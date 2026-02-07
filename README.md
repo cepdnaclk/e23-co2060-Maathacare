@@ -26,8 +26,6 @@ MaathaCare is a smart digital pregnancy support system designed to enhance Sri L
 - **Authentication:** JWT-based authentication  
 - **Notifications:** Firebase Cloud Messaging (FCM)
   
-### Team Members
-
 ## Team Members
 
 - **A.M.G.M. Madubhashinie** – E/23/211  
