@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/users/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "0771234567",
+  "password": "mySecretPassword123",
+  "role": "MOTHER"
+}
