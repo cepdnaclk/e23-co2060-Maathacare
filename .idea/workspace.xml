@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa73feec-3b0f-4d5d-9ffc-2156e7f17fde" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/MotherProfileRequest" afterDir="false" />
-    </list>
+    <list default="true" id="aa73feec-3b0f-4d5d-9ffc-2156e7f17fde" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
