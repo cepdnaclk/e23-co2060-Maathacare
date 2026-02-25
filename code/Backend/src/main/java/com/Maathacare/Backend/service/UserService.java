@@ -4,12 +4,16 @@ import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.model.enums.Role;
 import com.Maathacare.Backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
                  this.userRepository = userRepository;
+                 this.passwordEncoder = passwordEncoder;
              }
 
          public User registerNewUser(String phoneNumber, String password, Role role) {
@@ -19,7 +23,7 @@ public class UserService {
 
                  User newUser = new User();
                  newUser.setPhoneNumber(phoneNumber);
-                 newUser.setPasswordHash(password);
+                 newUser.setPasswordHash(passwordEncoder.encode(password));
                  newUser.setRole(role);
                  newUser.setActive(true);
 
