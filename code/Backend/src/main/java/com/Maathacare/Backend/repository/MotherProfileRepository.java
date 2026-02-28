@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface MotherProfileRepository extends JpaRepository<MotherProfile, UUID> {
     boolean existsByNic(String nic);
+    // Finds the mother's profile using her User ID
+    java.util.Optional<MotherProfile> findByUserId(java.util.UUID userId);
 }

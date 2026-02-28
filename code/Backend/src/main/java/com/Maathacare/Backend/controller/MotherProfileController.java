@@ -29,4 +29,17 @@ public class MotherProfileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {
+        try {
+            // Ask the Service Brain to fetch the profile
+            MotherProfile profile = motherProfileService.getProfileByUserId(userId);
+
+            // Send the profile data back to the phone/screen!
+            return ResponseEntity.ok(profile);
+        } catch (RuntimeException e) {
+            // If not found, send a 400 Bad Request error
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

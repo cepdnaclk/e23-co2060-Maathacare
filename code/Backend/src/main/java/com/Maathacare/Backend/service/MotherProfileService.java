@@ -49,4 +49,19 @@ public class MotherProfileService {
         // 5. Save it to the database!
         return motherProfileRepository.save(newProfile);
     }
+
+    public MotherProfile getProfileByUserId(String userIdString) {
+        // 1. Convert the plain text String ID into a strict Java UUID
+        java.util.UUID userId = java.util.UUID.fromString(userIdString);
+
+        // 2. Ask the database to find the profile
+        java.util.Optional<MotherProfile> profileOptional = motherProfileRepository.findByUserId(userId);
+
+        // 3. If it doesn't exist, throw an error. If it does, return it!
+        if (profileOptional.isEmpty()) {
+            throw new RuntimeException("No Mother Profile found for this user!");
+        }
+
+        return profileOptional.get();
+    }
 }
