@@ -28,5 +28,16 @@ public class UserController {
                      return ResponseEntity.badRequest().body(e.getMessage());
                  }
          }
-
+    @PostMapping("/login")
+    public ResponseEntity loginUser(@RequestBody com.Maathacare.Backend.dto.AuthRequest request) {
+        try {
+            com.Maathacare.Backend.dto.AuthResponse response = userService.loginUser(
+                    request.getPhoneNumber(),
+                    request.getPassword()
+            );
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
