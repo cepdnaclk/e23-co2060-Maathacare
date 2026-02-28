@@ -2,7 +2,7 @@ POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "phoneNumber": "0771234567",
+  "phoneNumber": "0771234568",
   "password": "mySecretPassword123",
   "role": "MOTHER"
 }
@@ -17,4 +17,21 @@ Content-Type: application/json
   "fullName": "Samanthi Perera",
   "mohArea": "Kandy South",
   "contactNumber": "0712345678"
+### Register a user (just in case your database reset)
+POST http://localhost:8080/api/users/register
+Content-Type: application/json
+
+{
+  "phoneNumber": "0775555555",
+  "password": "mySecretPassword123",
+  "role": "MOTHER"
+}
+
+### Test the Login Endpoint!
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "phoneNumber": "0775555555",
+  "password": "mySecretPassword123"
 }
