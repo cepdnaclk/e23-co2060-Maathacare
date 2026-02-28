@@ -7,6 +7,16 @@ Content-Type: application/json
   "role": "MOTHER"
 }
 
+### Test PHM Profile Creation
+POST http://localhost:8080/api/phm/setup
+Content-Type: application/json
+
+{
+  "userId": "f9595af4-3170-4038-893b-fc26a468093f",
+  "registrationNumber": "PHM-2026-001",
+  "fullName": "Samanthi Perera",
+  "mohArea": "Kandy South",
+  "contactNumber": "0712345678"
 ### Register a user (just in case your database reset)
 POST http://localhost:8080/api/users/register
 Content-Type: application/json
