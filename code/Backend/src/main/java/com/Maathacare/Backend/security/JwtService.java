@@ -25,4 +25,38 @@ public class JwtService {
                 .signWith(key)
                 .compact();
     }
+    //Read the phone number from the token
+    public String extractUsername(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
+    //Read the user's role from the token
+    public String extractRole(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("role", String.class);
+    }
+
+    // Verify the token hasn't been tampered with
+    public boolean isTokenValid(String token) {
+        try {
+            extractUsername(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    private javax.crypto.SecretKey getSigningKey() {
+        // NOTE: Make sure "SECRET_KEY" matches the name of the secret string variable at the top of your file!
+        byte[] keyBytes = io.jsonwebtoken.io.Decoders.BASE64.decode("MaathaCareSuperSecretKeyForJwtGeneration2026!");
+        return io.jsonwebtoken.security.Keys.hmacShaKeyFor(keyBytes);
+    }
 }
