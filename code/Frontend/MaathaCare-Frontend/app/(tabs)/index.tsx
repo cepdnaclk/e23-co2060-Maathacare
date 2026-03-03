@@ -1,6 +1,7 @@
 import axios from "axios"; // Import our new network library
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -12,6 +13,22 @@ import {
 
 export default function App() {
   const router = useRouter();
+  // This runs automatically the exact second the app opens
+  useEffect(() => {
+    const checkUserLogin = async () => {
+      try {
+        const savedToken = await SecureStore.getItemAsync("userToken");
+        if (savedToken) {
+          console.log("Found saved token! Auto-logging in...");
+          router.replace("/dashboard");
+        }
+      } catch (error) {
+        console.error("Error checking vault:", error);
+      }
+    };
+
+    checkUserLogin();
+  }, []);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
@@ -40,6 +57,10 @@ export default function App() {
 
       console.log("Login Success! Role:", role);
       console.log("JWT Token:", token);
+
+      //Lock the token and role in the phone's encrypted vault!
+      await SecureStore.setItemAsync("userToken", token);
+      await SecureStore.setItemAsync("userRole", role);
 
       router.replace("/dashboard");
     } catch (error) {
