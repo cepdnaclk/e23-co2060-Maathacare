@@ -13,6 +13,8 @@ public class JwtService {
 
     // This is the master lock key used to sign the wristbands!
     private static final String SECRET_STRING = "MaathaCareSuperSecretKeyForJwtGeneration2026!";
+
+    // We use this single, permanent key for BOTH generating and verifying!
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
 
     public String generateToken(User user) {
@@ -25,20 +27,21 @@ public class JwtService {
                 .signWith(key)
                 .compact();
     }
-    //Read the phone number from the token
+
+    // Read the phone number from the token
     public String extractUsername(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(key) // FIX: We now use the exact same key from the top of the file!
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
     }
 
-    //Read the user's role from the token
+    // Read the user's role from the token
     public String extractRole(String token) {
         return Jwts.parser()
-                .verifyWith(getSigningKey())
+                .verifyWith(key) // FIX: We now use the exact same key from the top of the file!
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -54,9 +57,6 @@ public class JwtService {
             return false;
         }
     }
-    private javax.crypto.SecretKey getSigningKey() {
-        // NOTE: Make sure "SECRET_KEY" matches the name of the secret string variable at the top of your file!
-        byte[] keyBytes = io.jsonwebtoken.io.Decoders.BASE64.decode("MaathaCareSuperSecretKeyForJwtGeneration2026!");
-        return io.jsonwebtoken.security.Keys.hmacShaKeyFor(keyBytes);
-    }
+
+    // Notice that we completely deleted the getSigningKey() method because it was causing the confusion!
 }

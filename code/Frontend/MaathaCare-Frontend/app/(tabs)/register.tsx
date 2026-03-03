@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -15,13 +16,51 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    // 1. Check if any fields are empty
+    if (!phoneNumber || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields.");
+      return;
+    }
+
+    // 2. Check if passwords match
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match!");
       return;
     }
-    Alert.alert("Test", `Ready to register: ${phoneNumber}`);
-    // We will connect this to your Spring Boot /register backend next!
+
+    try {
+      console.log("Sending registration request to backend...");
+
+      // 3. Send the data to your Spring Boot Register endpoint
+      const response = await axios.post(
+        "http://172.20.10.2:8080/api/users/register",
+        {
+          phoneNumber: phoneNumber,
+          password: password,
+          role: "MOTHER", // Sending a default role for the MaathaCare app!
+        },
+      );
+
+      // 4. Handle Success
+      console.log("Registration Success:", response.data);
+
+      Alert.alert(
+        "Account Created!",
+        "Welcome to MaathaCare. Please log in with your new account.",
+        [
+          // This creates an "OK" button on the alert that automatically jumps back to the Login screen!
+          { text: "OK", onPress: () => router.back() },
+        ],
+      );
+    } catch (error) {
+      // 5. If the server is off, or if the phone number already exists in the database
+      console.error("Registration Error:", error);
+      Alert.alert(
+        "Registration Failed",
+        "Could not create account. This phone number might already be registered.",
+      );
+    }
   };
 
   return (
