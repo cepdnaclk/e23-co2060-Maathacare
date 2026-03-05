@@ -37,6 +37,9 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/users/register", "/api/users/login", "/api/auth/**").permitAll()
+         
+                // Put our JWT Bouncer in front of the standard Spring Security bouncer!
                         // Public endpoints
                         .requestMatchers("/api/users/register", "/api/users/login").permitAll()
 

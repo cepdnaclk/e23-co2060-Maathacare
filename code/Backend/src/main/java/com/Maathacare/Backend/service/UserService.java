@@ -21,27 +21,28 @@ public class UserService {
         this.jwtService = jwtService;
     }
 
-    public User registerNewUser(String phoneNumber, String password, Role role) {
-        if (userRepository.findByPhoneNumber(phoneNumber).isPresent()) {
+    public User registerNewUser(String userId, String password, Role role) {
+        if (userRepository.findByUserId(userId).isPresent()) {
             throw new RuntimeException("This phone number is already registered!");
         }
 
         User newUser = new User();
-        newUser.setPhoneNumber(phoneNumber);
+        newUser.setUserId(userId);
         newUser.setPasswordHash(passwordEncoder.encode(password));
-        newUser.setRole(role);
+        newUser.setRole(Role.MOTHER);
+
         newUser.setActive(true);
 
         return userRepository.save(newUser);
     }
 
     // NEW: The Login Engine
-    public AuthResponse loginUser(String phoneNumber, String password) {
+    public AuthResponse loginUser(String userId, String password) {
         // 1. Find the user
-        User user = userRepository.findByPhoneNumber(phoneNumber)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
-        // 2. Check the password using BCrypt
+        // 2. Check the password using Bcrypt
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new RuntimeException("Invalid password!");
         }
