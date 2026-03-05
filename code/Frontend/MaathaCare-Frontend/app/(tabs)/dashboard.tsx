@@ -2,7 +2,7 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // <-- Added useEffect here!
 import {
   Alert,
   ScrollView,
@@ -16,11 +16,26 @@ import {
 export default function Dashboard() {
   const router = useRouter();
 
-  // State variables to hold what the user types into the form
+  // State variables for the form
   const [fullName, setFullName] = useState("");
   const [nic, setNic] = useState("");
   const [emergencyPhone, setEmergencyPhone] = useState("");
   const [address, setAddress] = useState("");
+
+  // NEW 1: State variable to hold the Weekly Milestone data!
+  const [milestone, setMilestone] = useState<any>(null);
+
+  // NEW 2: The auto-fetcher that runs the second the screen opens
+  useEffect(() => {
+    // We use the exact same IP address your friend used!
+    axios.get("http://172.20.10.4:8080/api/milestones/14")
+      .then((response) => {
+        setMilestone(response.data); // Save the Lemon data into our state!
+      })
+      .catch((error) => {
+        console.error("Error fetching milestone:", error);
+      });
+  }, []);
 
   const submitProfile = async () => {
     // 1. Basic validation
@@ -45,7 +60,7 @@ export default function Dashboard() {
 
       // 3. Send the POST request with the real typed data!
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/mothers/profile",
+        "http://172.20.10.4:8080/api/mothers/profile",
         {
           userId: realUserId,
           fullName: fullName,
@@ -102,6 +117,24 @@ export default function Dashboard() {
       <Text style={styles.title}>Welcome to MaathaCare!</Text>
       <Text style={styles.subtitle}>Complete your Mother Profile below.</Text>
 
+      {/* NEW 3: THE PREGNANCY PROGRESS CARD */}
+      {milestone && (
+        <View style={styles.milestoneCard}>
+          <Text style={styles.milestoneTitle}>
+            Week {milestone.weekNumber} Progress
+          </Text>
+          <Text style={styles.milestoneText}>
+            Your baby is the size of a {milestone.babySize} 🍋
+          </Text>
+          <Text style={styles.milestoneText}>
+            Weight: {milestone.babyWeight}
+          </Text>
+          <Text style={styles.milestoneTip}>
+            "{milestone.weeklyTip}"
+          </Text>
+        </View>
+      )}
+
       {/* THE FORM UI */}
       <View style={styles.formContainer}>
         <TextInput
@@ -149,11 +182,12 @@ export default function Dashboard() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1, // Changed to flexGrow so the scroll works better with the new card
     backgroundColor: "#F8F9FA",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+    paddingTop: 50, // Added a little top padding
   },
   title: {
     fontSize: 28,
@@ -165,8 +199,43 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: "#6c757d",
-    marginBottom: 30,
+    marginBottom: 20, // Reduced slightly to make room for card
   },
+  
+  // NEW STYLES FOR YOUR CARD
+  milestoneCard: {
+    backgroundColor: "#fce7f3", // Light pink background
+    padding: 20,
+    borderRadius: 15,
+    width: "100%",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#fbcfe8",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // For android shadow
+  },
+  milestoneTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#db2777", // Darker pink text
+    marginBottom: 8,
+  },
+  milestoneText: {
+    fontSize: 16,
+    color: "#374151",
+    marginBottom: 4,
+  },
+  milestoneTip: {
+    fontSize: 15,
+    marginTop: 12,
+    fontStyle: "italic",
+    color: "#4b5563",
+    lineHeight: 22, // Makes the paragraph easier to read
+  },
+
   formContainer: {
     width: "100%",
     marginBottom: 20,
@@ -200,6 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 20,
   },
   logoutButtonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });
