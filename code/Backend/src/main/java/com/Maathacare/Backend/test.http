@@ -1,13 +1,4 @@
-POST http://localhost:8080/api/users/register
-Content-Type: application/json
-
-{
-  "phoneNumber": "0771234568",
-  "password": "mySecretPassword123",
-  "role": "MOTHER"
-}
-
-### Register a user (just in case your database reset)
+### 1. Register a Mother User (Optional)
 POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
@@ -17,7 +8,7 @@ Content-Type: application/json
   "role": "MOTHER"
 }
 
-### Test the Login Endpoint!
+### 2. Login to get a fresh Access Token
 POST http://localhost:8080/api/users/login
 Content-Type: application/json
 
@@ -25,3 +16,22 @@ Content-Type: application/json
   "phoneNumber": "0775555555",
   "password": "mySecretPassword123"
 }
+
+### 3. Schedule a Clinic Appointment
+POST http://localhost:8080/api/appointments/schedule
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwNzc1NTU1NTU1Iiwicm9sZSI6IlBITSIsInVzZXJJZCI6IjI3ZmRjMjk1LTdhMzYtNDg5Ny1hMTkxLWIwN2Y1YWE5MWZjNiIsImlhdCI6MTc3MjcxNjU1OCwiZXhwIjoxNzcyODAyOTU4fQ.hdZpPZo3N-u_z2fxVt9V8EFh4tDzPSFdLScMNsPrW8I
+
+
+{
+  "mother": { "id": "62df2c26-2882-4fc3-8397-03de89187f59" },
+  "phm": { "id": "16ff0442-c9a0-4b37-8140-a90046ac3a05" },
+  "appointmentDate": "2026-03-20T10:30:00",
+  "location": "Kandy South Clinic",
+  "remarks": "First trimester regular checkup",
+  "status": "SCHEDULED"
+}
+
+### 4. Get All Appointments for Kumari
+GET http://localhost:8080/api/appointments/mother/62df2c26-2882-4fc3-8397-03de89187f4c
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwNzc1NTU1NTU1Iiwicm9sZSI6IlBITSIsInVzZXJJZCI6IjI3ZmRjMjk1LTdhMzYtNDg5Ny1hMTkxLWIwN2Y1YWE5MWZjNiIsImlhdCI6MTc3MjcxNjU1OCwiZXhwIjoxNzcyODAyOTU4fQ.hdZpPZo3N-u_z2fxVt9V8EFh4tDzPSFdLScMNsPrW8I
