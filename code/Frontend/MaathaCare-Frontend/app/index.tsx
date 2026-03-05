@@ -1,16 +1,63 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function GatewayScreen() {
   const router = useRouter();
 
+  // 1. State to show the loading spinner while checking the backpack
+  const [isCheckingUser, setIsCheckingUser] = useState(true);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        // 🎒 2. Peek into the phone's memory
+        const userToken = await AsyncStorage.getItem("userToken");
+        const userRole = await AsyncStorage.getItem("userRole");
+
+        // 3. If they have a token, bypass the login screen!
+        if (userToken && userRole) {
+          if (userRole === "PHM") {
+            router.replace("/phm_dashboard");
+            return; // Stop the code so the buttons don't flash
+          }
+          // TODO: Uncomment when we build the Mother Dashboard!
+          // if (userRole === "MOTHER") {
+          //   router.replace("/mother-dashboard");
+          //   return;
+          // }
+        }
+      } catch (error) {
+        console.error("Error checking backpack:", error);
+      } finally {
+        // 4. If memory is empty (or after checking), turn off the spinner
+        setIsCheckingUser(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  // --- THE LOADING SCREEN ---
+  if (isCheckingUser) {
+    return (
+      <View style={[styles.container, styles.loadingCenter]}>
+        {/* Using your MaathaCare Pink for the spinner! */}
+        <ActivityIndicator size="large" color="#FF69B4" />
+        <Text style={styles.loadingText}>Loading MaathaCare...</Text>
+      </View>
+    );
+  }
+
+  // --- THE MAIN GATEWAY UI (Your exact design!) ---
   return (
     <SafeAreaView style={styles.container}>
       {/* App Logo & Welcome */}
@@ -41,12 +88,22 @@ export default function GatewayScreen() {
   );
 }
 
+// --- STYLES ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
     justifyContent: "center",
     padding: 20,
+  },
+  loadingCenter: {
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 15,
+    fontSize: 16,
+    color: "#FF69B4", // Matches the theme
+    fontWeight: "600",
   },
   header: {
     alignItems: "center",

@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -62,10 +63,14 @@ export default function StaffLogin() {
 
       Alert.alert("Login Successful!", `Welcome back! Role: ${data.role}`);
 
-      // TODO: Save the token securely (e.g., AsyncStorage)
+      //SAVE THE TOKEN TO THE PHONE'S BACKPACK
+      await AsyncStorage.setItem("userToken", data.token);
+      await AsyncStorage.setItem("userRole", data.role);
+
+      console.log("Token successfully saved to device!");
 
       // 5. Navigate to the Midwife Dashboard
-      // router.push("/phm-dashboard");
+      router.replace("/phm_dashboard");
     } catch (error) {
       console.error(error);
       setErrorMessage(
