@@ -29,10 +29,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disables CSRF so IntelliJ/Postman can send requests
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/users/login").permitAll() // Open to public
+                        .requestMatchers("/api/users/register", "/api/users/login", "/api/auth/**").permitAll()
                         .anyRequest().authenticated() // Locks down everything else
                 )
-                // NEW: Put our JWT Bouncer in front of the standard Spring Security bouncer!
+                // Put our JWT Bouncer in front of the standard Spring Security bouncer!
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

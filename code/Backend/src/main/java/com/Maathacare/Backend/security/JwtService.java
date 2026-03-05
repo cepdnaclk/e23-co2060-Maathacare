@@ -19,7 +19,7 @@ public class JwtService {
 
     public String generateToken(User user) {
         return Jwts.builder()
-                .subject(user.getPhoneNumber())
+                .subject(user.getUserId())
                 .claim("role", user.getRole().name())
                 .claim("userId", user.getId().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))

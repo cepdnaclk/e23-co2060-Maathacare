@@ -14,11 +14,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "phone_number", length = 15, unique = true, nullable = false)
-    private String phoneNumber;
+    @Column(name = "user_id", length = 15, unique = true, nullable = false)
+    private String UserId;
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(name = "staff_id", unique = true, length = 20)
+    private String staffId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -44,12 +47,20 @@ public class User {
         this.id = id;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getUserId() {
+        return UserId;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setUserId(String userId) {
+        UserId = userId;
+    }
+
+    public String getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
 
     public String getPasswordHash() {
