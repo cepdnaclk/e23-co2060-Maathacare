@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 export default function GatewayScreen() {
   const router = useRouter();
 
