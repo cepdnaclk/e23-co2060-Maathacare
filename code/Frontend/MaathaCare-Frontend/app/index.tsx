@@ -1,3 +1,6 @@
+import { Link, useRouter } from "expo-router";
+import React from "react";
+import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -124,6 +127,7 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 20, // Adds space between the buttons
   },
+  
   button: {
     width: "100%",
     paddingVertical: 20,
@@ -154,3 +158,13 @@ const styles = StyleSheet.create({
     opacity: 0.9,
   },
 });
+
+{/* The Two Main Portals */}
+<View style={styles.buttonContainer}>
+
+  {/* ... (Keep the Mother and Staff buttons exactly as they are) ... */}
+
+  <Link href="/phm-profile" style={{ marginTop: 30, color: '#0056b3', textAlign: 'center', fontSize: 16, textDecorationLine: 'underline' }}>
+     🛠️ DEV: Go to PHM Profile Screen
+  </Link>
+</View>
