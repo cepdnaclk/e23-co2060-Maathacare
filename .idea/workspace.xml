@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="aa73feec-3b0f-4d5d-9ffc-2156e7f17fde" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/AppointmentController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/Appointment.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/AppointmentRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/AppointmentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/test.http" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/test.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,29 +50,13 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "feature/phm-appointments",
+    "git-widget-placeholder": "feature/frontend-phm-profile",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/sem 3/project/code/e23-co2060-Maathacare",
     "settings.editor.selected.configurable": "MavenSettings",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunDashboard">
-    <option name="configurationStatuses">
-      <map>
-        <entry key="HttpClient.HttpRequestRunConfigurationType">
-          <value>
-            <map>
-              <entry key="test | 1. Register a Mother User (Optional)" value="STOPPED" />
-              <entry key="test | 2. Login to get a fresh Access Token" value="STOPPED" />
-              <entry key="test | 3. Schedule a Clinic Appointment" value="STOPPED" />
-              <entry key="test | 4. Get All Appointments for Kumari" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="RunManager" selected="HTTP Request.test | 4. Get All Appointments for Kumari">
     <configuration name="BackendApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.Maathacare.Backend.BackendApplication" />
