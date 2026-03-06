@@ -8,8 +8,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/phm-profile.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm_dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm_dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" afterDir="false" />
     </list>
@@ -39,46 +37,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.BackendApplication.executor": "Run",
-    "HTTP Request.test | 1. Register a Mother User (Optional).executor": "Run",
-    "HTTP Request.test | 1. Register a Mother User (if database is empty).executor": "Run",
-    "HTTP Request.test | 2. Login to get a fresh Access Token.executor": "Run",
-    "HTTP Request.test | 2. Login to get the Access Token (VIP Pass).executor": "Run",
-    "HTTP Request.test | 3. Schedule a Clinic Appointment.executor": "Run",
-    "HTTP Request.test | 4. Get All Appointments for Kumari.executor": "Run",
-    "HTTP Request.test | 4. Get All Appointments for a Specific Mother.executor": "Run",
-    "HTTP Request.test | IMPORTANT: Copy the token from the response of step 2 and paste it below..executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "feature/frontend-phm-profile",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/sem 3/project/code/e23-co2060-Maathacare",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "MavenSettings",
-    "ts.external.directory.path": "C:\\Users\\chemi\\Desktop\\SEM 3\\CO2060\\app2\\e23-co2060-Maathacare\\code\\Frontend\\MaathaCare-Frontend\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
-  }
-}]]></component>
-  <component name="RunManager" selected="HTTP Request.test | 4. Get All Appointments for Kumari">
-    <configuration name="BackendApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.Maathacare.Backend.BackendApplication" />
-      <module name="Backend" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.Maathacare.Backend.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="test | 1. Register a Mother User (Optional)" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/test.http" executionIdentifier="1. Register a Mother User (Optional)" runType="Run single request">
+
       <method v="2" />
     </configuration>
     <configuration name="test | 2. Login to get a fresh Access Token" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/test.http" executionIdentifier="2. Login to get a fresh Access Token" index="2" runType="Run single request">
@@ -121,6 +80,10 @@
       <created>1771955161752</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
+      <updated>1772586545615</updated>
+      <workItem from="1772586547000" duration="4247000" />
+      <workItem from="1772615706473" duration="5076000" />
+      <workItem from="1772731765689" duration="5591000" />
       <updated>1771955161752</updated>
       <workItem from="1771955163552" duration="20000" />
       <workItem from="1772714947198" duration="1913000" />

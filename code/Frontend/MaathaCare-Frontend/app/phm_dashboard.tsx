@@ -1,7 +1,18 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+const API_BASE_URL = "http://192.168.8.180:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();
@@ -9,26 +20,55 @@ export default function PHMDashboard() {
   const [phmInfo, setPhmInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // 1. New states for our secure data
+  const [patients, setPatients] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    // 🎒 Load data from the phone's memory when the screen opens
-    loadPHMData();
+    // Open the backpack and check who is logged in!
+    const loadData = async () => {
+      const savedRole = await AsyncStorage.getItem("userRole");
+      if (savedRole) setRole(savedRole);
+    };
+    loadData();
   }, []);
 
-  const loadPHMData = async () => {
+  // --- 🔒 THE MAGIC SECURE FETCH FUNCTION ---
+  const fetchSecureData = async () => {
+    setLoading(true);
     try {
-      const savedRole = await AsyncStorage.getItem("userRole");
-      const savedToken = await AsyncStorage.getItem("userToken");
+      // 🎒 Grab the VIP Token from the backpack
+      const token = await AsyncStorage.getItem("userToken");
 
-      // Simulated Fetch - Replace with your Spring Boot API call later
-      setPhmInfo({
-        name: "Kasun Hansika",
-        id: "PHM-2026-045",
-        phone: "+94 77 123 4567",
-        area: "Kandy South",
-        role: savedRole
+      if (!token) {
+        Alert.alert("Error", "No security token found. Please log in again.");
+        return;
+      }
+
+      // 🛑 Make the request AND attach the token as a VIP badge!
+      const response = await fetch(`${API_BASE_URL}/api/phm/patients`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // <--- THIS UNLOCKS THE VAULT!
+        },
       });
+
+      if (response.ok) {
+        const data = await response.json();
+        setPatients(data); // Save the data to show on screen
+      } else {
+        Alert.alert(
+          "Access Denied!",
+          "The Spring Boot Bouncer rejected your token.",
+        );
+      }
     } catch (error) {
-      console.error("Error loading data:", error);
+      console.error(error);
+      Alert.alert(
+        "Network Error!",
+        "Is Spring Boot running and your IP address correct?",
+      );
     } finally {
       setLoading(false);
     }
@@ -38,6 +78,8 @@ export default function PHMDashboard() {
     // 🗑️ Clear the memory and send the user back to the Gateway
     await AsyncStorage.removeItem("userToken");
     await AsyncStorage.removeItem("userRole");
+
+    // Send them back to the main Gateway screen
     router.replace("/");
   };
 

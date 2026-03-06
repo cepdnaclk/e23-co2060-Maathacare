@@ -6,6 +6,9 @@ import com.Maathacare.Backend.service.MotherProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
+
 @RestController
 @RequestMapping("/api/mothers")
 public class MotherProfileController {
@@ -26,6 +29,16 @@ public class MotherProfileController {
             return ResponseEntity.ok("Success! Mother Profile created with ID: " + newProfile.getId());
         } catch (RuntimeException e) {
             // If the Service throws an error (like NIC already exists), send a 400 Bad Request
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/profile/{userId}")
+    public ResponseEntity<?> getMotherProfile(@PathVariable UUID userId) {
+        try {
+            MotherProfile profile = motherProfileService.getProfileByUserId(userId);
+            return ResponseEntity.ok(profile);
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
