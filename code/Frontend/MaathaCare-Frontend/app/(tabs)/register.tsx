@@ -34,7 +34,7 @@ export default function Register() {
 
       // 3. Send the data to your Spring Boot Register endpoint
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/users/register",
+        "http://172.20.10.4:8080/api/users/register",
         {
           phoneNumber: phoneNumber,
           password: password,
