@@ -23,7 +23,8 @@ public class MotherProfileService {
 
     public MotherProfile createMotherProfile(MotherProfileRequest request) {
         // 1. Check if the User account actually exists
-        Optional<User> userOptional = userRepository.findById(request.getUserId());
+        // We use our custom findByUserId method which accepts the String phone number
+        Optional<User> userOptional = userRepository.findByUserId(request.getUserId());
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User account not found!");
         }
@@ -50,8 +51,8 @@ public class MotherProfileService {
         // 5. Save it to the database!
         return motherProfileRepository.save(newProfile);
     }
-    public MotherProfile getProfileByUserId(UUID userId) {
-        return motherProfileRepository.findByUserId(userId)
+    public MotherProfile getProfileByUserId(String userId) {
+        return motherProfileRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("No profile found for this user!"));
     }
 }

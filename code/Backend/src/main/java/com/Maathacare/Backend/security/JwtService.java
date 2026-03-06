@@ -21,7 +21,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(user.getUserId())
                 .claim("role", user.getRole().name())
-                .claim("userId", user.getId().toString())
+                .claim("userId", user.getUserId().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Valid for 24 hours
                 .signWith(key)

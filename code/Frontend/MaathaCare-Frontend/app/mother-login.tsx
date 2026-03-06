@@ -13,6 +13,7 @@ import {
 
 export default function App() {
   const router = useRouter();
+
   // This runs automatically the exact second the app opens
   useEffect(() => {
     const checkUserLogin = async () => {
@@ -29,6 +30,7 @@ export default function App() {
 
     checkUserLogin();
   }, []);
+
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
 
@@ -42,10 +44,9 @@ export default function App() {
     try {
       console.log("Sending request to backend...");
 
-      // 2. Send the data to Spring Boot
+      // 2. Send the data to Spring Boot (ONLY ONE URL NOW!)
       const response = await axios.post(
         "http://192.168.8.180:8080/api/users/login",
-        "http://172.20.10.4:8080/api/users/login",
         {
           phoneNumber: phoneNumber,
           password: password,
@@ -59,18 +60,30 @@ export default function App() {
       console.log("Login Success! Role:", role);
       console.log("JWT Token:", token);
 
-      //Lock the token and role in the phone's encrypted vault!
+      // Lock the token and role in the phone's encrypted vault!
       await SecureStore.setItemAsync("userToken", token);
       await SecureStore.setItemAsync("userRole", role);
 
-      router.replace("/dashboard");
+      router.replace("/profile");
     } catch (error) {
-      // 4. If Spring Boot says "Invalid Password" or the server is off
-      console.error("Login Error:", error);
-      Alert.alert(
-        "Login Failed",
-        "Incorrect phone number or password. Please try again.",
-      );
+      // 1. Tell TypeScript to chill
+      const err = error as any;
+      console.error("Full Login Error:", err);
+
+      // 2. Give us the EXACT error code from Spring Boot!
+      if (err.response) {
+        Alert.alert(
+          "Server Rejected",
+          `Code: ${err.response.status} | Message: ${err.response.data}`,
+        );
+      } else if (err.request) {
+        Alert.alert(
+          "Network Blocked",
+          "Cannot reach server. Check Wi-Fi and IP.",
+        );
+      } else {
+        Alert.alert("App Error", err.message);
+      }
     }
   };
 

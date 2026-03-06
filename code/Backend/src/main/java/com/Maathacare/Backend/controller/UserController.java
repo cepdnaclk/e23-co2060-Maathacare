@@ -13,8 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/users") // 1. FIXED: Changed from /auth to /users to match your React Native app!
 public class UserController {
 
     @Autowired
@@ -29,62 +32,82 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // 1. MOTHER LOGIN ENDPOINT
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+    // 2. NEW: THE MISSING REGISTRATION ENDPOINT!
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Map<String, String> requestData) {
         try {
+            // Catch the exact JSON data coming from your React Native app
+            String phone = requestData.get("phoneNumber");
+            String password = requestData.get("password");
+
+            // Create the new Mother profile
+            User newUser = new User();
+
+            // Assuming you use the phone number as their primary User ID for logging in!
+            newUser.setUserId(phone);
+            newUser.setPasswordHash(passwordEncoder.encode(password));
+            newUser.setRole(Role.MOTHER);
+            newUser.setActive(true);
+
+            userRepository.save(newUser);
+            return ResponseEntity.ok("Account created successfully!");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error creating account: " + e.getMessage());
+        }
+    }
+
+    // 3. UPDATED: MOTHER LOGIN ENDPOINT
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> requestData) {
+        try {
+            // Safely catch the phoneNumber from Expo instead of looking for 'userId'
+            String phone = requestData.get("phoneNumber");
+            String password = requestData.get("password");
+
             // Uses the login engine we just perfected in UserService!
-            AuthResponse response = userService.loginUser(request.getUserId(), request.getPassword());
+            AuthResponse response = userService.loginUser(phone, password);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
-    // 2. SECURE STAFF LOGIN ENDPOINT
+    // ----------------------------------------------------
+    // SECURE STAFF ENDPOINTS (Untouched!)
+    // ----------------------------------------------------
     @PostMapping("/staff/login")
     public ResponseEntity<?> staffLogin(@RequestBody AuthRequest request) {
 
-        // 1. Find the user by their Staff ID.
-        User user = userRepository.findByStaffId(request.getStaffId())
-                .orElse(null);
+        User user = userRepository.findByStaffId(request.getStaffId()).orElse(null);
 
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff ID not found.");
         }
 
-        // 2. Verify they are ACTUALLY staff (Security check!)
         if (user.getRole() == Role.MOTHER) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied: You are not registered as Staff.");
         }
 
-        // 3. Check the password
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
         }
 
-        // 4. Generate the VIP Staff Token!
         String token = jwtService.generateToken(user);
-
-        // 5. Send back the token AND their role!
         return ResponseEntity.ok(new AuthResponse(token, user.getRole().name()));
     }
 
-    // ----------------------------------------------------
-    // 🛑 TEMPORARY CHEAT CODE TO CREATE A TEST MIDWIFE 🛑
-    // (We will delete this later once we build the Admin portal)
-    // ----------------------------------------------------
     @GetMapping("/staff/create-test")
     public ResponseEntity<String> createTestStaff() {
-        // Check if we already made one so it doesn't crash
         if (userRepository.findByStaffId("PHM-100").isPresent()) {
             return ResponseEntity.ok("Test Midwife already exists!");
         }
 
         User testStaff = new User();
-        testStaff.setUserId("999999999V"); // Dummy NIC
+        testStaff.setUserId("999999999V");
         testStaff.setStaffId("PHM-100");
-        testStaff.setPasswordHash(passwordEncoder.encode("password123")); // Properly encrypts it!
+        testStaff.setPasswordHash(passwordEncoder.encode("password123"));
         testStaff.setRole(Role.PHM);
         testStaff.setActive(true);
 
