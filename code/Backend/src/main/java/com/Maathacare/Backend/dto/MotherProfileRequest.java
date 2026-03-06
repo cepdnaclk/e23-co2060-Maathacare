@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class MotherProfileRequest {
 
-    private UUID userId;
+    private String userId;
     private String fullName;
     private String nic;
     private LocalDate dateOfBirth;
@@ -14,13 +14,8 @@ public class MotherProfileRequest {
     private String address;
     private String chronicDiseaseStatus;
 
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
     public String getFullName() {
         return fullName;

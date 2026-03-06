@@ -8,8 +8,8 @@ import java.util.UUID;
 @Table(name = "appointments")
 public class Appointment {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID) // Specifically for String IDs
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "mother_id", nullable = false)
@@ -26,8 +26,8 @@ public class Appointment {
 
     // --- Getters and Setters ---
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public MotherProfile getMother() { return mother; }
     public void setMother(MotherProfile mother) { this.mother = mother; }

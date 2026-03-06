@@ -9,6 +9,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
+
+// 🚨 NEW IMPORTS NEEDED FOR CORS
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 
 @Configuration
 public class SecurityConfig {
@@ -28,40 +35,54 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-<<<<<<< HEAD
-                .csrf(csrf -> csrf.disable()) // Disables CSRF so IntelliJ/Postman can send requests
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/milestones/**").permitAll()                        .anyRequest().authenticated() // Locks down everything else
-=======
-                // 1. Disable CSRF - Required for POST requests in stateless APIs
+                // 1. 🔓 ENABLE CORS SO EXPO CAN TALK TO SPRING BOOT
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // 2. Disable CSRF - Required for POST requests in stateless APIs
                 .csrf(csrf -> csrf.disable())
 
-                // 2. Set session management to STATELESS (Standard for JWT)
+                // 3. Set session management to STATELESS (Standard for JWT)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
->>>>>>> 1a728557fcc65a926ecb8981627f6dc3e5cc0cec
                 )
 
+                // 4. Configure endpoint access rules
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/register", "/api/users/login", "/api/auth/**").permitAll()
-         
-                // Put our JWT Bouncer in front of the standard Spring Security bouncer!
-                        // Public endpoints
-                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                        // 🔓 NEW: ALWAYS allow the hidden mobile pre-flight checks!
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Appointment endpoints - Accessible to any authenticated user
+                        // Public endpoints (No token required)
+                        .requestMatchers(
+                                "/api/users/register",
+                                "/api/users/login",
+                                "/api/auth/**",
+                                "/api/milestones/**"
+                        ).permitAll()
+
+                        // Protected endpoints (Accessible to any authenticated user)
                         .requestMatchers("/api/appointments/**").authenticated()
-
-                        // PHM Setup endpoints
                         .requestMatchers("/api/phm/**").authenticated()
 
                         // Lockdown everything else
                         .anyRequest().authenticated()
                 )
 
-                // 3. Add our JWT Filter
+                // 5. Put our JWT Bouncer in front of the standard Spring Security bouncer!
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // 🔓 THE VIP LIST FOR YOUR EXPO APP
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*")); // Allow all IP addresses
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // OPTIONS is crucial for Axios!
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

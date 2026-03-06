@@ -19,9 +19,12 @@ public class PHMProfileService {
     }
 
     public PHMProfile createPHMProfile(PHMProfileRequest request) {
-        // 1. Find the user account this profile belongs to
-        User user = userRepository.findById(request.getUserId())
+        // ✅ This line is now GREEN because String matches String!
+        User user = userRepository.findByUserId(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found!"));
+
+
+
 
         // 2. Create the new PHM Profile
         PHMProfile newProfile = new PHMProfile();

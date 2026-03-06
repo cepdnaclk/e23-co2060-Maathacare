@@ -2,12 +2,13 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator, // Added for the loading spinner!
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function Register() {
@@ -15,6 +16,9 @@ export default function Register() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // NEW: A state to track if the app is currently talking to the server
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
     // 1. Check if any fields are empty
@@ -30,11 +34,14 @@ export default function Register() {
     }
 
     try {
+      // Turn on the loading spinner!
+      setIsLoading(true);
       console.log("Sending registration request to backend...");
 
       // 3. Send the data to your Spring Boot Register endpoint
+      // ⚠️ IMPORTANT: Make sure this IP address is still your laptop's correct IPv4 address!
       const response = await axios.post(
-        "http://172.20.10.4:8080/api/users/register",
+        "http://192.168.8.180:8080/api/users/register",
         {
           phoneNumber: phoneNumber,
           password: password,
@@ -48,18 +55,30 @@ export default function Register() {
       Alert.alert(
         "Account Created!",
         "Welcome to MaathaCare. Please log in with your new account.",
-        [
-          // This creates an "OK" button on the alert that automatically jumps back to the Login screen!
-          { text: "OK", onPress: () => router.back() },
-        ],
+        [{ text: "OK", onPress: () => router.replace("/mother-login") }],
       );
     } catch (error) {
-      // 5. If the server is off, or if the phone number already exists in the database
-      console.error("Registration Error:", error);
-      Alert.alert(
-        "Registration Failed",
-        "Could not create account. This phone number might already be registered.",
-      );
+      // Tell TypeScript to stop complaining!
+      const err = error as any;
+
+      console.error("Full Error Details:", err);
+
+      // Turn off loading spinner
+      setIsLoading(false);
+
+      if (err.response) {
+        // The server received it, but rejected it (e.g., 403 Forbidden or 500 Internal Error)
+        Alert.alert("Server Rejected", `Error Code: ${err.response.status}`);
+      } else if (err.request) {
+        // The app couldn't even reach the server (Firewall, IP issue, or Apple blocking it)
+        Alert.alert(
+          "Network Blocked",
+          `Cannot reach server. Check Wi-Fi and IP.`,
+        );
+      } else {
+        // Something else broke
+        Alert.alert("App Error", err.message);
+      }
     }
   };
 
@@ -76,6 +95,8 @@ export default function Register() {
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
         autoCapitalize="none"
+        // Disable typing while loading
+        editable={!isLoading}
       />
 
       <Text style={styles.label}>Password</Text>
@@ -85,6 +106,7 @@ export default function Register() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry={true}
+        editable={!isLoading}
       />
 
       <Text style={styles.label}>Confirm Password</Text>
@@ -94,15 +116,25 @@ export default function Register() {
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry={true}
+        editable={!isLoading}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Sign Up</Text>
+      {/* NEW: Button changes based on loading state */}
+      <TouchableOpacity
+        style={[styles.button, isLoading && styles.buttonDisabled]}
+        onPress={handleRegister}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Sign Up</Text>
+        )}
       </TouchableOpacity>
 
       <View style={styles.loginContainer}>
         <Text style={styles.loginText}>Already have an account? </Text>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
           <Text style={styles.loginLink}>Login</Text>
         </TouchableOpacity>
       </View>
@@ -151,6 +183,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
+    flexDirection: "row", // Helps align spinner and text
+  },
+  buttonDisabled: {
+    backgroundColor: "#ffb6c1", // Lighter pink when disabled
   },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   loginContainer: { flexDirection: "row", marginTop: 20 },

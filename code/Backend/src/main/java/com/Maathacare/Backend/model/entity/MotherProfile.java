@@ -5,21 +5,18 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "mother_profiles")
 public class MotherProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
-    // Links to auth credentials
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Links the mother to her assigned PHM
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "phm_id", referencedColumnName = "id")
     private PHMProfile phmProfile;
@@ -53,99 +50,39 @@ public class MotherProfile {
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
-    public UUID getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
-    public User getUser() {
-        return user;
-    }
+    public PHMProfile getPhmProfile() { return phmProfile; }
+    public void setPhmProfile(PHMProfile phmProfile) { this.phmProfile = phmProfile; }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public String getNic() { return nic; }
+    public void setNic(String nic) { this.nic = nic; }
 
-    public PHMProfile getPhmProfile() {
-        return phmProfile;
-    }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public void setPhmProfile(PHMProfile phmProfile) {
-        this.phmProfile = phmProfile;
-    }
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
-    public String getNic() {
-        return nic;
-    }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
-    public void setNic(String nic) {
-        this.nic = nic;
-    }
+    public String getEmergencyContactNumber() { return emergencyContactNumber; }
+    public void setEmergencyContactNumber(String emergencyContactNumber) { this.emergencyContactNumber = emergencyContactNumber; }
 
-    public String getFullName() {
-        return fullName;
-    }
+    public String getChronicDiseaseStatus() { return chronicDiseaseStatus; }
+    public void setChronicDiseaseStatus(String chronicDiseaseStatus) { this.chronicDiseaseStatus = chronicDiseaseStatus; }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+    public String getBloodGroup() { return bloodGroup; }
+    public void setBloodGroup(String bloodGroup) { this.bloodGroup = bloodGroup; }
 
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getEmergencyContactNumber() {
-        return emergencyContactNumber;
-    }
-
-    public void setEmergencyContactNumber(String emergencyContactNumber) {
-        this.emergencyContactNumber = emergencyContactNumber;
-    }
-
-    public String getChronicDiseaseStatus() {
-        return chronicDiseaseStatus;
-    }
-
-    public void setChronicDiseaseStatus(String chronicDiseaseStatus) {
-        this.chronicDiseaseStatus = chronicDiseaseStatus;
-    }
-
-    public String getBloodGroup() {
-        return bloodGroup;
-    }
-
-    public void setBloodGroup(String bloodGroup) {
-        this.bloodGroup = bloodGroup;
-    }
-
-    public ZonedDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(ZonedDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public ZonedDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public ZonedDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

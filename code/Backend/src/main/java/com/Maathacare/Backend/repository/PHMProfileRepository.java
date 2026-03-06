@@ -10,4 +10,5 @@ import java.util.UUID;
 @Repository
 public interface PHMProfileRepository extends JpaRepository<PHMProfile, UUID> {
     Optional<PHMProfile> findByRegistrationNumber(String registrationNumber);
+    Optional<PHMProfile> findByUserUserId(String userId);
 }

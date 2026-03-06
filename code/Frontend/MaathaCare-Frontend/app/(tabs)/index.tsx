@@ -1,44 +1,34 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function GatewayScreen() {
   const router = useRouter();
-
-  // 1. State to show the loading spinner while checking the backpack
   const [isCheckingUser, setIsCheckingUser] = useState(true);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        // 🎒 2. Peek into the phone's memory
         const userToken = await AsyncStorage.getItem("userToken");
         const userRole = await AsyncStorage.getItem("userRole");
 
-        // 3. If they have a token, bypass the login screen!
         if (userToken && userRole) {
           if (userRole === "PHM") {
             router.replace("/phm_dashboard");
-            return; // Stop the code so the buttons don't flash
+            return;
           }
-          // TODO: Uncomment when we build the Mother Dashboard!
-          // if (userRole === "MOTHER") {
-          //   router.replace("/mother-dashboard");
-          //   return;
-          // }
         }
       } catch (error) {
         console.error("Error checking backpack:", error);
       } finally {
-        // 4. If memory is empty (or after checking), turn off the spinner
         setIsCheckingUser(false);
       }
     };
@@ -46,27 +36,22 @@ export default function GatewayScreen() {
     checkLoginStatus();
   }, []);
 
-  // --- THE LOADING SCREEN ---
   if (isCheckingUser) {
     return (
       <View style={[styles.container, styles.loadingCenter]}>
-        {/* Using your MaathaCare Pink for the spinner! */}
         <ActivityIndicator size="large" color="#FF69B4" />
         <Text style={styles.loadingText}>Loading MaathaCare...</Text>
       </View>
     );
   }
 
-  // --- THE MAIN GATEWAY UI (Your exact design!) ---
   return (
     <SafeAreaView style={styles.container}>
-      {/* App Logo & Welcome */}
       <View style={styles.header}>
         <Text style={styles.title}>MaathaCare</Text>
         <Text style={styles.subtitle}>Smart Digital Pregnancy Support</Text>
       </View>
 
-      {/* The Two Main Portals */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, styles.motherButton]}
@@ -88,7 +73,6 @@ export default function GatewayScreen() {
   );
 }
 
-// --- STYLES ---
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -96,35 +80,22 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 20,
   },
-  loadingCenter: {
-    alignItems: "center",
-  },
+  loadingCenter: { alignItems: "center" },
   loadingText: {
     marginTop: 15,
     fontSize: 16,
-    color: "#FF69B4", // Matches the theme
+    color: "#FF69B4",
     fontWeight: "600",
   },
-  header: {
-    alignItems: "center",
-    marginBottom: 60,
-  },
+  header: { alignItems: "center", marginBottom: 60 },
   title: {
     fontSize: 40,
     fontWeight: "bold",
-    color: "#FF69B4", // The MaathaCare Pink
+    color: "#FF69B4",
     marginBottom: 10,
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#6c757d",
-    fontWeight: "500",
-  },
-  buttonContainer: {
-    width: "100%",
-    gap: 20, // Adds space between the buttons
-  },
-
+  subtitle: { fontSize: 16, color: "#6c757d", fontWeight: "500" },
+  buttonContainer: { width: "100%", gap: 20 },
   button: {
     width: "100%",
     paddingVertical: 20,
@@ -135,43 +106,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3, // For Android shadow
+    elevation: 3,
   },
-  motherButton: {
-    backgroundColor: "#FF69B4", // Pink for Mothers
-  },
-  staffButton: {
-    backgroundColor: "#0056b3", // Professional Blue for Staff
-  },
+  motherButton: { backgroundColor: "#FF69B4" },
+  staffButton: { backgroundColor: "#0056b3" },
   buttonTitle: {
     color: "#ffffff",
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 5,
   },
-  buttonSub: {
-    color: "#ffffff",
-    fontSize: 14,
-    opacity: 0.9,
-  },
+  buttonSub: { color: "#ffffff", fontSize: 14, opacity: 0.9 },
 });
-
-{
-  /* The Two Main Portals */
-}
-<View style={styles.buttonContainer}>
-  {/* ... (Keep the Mother and Staff buttons exactly as they are) ... */}
-
-  <Link
-    href="/phm-profile"
-    style={{
-      marginTop: 30,
-      color: "#0056b3",
-      textAlign: "center",
-      fontSize: 16,
-      textDecorationLine: "underline",
-    }}
-  >
-    🛠️ DEV: Go to PHM Profile Screen
-  </Link>
-</View>;

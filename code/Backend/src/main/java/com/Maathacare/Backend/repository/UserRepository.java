@@ -8,8 +8,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface UserRepository extends JpaRepository<User, String> {
     // Spring Boot automatically translates this into: SELECT * FROM users WHERE phone_number = ?
+
+
     Optional<User> findByUserId(String userId);
+
     Optional<User> findByStaffId(String staffId);
 }

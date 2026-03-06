@@ -34,7 +34,7 @@ public class MotherProfileController {
     }
 
     @GetMapping("/profile/{userId}")
-    public ResponseEntity<?> getMotherProfile(@PathVariable UUID userId) {
+    public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {
         try {
             MotherProfile profile = motherProfileService.getProfileByUserId(userId);
             return ResponseEntity.ok(profile);

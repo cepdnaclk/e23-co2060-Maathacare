@@ -37,20 +37,16 @@ public class UserService {
     }
 
     // NEW: The Login Engine
-    public AuthResponse loginUser(String userId, String password) {
-        // 1. Find the user
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+    public AuthResponse loginUser(String identifier, String password) {
+        // Use the method name we just fixed in the Repository
+        User user = userRepository.findByUserId(identifier)
+                .orElseThrow(() -> new RuntimeException("User not found: " + identifier));
 
-        // 2. Check the password using Bcrypt
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new RuntimeException("Invalid password!");
         }
 
-        // 3. Generate the token
         String token = jwtService.generateToken(user);
-
-        // 4. Send back the token AND their role (PHM, MOH, MOTHER)
         return new AuthResponse(token, user.getRole().name());
     }
 }
