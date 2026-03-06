@@ -6,9 +6,6 @@ import com.Maathacare.Backend.service.PHMProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/phm")
 public class PHMProfileController {
@@ -27,21 +24,5 @@ public class PHMProfileController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    // ----------------------------------------------------
-    // 🔒 THE NEW SECURE VAULT ENDPOINT
-    // ----------------------------------------------------
-    @GetMapping("/patients")
-    public ResponseEntity<List<String>> getMyPatients() {
-
-        // Dummy data to test that the phone successfully passes the JWT Bouncer
-        List<String> dummyPatients = Arrays.asList(
-                "1. Kamala Perera - 12 Weeks Pregnant",
-                "2. Nimali Silva - 24 Weeks Pregnant",
-                "3. Sunethra Fernando - 36 Weeks Pregnant"
-        );
-
-        return ResponseEntity.ok(dummyPatients);
     }
 }
