@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Optional;
 
 @Repository
 public interface MotherProfileRepository extends JpaRepository<MotherProfile, UUID> {
@@ -15,5 +16,5 @@ public interface MotherProfileRepository extends JpaRepository<MotherProfile, UU
 
     // YOUR method (Part 2): Finds all Mothers assigned to a specific PHM
     List<MotherProfile> findAllByPhmProfileId(UUID phmId);
-
+    Optional<MotherProfile> findByUserId(UUID userId);
 }

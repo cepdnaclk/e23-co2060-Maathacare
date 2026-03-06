@@ -8,6 +8,7 @@ import com.Maathacare.Backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MotherProfileService {
@@ -48,5 +49,9 @@ public class MotherProfileService {
 
         // 5. Save it to the database!
         return motherProfileRepository.save(newProfile);
+    }
+    public MotherProfile getProfileByUserId(UUID userId) {
+        return motherProfileRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("No profile found for this user!"));
     }
 }
