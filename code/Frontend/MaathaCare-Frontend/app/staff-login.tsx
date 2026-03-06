@@ -36,7 +36,7 @@ export default function StaffLogin() {
     setErrorMessage("");
 
     try {
-      const backendUrl = "http://172.20.10.2:8080/api/auth/staff/login";
+      const backendUrl = "http://10.163.129.223:8080/api/auth/staff/login";
 
       // 2. Send the data to Spring Boot
       const response = await fetch(backendUrl, {

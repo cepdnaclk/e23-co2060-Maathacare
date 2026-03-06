@@ -1,8 +1,5 @@
-import { Link, useRouter } from "expo-router";
-import React from "react";
-import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -12,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 export default function GatewayScreen() {
   const router = useRouter();
 
