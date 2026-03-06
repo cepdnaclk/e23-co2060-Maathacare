@@ -1,14 +1,11 @@
-<<<<<<< HEAD:code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx
 import { Link, useRouter } from "expo-router";
 import React from "react";
 import {
-=======
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
->>>>>>> origin/main:code/Frontend/MaathaCare-Frontend/app/index.tsx
   SafeAreaView,
   StyleSheet,
   Text,
