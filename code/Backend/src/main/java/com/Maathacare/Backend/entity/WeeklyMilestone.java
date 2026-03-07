@@ -1,20 +1,38 @@
-package com.Maathacare.Backend.model;
+package com.Maathacare.Backend.entity;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "weekly_milestones")
+@Table(name = "weekly_milestones") // Matches your pgAdmin table name
 public class WeeklyMilestone {
 
-    // The week number (1 to 40) will be our primary key ID!
     @Id
     private Integer weekNumber;
 
-    private String babySize; // e.g., "Apple", "Avocado"
-    private String babyWeight; // e.g., "70 grams"
+    private String babySize;
+    private String babyWeight;
 
     @Column(length = 1000)
-    private String weeklyTip; // A long paragraph for the educational tip
+    private String weeklyTip;
+
+    // --- CONSTRUCTORS ---
+
+    /**
+     * Required by JPA/Hibernate to fetch data from the database.
+     */
+    public WeeklyMilestone() {
+    }
+
+    /**
+     * Required by MilestoneDataLoader to create new weeks of data.
+     * This fixes the "cannot be applied to given types" error.
+     */
+    public WeeklyMilestone(Integer weekNumber, String babySize, String babyWeight, String weeklyTip) {
+        this.weekNumber = weekNumber;
+        this.babySize = babySize;
+        this.babyWeight = babyWeight;
+        this.weeklyTip = weeklyTip;
+    }
 
     // --- GETTERS AND SETTERS ---
     public Integer getWeekNumber() {

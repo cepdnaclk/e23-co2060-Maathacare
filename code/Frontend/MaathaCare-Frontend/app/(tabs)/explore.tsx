@@ -21,7 +21,10 @@ export default function ExploreScreen() {
               key={week} 
               style={styles.weekCard}
               // This triggers the dynamic route we will create next
-              onPress={() => router.push(`/week/${week}`)} 
+              onPress={() => router.push({
+                pathname: "/week/[id]",
+                params: { id: week.toString() }
+              })} 
             >
               <Text style={styles.weekLabel}>WEEK</Text>
               <Text style={styles.weekNumber}>{week}</Text>

@@ -1,6 +1,6 @@
 package com.Maathacare.Backend.controller;
 
-import com.Maathacare.Backend.model.WeeklyMilestone;
+import com.Maathacare.Backend.entity.WeeklyMilestone;
 import com.Maathacare.Backend.repository.WeeklyMilestoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

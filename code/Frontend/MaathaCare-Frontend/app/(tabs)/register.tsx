@@ -41,7 +41,7 @@ export default function Register() {
       // 3. Send the data to your Spring Boot Register endpoint
       // ⚠️ IMPORTANT: Make sure this IP address is still your laptop's correct IPv4 address!
       const response = await axios.post(
-        "http://192.168.8.180:8080/api/users/register",
+        "http://172.20.10.4:8080/api/users/register",
         {
           phoneNumber: phoneNumber,
           password: password,
