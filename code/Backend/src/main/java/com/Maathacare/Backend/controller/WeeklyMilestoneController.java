@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/milestones")
+@RequestMapping("/api/weekly-milestones")
 @CrossOrigin(origins = "*") // This allows your React Native phone app to talk to it safely!
 public class WeeklyMilestoneController {
 

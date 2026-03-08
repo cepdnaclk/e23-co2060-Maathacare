@@ -1,13 +1,11 @@
 package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.MotherProfileRequest;
+import com.Maathacare.Backend.dto.MotherProfileResponse;
 import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.service.MotherProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
-
 
 @RestController
 @RequestMapping("/api/mothers")
@@ -22,13 +20,9 @@ public class MotherProfileController {
     @PostMapping("/profile")
     public ResponseEntity<?> createProfile(@RequestBody MotherProfileRequest request) {
         try {
-            // Hand the form to the Service Brain we just built
             MotherProfile newProfile = motherProfileService.createMotherProfile(request);
-
-            // If it works, send a 200 OK Success message back to the phone!
             return ResponseEntity.ok("Success! Mother Profile created with ID: " + newProfile.getId());
         } catch (RuntimeException e) {
-            // If the Service throws an error (like NIC already exists), send a 400 Bad Request
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -36,10 +30,14 @@ public class MotherProfileController {
     @GetMapping("/profile/{userId}")
     public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {
         try {
-            MotherProfile profile = motherProfileService.getProfileByUserId(userId);
-            return ResponseEntity.ok(profile);
+            // 🟢 WE CHANGED THIS LINE: It now correctly catches the 'MotherProfileResponse'
+            // directly from the service, matching the new upgraded logic!
+            MotherProfileResponse response = motherProfileService.getProfileByUserId(userId);
+
+            // And sends it straight back to React Native
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(404).body("Profile not found: " + e.getMessage());
         }
     }
 }

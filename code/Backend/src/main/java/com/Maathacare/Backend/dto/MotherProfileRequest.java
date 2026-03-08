@@ -13,6 +13,8 @@ public class MotherProfileRequest {
     private String emergencyContactNumber;
     private String address;
     private String chronicDiseaseStatus;
+    private String district;
+    private String province;
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -71,5 +73,12 @@ public class MotherProfileRequest {
 
     public void setChronicDiseaseStatus(String chronicDiseaseStatus) {
         this.chronicDiseaseStatus = chronicDiseaseStatus;
+
+
     }
+    public String getDistrict() { return district; }
+    public void setDistrict(String district) { this.district = district; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
 }

@@ -9,15 +9,22 @@ export default function WeekDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace with your laptop's current IP address
-    axios.get(`http://172.20.10.4:8080/api/milestones/${id}`)
+    // 🟢 FIXED: Updated URL path to match your Backend Controller
+    // 🟢 FIXED: Added more detailed error logging
+    const fetchUrl = `http://10.168.251.226:8080/api/weekly-milestones/${id}`;
+    
+    console.log("🚀 Attempting to fetch from:", fetchUrl);
+
+    axios.get(fetchUrl)
       .then(res => {
+        console.log("✅ Data received:", res.data);
         setData(res.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Fetch error:", err);
-        setLoading(false);
+        console.error("❌ Fetch error detail:", err.message);
+        // If the server isn't reached, it stays loading forever unless we stop it here
+        setLoading(false); 
       });
   }, [id]);
 
