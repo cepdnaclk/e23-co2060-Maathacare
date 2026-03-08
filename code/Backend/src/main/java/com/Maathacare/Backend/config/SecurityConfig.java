@@ -56,7 +56,7 @@ public class SecurityConfig {
                                 "/api/users/register",
                                 "/api/users/login",
                                 "/api/auth/**",
-                                "/api/milestones/**"
+                                "/api/weekly-milestones/**"
                         ).permitAll()
 
                         // Protected endpoints (Accessible to any authenticated user)

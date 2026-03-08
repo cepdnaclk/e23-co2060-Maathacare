@@ -5,25 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3d57ca5-86a1-43fd-b205-2734c91a32c7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/MotherProfileResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/util/MilestoneDataLoader.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/week/[id].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/MotherProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/MotherProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/MotherProfileRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/MotherProfileRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/UserRegistrationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/UserRegistrationRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/MotherProfile.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/MotherProfile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/MotherProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/MotherProfileService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/WeeklyMilestoneController.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/WeeklyMilestoneController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/entity/WeeklyMilestone.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/entity/WeeklyMilestone.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/WeeklyMilestoneRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/WeeklyMilestoneRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/explore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/explore.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/profile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/mother-login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/mother-login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm_dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm_dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +47,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "Merging profile-login-fix",
     "kotlin-language-version-configured": "true"
   }
 }]]></component>

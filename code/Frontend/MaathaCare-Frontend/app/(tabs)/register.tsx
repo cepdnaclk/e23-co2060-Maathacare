@@ -1,6 +1,8 @@
+import axios from "axios";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
+  ActivityIndicator, // Added for the loading spinner!
   Alert,
   StyleSheet,
   Text,
@@ -9,14 +11,12 @@ import {
   View,
   ScrollView, // Added to allow scrolling through the new fields
 } from "react-native";
-import { useRouter } from "expo-router";
-import axios from "axios";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import RNPickerSelect from 'react-native-picker-select';
 
 export default function Register() {
   const router = useRouter();
-  
+
   // Existing States
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -28,11 +28,11 @@ export default function Register() {
   const [nic, setNic] = useState("");
   const [address, setAddress] = useState("");
   const [emergencyContactNumber, setEmergencyContactNumber] = useState("");
-  
+
   // Date Picker States
   const [dob, setDob] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  
+
   // Dropdown States
   const [bloodGroup, setBloodGroup] = useState("");
   const [district, setDistrict] = useState("");
@@ -45,6 +45,7 @@ export default function Register() {
       return;
     }
 
+    // 2. Check if passwords match
     if (password !== confirmPassword) {
       Alert.alert("Error", "Passwords do not match!");
       return;
@@ -56,6 +57,7 @@ export default function Register() {
     }
 
     try {
+      // Turn on the loading spinner!
       setIsLoading(true);
       console.log("Sending registration request to backend...");
 
@@ -79,6 +81,7 @@ export default function Register() {
         payload
       );
 
+      // 4. Handle Success
       console.log("Registration Success:", response.data);
 
       Alert.alert(
@@ -96,6 +99,7 @@ export default function Register() {
       } else if (err.request) {
         Alert.alert("Network Blocked", "Cannot reach server. Check Wi-Fi and IP.");
       } else {
+        // Something else broke
         Alert.alert("App Error", err.message);
       }
     }
@@ -131,8 +135,8 @@ export default function Register() {
 
       {/* Date of Birth Picker */}
       <Text style={styles.label}>Date of Birth</Text>
-      <TouchableOpacity 
-        style={styles.dateInput} 
+      <TouchableOpacity
+        style={styles.dateInput}
         onPress={() => !isLoading && setShowDatePicker(true)}
       >
         <Text style={styles.dateText}>{dob.toDateString()}</Text>

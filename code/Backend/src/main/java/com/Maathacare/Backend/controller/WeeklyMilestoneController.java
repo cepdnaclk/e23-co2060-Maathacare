@@ -1,6 +1,6 @@
 package com.Maathacare.Backend.controller;
 
-import com.Maathacare.Backend.model.WeeklyMilestone;
+import com.Maathacare.Backend.entity.WeeklyMilestone;
 import com.Maathacare.Backend.repository.WeeklyMilestoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/milestones")
+@RequestMapping("/api/weekly-milestones")
 @CrossOrigin(origins = "*") // This allows your React Native phone app to talk to it safely!
 public class WeeklyMilestoneController {
 
