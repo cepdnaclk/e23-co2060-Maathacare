@@ -2,8 +2,11 @@ package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.AuthRequest;
 import com.Maathacare.Backend.dto.AuthResponse;
+import com.Maathacare.Backend.dto.UserRegistrationRequest; // 🟢 NEW IMPORT
+import com.Maathacare.Backend.model.entity.MotherProfile; // 🟢 NEW IMPORT
 import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.model.enums.Role;
+import com.Maathacare.Backend.repository.MotherProfileRepository; // 🟢 NEW IMPORT
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
@@ -17,11 +20,15 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/users") // 1. FIXED: Changed from /auth to /users to match your React Native app!
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    // 🟢 NEW: We need this to save the profile data!
+    @Autowired
+    private MotherProfileRepository motherProfileRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -32,25 +39,41 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // 2. NEW: THE MISSING REGISTRATION ENDPOINT!
+    // 🟢 UPDATED: NOW CATCHES THE DTO AND SAVES THE FULL PROFILE!
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> requestData) {
+    public ResponseEntity<?> register(@RequestBody UserRegistrationRequest request) {
         try {
-            // Catch the exact JSON data coming from your React Native app
-            String phone = requestData.get("phoneNumber");
-            String password = requestData.get("password");
+            // 1. (Optional but recommended) Check if the user already exists
+            if (userRepository.findById(request.getPhoneNumber()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already registered.");
+            }
 
-            // Create the new Mother profile
+            // 2. Create the base User (Login Credentials)
             User newUser = new User();
-
-            // Assuming you use the phone number as their primary User ID for logging in!
-            newUser.setUserId(phone);
-            newUser.setPasswordHash(passwordEncoder.encode(password));
+            newUser.setUserId(request.getPhoneNumber()); // Phone acts as User ID
+            newUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
             newUser.setRole(Role.MOTHER);
             newUser.setActive(true);
 
-            userRepository.save(newUser);
-            return ResponseEntity.ok("Account created successfully!");
+            // Save the user first so we can link it to the profile
+            User savedUser = userRepository.save(newUser);
+
+            // 3. Create the Mother Profile with all the new React Native data
+            MotherProfile profile = new MotherProfile();
+            profile.setUser(savedUser); // Link the profile to the login credentials
+            profile.setFullName(request.getFullName());
+            profile.setNic(request.getNic());
+            profile.setDateOfBirth(request.getDateOfBirth());
+            profile.setAddress(request.getAddress());
+            profile.setEmergencyContactNumber(request.getEmergencyContactNumber());
+            profile.setBloodGroup(request.getBloodGroup());
+            profile.setDistrict(request.getDistrict());
+            profile.setProvince(request.getProvince());
+
+            // 4. Save the full profile to the database!
+            motherProfileRepository.save(profile);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Account and Profile created successfully!");
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -58,15 +81,15 @@ public class UserController {
         }
     }
 
-    // 3. UPDATED: MOTHER LOGIN ENDPOINT
+    // ----------------------------------------------------
+    // UPDATED: MOTHER LOGIN ENDPOINT
+    // ----------------------------------------------------
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> requestData) {
         try {
-            // Safely catch the phoneNumber from Expo instead of looking for 'userId'
             String phone = requestData.get("phoneNumber");
             String password = requestData.get("password");
 
-            // Uses the login engine we just perfected in UserService!
             AuthResponse response = userService.loginUser(phone, password);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {

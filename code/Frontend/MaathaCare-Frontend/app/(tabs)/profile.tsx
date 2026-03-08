@@ -11,8 +11,26 @@ export default function ProfileScreen() {
     const fetchProfile = async () => {
       try {
         const userId = await AsyncStorage.getItem('userId');
-        // Make sure this IP matches your current hotspot/network IP!
-        const response = await axios.get(`http://172.20.10.4:8080/api/mothers/profile/${userId}`);
+        const token = await AsyncStorage.getItem('userToken');
+
+        // 🚨 ADD THESE TWO LINES TO SPY ON THE STORAGE:
+        console.log("👉 1. The phone thinks the User ID is:", userId);
+        console.log("👉 2. Does the phone have a Token?", token ? "YES" : "NO");
+
+        // 🛡️ BLOCK the request if the token is missing or too short
+        if (!token || token.split('.').length !== 3) {
+          console.warn("No valid JWT token found in storage. Redirecting to login...");
+          setLoading(false);
+          return; 
+        }
+
+        const response = await axios.get(
+          `http://10.168.251.226:8080/api/mothers/profile/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+        console.log("Backend sent this profile data:", response.data);
         setProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
@@ -31,10 +49,13 @@ export default function ProfileScreen() {
       <View style={styles.card}>
         <DetailItem label="Full Name" value={profile?.fullName} />
         <DetailItem label="NIC Number" value={profile?.nic} />
+        <DetailItem label="Date of Birth" value={profile?.dateOfBirth} /> 
+        <DetailItem label="Blood Group" value={profile?.bloodGroup} />
         <DetailItem label="Emergency Contact" value={profile?.emergencyContactNumber} />
         <DetailItem label="Home Address" value={profile?.address} />
-        <DetailItem label="Blood Group" value={profile?.bloodGroup} />
-        </View>
+        <DetailItem label="District" value={profile?.district} />
+        <DetailItem label="Province" value={profile?.province} />
+      </View>
     </ScrollView>
   );
 }

@@ -28,7 +28,7 @@ export default function Dashboard() {
   // NEW 2: The auto-fetcher that runs the second the screen opens
   useEffect(() => {
     // We use the exact same IP address your friend used!
-    axios.get("http://172.20.10.4:8080/api/milestones/14")
+    axios.get("http://10.168.251.226:8080/api/milestones/1")
       .then((response) => {
         setMilestone(response.data); // Save the Lemon data into our state!
       })
@@ -60,7 +60,7 @@ export default function Dashboard() {
 
       // 3. Send the POST request with the real typed data!
       const response = await axios.post(
-        "http://172.20.10.4:8080/api/mothers/profile",
+        "http://10.168.251.226:8080/api/mothers/profile",
         {
           userId: realUserId,
           fullName: fullName,

@@ -42,6 +42,13 @@ public class MotherProfile {
     @Column(name = "blood_group", length = 5)
     private String bloodGroup;
 
+    @Column(name = "district", length = 50)
+    private String district;
+
+    @Column(name = "province", length = 50)
+    private String province;
+
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
@@ -49,6 +56,7 @@ public class MotherProfile {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
+
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -85,4 +93,10 @@ public class MotherProfile {
 
     public ZonedDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getDistrict() { return district; }
+    public void setDistrict(String district) { this.district = district; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
 }
