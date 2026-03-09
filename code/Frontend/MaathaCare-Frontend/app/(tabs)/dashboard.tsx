@@ -28,7 +28,8 @@ export default function Dashboard() {
   // NEW 2: The auto-fetcher that runs the second the screen opens
   useEffect(() => {
     // We use the exact same IP address your friend used!
-    axios.get("http://10.168.251.226:8080/api/milestones/1")
+    axios
+      .get("http://10.30.6.212:8080/api/milestones/1")
       .then((response) => {
         setMilestone(response.data); // Save the Lemon data into our state!
       })
@@ -129,9 +130,7 @@ export default function Dashboard() {
           <Text style={styles.milestoneText}>
             Weight: {milestone.babyWeight}
           </Text>
-          <Text style={styles.milestoneTip}>
-            "{milestone.weeklyTip}"
-          </Text>
+          <Text style={styles.milestoneTip}>"{milestone.weeklyTip}"</Text>
         </View>
       )}
 
@@ -201,7 +200,7 @@ const styles = StyleSheet.create({
     color: "#6c757d",
     marginBottom: 20, // Reduced slightly to make room for card
   },
-  
+
   // NEW STYLES FOR YOUR CARD
   milestoneCard: {
     backgroundColor: "#fce7f3", // Light pink background

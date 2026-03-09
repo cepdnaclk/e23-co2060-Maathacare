@@ -1,6 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage"; // 🟢 MOVED TO TOP!
 import axios from "axios";
 import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // 🟢 MOVED TO TOP!
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -46,7 +46,7 @@ export default function App() {
       console.log("Sending request to backend...");
 
       const response = await axios.post(
-        "http://10.168.251.226:8080/api/users/login",
+        "http://10.30.6.212:8080/api/users/login",
         {
           phoneNumber: phoneNumber,
           password: password,
@@ -62,17 +62,23 @@ export default function App() {
       // 🟢 FIXED: Saves token, role, and userId correctly
       await AsyncStorage.setItem("userToken", token);
       await AsyncStorage.setItem("userRole", role);
-      await AsyncStorage.setItem("userId", phoneNumber); 
+      await AsyncStorage.setItem("userId", phoneNumber);
 
       router.replace("/profile");
     } catch (error) {
       const err = error as any;
       console.error("Full Login Error:", err);
-      
+
       if (err.response) {
-        Alert.alert("Server Rejected", `Code: ${err.response.status} | Message: ${err.response.data}`);
+        Alert.alert(
+          "Server Rejected",
+          `Code: ${err.response.status} | Message: ${err.response.data}`,
+        );
       } else if (err.request) {
-        Alert.alert("Network Blocked", "Cannot reach server. Check Wi-Fi and IP.");
+        Alert.alert(
+          "Network Blocked",
+          "Cannot reach server. Check Wi-Fi and IP.",
+        );
       } else {
         Alert.alert("App Error", err.message);
       }
