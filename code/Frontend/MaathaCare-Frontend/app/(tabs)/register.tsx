@@ -80,6 +80,9 @@ export default function Register() {
   const [dob, setDob] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const [lmp, setLmp] = useState(new Date());
+  const [showLmpPicker, setShowLmpPicker] = useState(false);
+
   // --- Dropdown States ---
   // Blood Group
   const [bloodGroupOpen, setBloodGroupOpen] = useState(false);
@@ -151,10 +154,11 @@ export default function Register() {
         district: district,
         province: province,
         dateOfBirth: dob.toISOString().split("T")[0],
+        lastMenstrualPeriod: lmp.toISOString().split("T")[0],
       };
 
       const response = await axios.post(
-        "http://10.30.6.212:8080/api/users/register",
+        "http://192.168.8.180:8080/api/users/register",
         payload,
       );
 
@@ -298,6 +302,28 @@ export default function Register() {
         zIndexInverse={1000}
         listMode="SCROLLVIEW"
       />
+
+      {/* 🚀 NEW: Last Menstrual Period Picker */}
+      <Text style={styles.label}>Last Menstrual Period (LMP) Date</Text>
+      <TouchableOpacity
+        style={styles.dateInput}
+        onPress={() => !isLoading && setShowLmpPicker(true)}
+      >
+        <Text style={styles.dateText}>{lmp.toDateString()}</Text>
+      </TouchableOpacity>
+      {showLmpPicker && (
+        <DateTimePicker
+          value={lmp}
+          mode="date"
+          display="default"
+          // Important: prevent selecting future dates for an LMP!
+          maximumDate={new Date()}
+          onChange={(event, selectedDate) => {
+            setShowLmpPicker(false);
+            if (selectedDate) setLmp(selectedDate);
+          }}
+        />
+      )}
 
       {/* 2. Province */}
       <Text style={styles.label}>Province</Text>

@@ -33,7 +33,7 @@ export default function ProfileScreen() {
         }
 
         const response = await axios.get(
-          `http://10.30.6.212:8080/api/mothers/profile/${userId}`,
+          `http://192.168.8.180:8080/api/mothers/profile/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },

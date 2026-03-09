@@ -10,6 +10,7 @@ public class MotherProfileRequest {
     private String nic;
     private LocalDate dateOfBirth;
     private String bloodGroup;
+    private LocalDate LastMenstrualPeriod;
     private String emergencyContactNumber;
     private String address;
     private String chronicDiseaseStatus;
@@ -49,6 +50,14 @@ public class MotherProfileRequest {
 
     public void setBloodGroup(String bloodGroup) {
         this.bloodGroup = bloodGroup;
+    }
+
+    public LocalDate getLastMenstrualPeriod() {
+        return LastMenstrualPeriod;
+    }
+
+    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
+        this.LastMenstrualPeriod = LastMenstrualPeriod;
     }
 
     public String getEmergencyContactNumber() {

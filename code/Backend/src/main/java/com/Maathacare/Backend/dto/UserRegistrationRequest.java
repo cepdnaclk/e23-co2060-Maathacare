@@ -16,6 +16,7 @@ public class UserRegistrationRequest {
     private String address;
     private String emergencyContactNumber;
     private String bloodGroup;
+    private LocalDate LastMenstrualPeriod;
     private String district;
     private String province;
 
@@ -91,6 +92,14 @@ public class UserRegistrationRequest {
 
     public void setBloodGroup(String bloodGroup) {
         this.bloodGroup = bloodGroup;
+    }
+
+    public LocalDate getLastMenstrualPeriod() {
+        return LastMenstrualPeriod;
+    }
+
+    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
+        this.LastMenstrualPeriod = LastMenstrualPeriod;
     }
 
     public String getDistrict() {
