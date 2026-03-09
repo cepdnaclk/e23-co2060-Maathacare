@@ -42,6 +42,9 @@ public class MotherProfile {
     @Column(name = "blood_group", length = 5)
     private String bloodGroup;
 
+    @Column(name = "last_menstrual_period")
+    private LocalDate lastMenstrualPeriod;
+
     @Column(name = "district", length = 50)
     private String district;
 
@@ -87,6 +90,14 @@ public class MotherProfile {
 
     public String getBloodGroup() { return bloodGroup; }
     public void setBloodGroup(String bloodGroup) { this.bloodGroup = bloodGroup; }
+
+    public LocalDate getLastMenstrualPeriod() {
+        return lastMenstrualPeriod;
+    }
+
+    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
+        this.lastMenstrualPeriod = LastMenstrualPeriod;
+    }
 
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }

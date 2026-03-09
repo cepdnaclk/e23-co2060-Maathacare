@@ -11,7 +11,7 @@ import {
   View,
 } from "react-native";
 
-const API_BASE_URL = "http://10.168.251.226:8080";
+const API_BASE_URL = "http://192.168.8.180:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();

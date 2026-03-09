@@ -67,6 +67,7 @@ public class UserController {
             profile.setAddress(request.getAddress());
             profile.setEmergencyContactNumber(request.getEmergencyContactNumber());
             profile.setBloodGroup(request.getBloodGroup());
+            profile.setLastMenstrualPeriod(request.getLastMenstrualPeriod());
             profile.setDistrict(request.getDistrict());
             profile.setProvince(request.getProvince());
 
