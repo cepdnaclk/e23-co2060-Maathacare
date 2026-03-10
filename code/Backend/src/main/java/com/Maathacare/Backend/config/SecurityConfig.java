@@ -55,9 +55,12 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/users/register",
                                 "/api/users/login",
+                                "/api/users/staff/login",
                                 "/api/auth/**",
+                                "/api/users/staff/create-test",
                                 "/api/weekly-milestones/**"
                         ).permitAll()
+                        
 
                         // Protected endpoints (Accessible to any authenticated user)
                         .requestMatchers("/api/appointments/**").authenticated()

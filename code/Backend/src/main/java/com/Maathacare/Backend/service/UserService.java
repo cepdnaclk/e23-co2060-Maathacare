@@ -38,12 +38,13 @@ public class UserService {
 
     // NEW: The Login Engine
     public AuthResponse loginUser(String identifier, String password) {
-        // Use the method name we just fixed in the Repository
+        // Check if identifier is a Phone (Mother) OR Staff ID
         User user = userRepository.findByUserId(identifier)
-                .orElseThrow(() -> new RuntimeException("User not found: " + identifier));
+                .orElseGet(() -> userRepository.findByStaffId(identifier)
+                        .orElseThrow(() -> new RuntimeException("User not found: " + identifier)));
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new RuntimeException("Invalid password!");
+            throw new RuntimeException("Invalid credentials!");
         }
 
         String token = jwtService.generateToken(user);

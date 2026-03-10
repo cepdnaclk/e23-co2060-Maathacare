@@ -29,7 +29,7 @@ export default function Dashboard() {
   useEffect(() => {
     // We use the exact same IP address your friend used!
     axios
-      .get("http://192.168.8.180:8080/api/milestones/1")
+      .get("http://10.30.6.212:8080/api/milestones/1")
       .then((response) => {
         setMilestone(response.data); // Save the Lemon data into our state!
       })
