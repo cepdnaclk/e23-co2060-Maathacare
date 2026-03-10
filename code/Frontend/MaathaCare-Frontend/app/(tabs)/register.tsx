@@ -158,7 +158,7 @@ export default function Register() {
       };
 
       const response = await axios.post(
-        "http://192.168.8.180:8080/api/users/register",
+        "http://10.30.6.212:8080/api/users/register",
         payload,
       );
 

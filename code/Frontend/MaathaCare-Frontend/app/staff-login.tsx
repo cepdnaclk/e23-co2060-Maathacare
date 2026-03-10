@@ -24,7 +24,7 @@ export default function StaffLogin() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async () => {
-    console.log("LOGIN BUTTON CLICKED!");
+    console.log("LOGIN BUTTON CLICKED! Attempting to connect...");
 
     // 1. Basic Validation
     if (!staffId || !password) {
@@ -36,7 +36,11 @@ export default function StaffLogin() {
     setErrorMessage("");
 
     try {
-      const backendUrl = "http://192.168.8.180:8080/api/auth/staff/login";
+      // 🚀 INDUSTRIAL FIX: Point to the correct Controller path
+      // Ensure the IP matches your current laptop IPv4 (cmd -> ipconfig)
+      const backendUrl = "http://10.30.6.212:8080/api/users/staff/login";
+
+      console.log(`Sending request to: ${backendUrl} for Staff ID: ${staffId}`);
 
       // 2. Send the data to Spring Boot
       const response = await fetch(backendUrl, {
@@ -45,36 +49,47 @@ export default function StaffLogin() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          staffId: staffId,
+          staffId: staffId, // Matches AuthRequest.java
           password: password,
         }),
       });
 
+      console.log(`Server responded with status: ${response.status}`);
+
       // 3. Handle Errors
       if (!response.ok) {
         const errorText = await response.text();
-        setErrorMessage(errorText);
+        console.log("Login Failed Server Message:", errorText);
+
+        // Specific alerts based on status code
+        if (response.status === 403) {
+          setErrorMessage("Access Denied: You do not have Staff permissions.");
+        } else if (response.status === 401) {
+          setErrorMessage("Invalid Staff ID or Password.");
+        } else {
+          setErrorMessage(errorText || "Login failed. Please try again.");
+        }
+
         setIsLoading(false);
         return;
       }
 
-      // 4. Handle Success! (Backend sends JSON containing the Token and Role)
+      // 4. Handle Success!
       const data = await response.json();
+      console.log("Login Successful! Role received:", data.role);
 
       Alert.alert("Login Successful!", `Welcome back! Role: ${data.role}`);
 
-      //SAVE THE TOKEN TO THE PHONE'S BACKPACK
+      // SAVE THE TOKEN AND ROLE
       await AsyncStorage.setItem("userToken", data.token);
       await AsyncStorage.setItem("userRole", data.role);
 
-      console.log("Token successfully saved to device!");
-
-      // 5. Navigate to the Midwife Dashboard
+      // 5. Navigate to the Midwife/PHM Dashboard
       router.replace("/phm_dashboard");
     } catch (error) {
-      console.error(error);
+      console.error("Network Error Details:", error);
       setErrorMessage(
-        "Could not connect to the server. Is Spring Boot running?",
+        "Network Error: Could not connect to the server. Check your IP and ensure Spring Boot is running.",
       );
     } finally {
       setIsLoading(false);
@@ -87,7 +102,6 @@ export default function StaffLogin() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.innerContainer}
       >
-        {/* Back Button */}
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
@@ -95,7 +109,6 @@ export default function StaffLogin() {
           <Text style={styles.backText}>← Back to Gateway</Text>
         </TouchableOpacity>
 
-        {/* Header */}
         <View style={styles.header}>
           <Text style={styles.title}>Staff Portal</Text>
           <Text style={styles.subtitle}>
@@ -103,19 +116,17 @@ export default function StaffLogin() {
           </Text>
         </View>
 
-        {/* Error Message Display */}
         {errorMessage ? (
           <View style={styles.errorBox}>
             <Text style={styles.errorText}>{errorMessage}</Text>
           </View>
         ) : null}
 
-        {/* Input Fields */}
         <View style={styles.form}>
           <Text style={styles.label}>Staff ID</Text>
           <TextInput
             style={styles.input}
-            placeholder="e.g. PHM-2026"
+            placeholder="e.g. PHM-100"
             value={staffId}
             onChangeText={setStaffId}
             autoCapitalize="none"
@@ -128,10 +139,9 @@ export default function StaffLogin() {
             placeholder="••••••••"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry // Hides the password!
+            secureTextEntry
           />
 
-          {/* Login Button */}
           <TouchableOpacity
             style={styles.loginButton}
             onPress={handleLogin}
@@ -149,7 +159,6 @@ export default function StaffLogin() {
   );
 }
 
-// --- STYLES ---
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F4F7FB" },
   innerContainer: { flex: 1, padding: 25, justifyContent: "center" },
@@ -186,11 +195,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#E0E0E0",
     marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
   },
   loginButton: {
     backgroundColor: "#0056b3",
@@ -198,11 +202,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
-    shadowColor: "#0056b3",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
   },
   loginButtonText: { color: "#ffffff", fontSize: 18, fontWeight: "bold" },
 });
