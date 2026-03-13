@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -33,7 +33,7 @@ export default function ProfileScreen() {
         }
 
         const response = await axios.get(
-          `http://10.30.6.212:8080/api/mothers/profile/${userId}`,
+          `http://10.163.129.223:8080/api/mothers/profile/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
