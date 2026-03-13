@@ -58,7 +58,11 @@ public class SecurityConfig {
                                 "/api/users/staff/login",
                                 "/api/auth/**",
                                 "/api/users/staff/create-test",
-                                "/api/weekly-milestones/**"
+                                "/api/weekly-milestones/**",
+                                "/api/users/staff/register",
+                                "/api/users/staff/all",
+                                "/api/users/admin/setup",
+                                "/api/users/staff/delete/**"
                         ).permitAll()
                         
 
