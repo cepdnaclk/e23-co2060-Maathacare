@@ -11,4 +11,8 @@ public interface MotherProfileRepository extends JpaRepository<MotherProfile, St
     boolean existsByNic(String nic);
     List<MotherProfile> findAllByPhmProfileId(String phmId);
     Optional<MotherProfile> findByUserUserId(String userId);
+    // 🟢 This finds all mothers assigned to a specific PHM
+    List<MotherProfile> findByPhmProfile_Id(String phmId);
+    // This finds a mother by her NIC number
+    Optional<MotherProfile> findByNic(String nic);
 }
