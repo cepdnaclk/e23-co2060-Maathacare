@@ -1,7 +1,7 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -158,7 +158,7 @@ export default function Register() {
       };
 
       const response = await axios.post(
-        "http://10.30.6.212:8080/api/users/register",
+        "http://10.163.129.223:8080/api/users/register",
         payload,
       );
 

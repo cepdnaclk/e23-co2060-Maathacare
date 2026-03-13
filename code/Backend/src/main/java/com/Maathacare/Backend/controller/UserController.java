@@ -2,11 +2,11 @@ package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.AuthRequest;
 import com.Maathacare.Backend.dto.AuthResponse;
-import com.Maathacare.Backend.dto.UserRegistrationRequest; // 🟢 NEW IMPORT
-import com.Maathacare.Backend.model.entity.MotherProfile; // 🟢 NEW IMPORT
+import com.Maathacare.Backend.dto.UserRegistrationRequest;
+import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.model.enums.Role;
-import com.Maathacare.Backend.repository.MotherProfileRepository; // 🟢 NEW IMPORT
+import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
@@ -26,7 +26,6 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    // 🟢 NEW: We need this to save the profile data!
     @Autowired
     private MotherProfileRepository motherProfileRepository;
 
@@ -39,28 +38,28 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // 🟢 UPDATED: NOW CATCHES THE DTO AND SAVES THE FULL PROFILE!
+    /**
+     * Registers a new Mother and creates her associated MotherProfile.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegistrationRequest request) {
         try {
-            // 1. (Optional but recommended) Check if the user already exists
-            if (userRepository.findById(request.getPhoneNumber()).isPresent()) {
+            // 1. Check if the user already exists using the phone number as user_id
+            if (userRepository.findByUserId(request.getPhoneNumber()).isPresent()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already registered.");
             }
 
-            // 2. Create the base User (Login Credentials)
+            // 2. Create and save the base User entity
             User newUser = new User();
-            newUser.setUserId(request.getPhoneNumber()); // Phone acts as User ID
+            newUser.setUserId(request.getPhoneNumber());
             newUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
             newUser.setRole(Role.MOTHER);
             newUser.setActive(true);
-
-            // Save the user first so we can link it to the profile
             User savedUser = userRepository.save(newUser);
 
-            // 3. Create the Mother Profile with all the new React Native data
+            // 3. Create the Mother Profile linked to the new User
             MotherProfile profile = new MotherProfile();
-            profile.setUser(savedUser); // Link the profile to the login credentials
+            profile.setUser(savedUser);
             profile.setFullName(request.getFullName());
             profile.setNic(request.getNic());
             profile.setDateOfBirth(request.getDateOfBirth());
@@ -71,7 +70,7 @@ public class UserController {
             profile.setDistrict(request.getDistrict());
             profile.setProvince(request.getProvince());
 
-            // 4. Save the full profile to the database!
+            // 4. Persist the full profile to the database
             motherProfileRepository.save(profile);
 
             return ResponseEntity.status(HttpStatus.CREATED).body("Account and Profile created successfully!");
@@ -82,15 +81,16 @@ public class UserController {
         }
     }
 
-    // ----------------------------------------------------
-    // UPDATED: MOTHER LOGIN ENDPOINT
-    // ----------------------------------------------------
+    /**
+     * Standard Login for Mothers using Phone Number.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> requestData) {
         try {
             String phone = requestData.get("phoneNumber");
             String password = requestData.get("password");
 
+            // Delegate to Service to handle token generation
             AuthResponse response = userService.loginUser(phone, password);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
@@ -98,30 +98,29 @@ public class UserController {
         }
     }
 
-    // ----------------------------------------------------
-    // SECURE STAFF ENDPOINTS (Untouched!)
-    // ----------------------------------------------------
+    /**
+     * Secure Login for PHM Staff using Staff ID.
+     */
     @PostMapping("/staff/login")
     public ResponseEntity<?> staffLogin(@RequestBody AuthRequest request) {
+        // Use the centralized login logic to ensure consistency across the app
+        try {
+            AuthResponse response = userService.loginUser(request.getStaffId(), request.getPassword());
 
-        User user = userRepository.findByStaffId(request.getStaffId()).orElse(null);
+            // Safety check: ensure only PHM roles use this endpoint
+            if (!response.getRole().equals("PHM")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied: Only Staff allowed.");
+            }
 
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff ID not found.");
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
-
-        if (user.getRole() == Role.MOTHER) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied: You are not registered as Staff.");
-        }
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
-        }
-
-        String token = jwtService.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(token, user.getRole().name()));
     }
 
+    /**
+     * Helper endpoint to generate test data for development.
+     */
     @GetMapping("/staff/create-test")
     public ResponseEntity<String> createTestStaff() {
         if (userRepository.findByStaffId("PHM-100").isPresent()) {
@@ -129,8 +128,8 @@ public class UserController {
         }
 
         User testStaff = new User();
-        testStaff.setUserId("999999999V");
-        testStaff.setStaffId("PHM-100");
+        testStaff.setUserId("999999999V"); // Internal ID
+        testStaff.setStaffId("PHM-100");   // Login ID
         testStaff.setPasswordHash(passwordEncoder.encode("password123"));
         testStaff.setRole(Role.PHM);
         testStaff.setActive(true);

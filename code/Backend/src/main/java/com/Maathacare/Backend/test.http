@@ -35,3 +35,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwNzc1NTU1NTU1Iiwicm9sZSI6I
 ### 4. Get All Appointments for Kumari
 GET http://localhost:8080/api/appointments/mother/62df2c26-2882-4fc3-8397-03de89187f4c
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwNzc1NTU1NTU1Iiwicm9sZSI6IlBITSIsInVzZXJJZCI6IjI3ZmRjMjk1LTdhMzYtNDg5Ny1hMTkxLWIwN2Y1YWE5MWZjNiIsImlhdCI6MTc3MjcxNjU1OCwiZXhwIjoxNzcyODAyOTU4fQ.hdZpPZo3N-u_z2fxVt9V8EFh4tDzPSFdLScMNsPrW8I
+
+
+POST http://localhost:8080/api/users/staff/create-test
+Content-Type: application/json
+
+{
+  "staffId": "PHM-100",
+  "password": "password123",
+  "fullName": "Samanthi Perera",
+  "mohArea": "Kandy South",
+  "registrationNumber": "REG-100",
+  "contactNumber": "0712345678"
+}

@@ -8,7 +8,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface PHMProfileRepository extends JpaRepository<PHMProfile, UUID> {
+public interface PHMProfileRepository extends JpaRepository<PHMProfile,String> {
     Optional<PHMProfile> findByRegistrationNumber(String registrationNumber);
     Optional<PHMProfile> findByUserUserId(String userId);
+    Optional<PHMProfile> findByUserStaffId(String staffId);
 }
+

@@ -22,7 +22,13 @@ public class AppointmentController {
     }
 
     @GetMapping("/mother/{motherId}")
-    public ResponseEntity<List<Appointment>> getMotherAppointments(@PathVariable UUID motherId) {
+    public ResponseEntity<List<Appointment>> getMotherAppointments(@PathVariable String motherId) {
         return ResponseEntity.ok(appointmentService.getAppointmentsForMother(motherId));
+    }
+    @GetMapping("/phm")
+    public ResponseEntity<List<Appointment>> getPHMAppointments() {
+        // You'll need to add getAppointmentsForPHM to your Service
+        List<Appointment> appointments = appointmentService.getAppointmentsForLoggedInPHM();
+        return ResponseEntity.ok(appointments);
     }
 }
