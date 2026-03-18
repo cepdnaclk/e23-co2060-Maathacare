@@ -31,6 +31,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         if (path.contains("/api/users/register") ||
                 path.contains("/api/users/login") ||
+                path.contains("/api/users/staff/login") ||
+                path.contains("/api/users/staff/create-test") ||
+                path.contains("/api/users/staff/register") ||
+                path.contains("/api/users/staff/all") ||
+                path.contains("/api/users/admin/setup") ||
+                path.contains("/api/users/staff/delete") ||
                 request.getMethod().equals("OPTIONS")) {
 
             filterChain.doFilter(request, response);

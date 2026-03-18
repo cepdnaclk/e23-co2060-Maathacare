@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"; // 🟢 MOVED TO TOP!
 import axios from "axios";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -46,7 +46,7 @@ export default function App() {
       console.log("Sending request to backend...");
 
       const response = await axios.post(
-        "http://10.163.129.223:8080/api/users/login",
+        "http://172.20.10.2:8080/api/users/login",
         {
           phoneNumber: phoneNumber,
           password: password,

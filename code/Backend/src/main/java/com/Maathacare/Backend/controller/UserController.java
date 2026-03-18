@@ -2,11 +2,15 @@ package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.AuthRequest;
 import com.Maathacare.Backend.dto.AuthResponse;
+import com.Maathacare.Backend.dto.StaffRegistrationRequest;
+import com.Maathacare.Backend.dto.StaffResponse;
 import com.Maathacare.Backend.dto.UserRegistrationRequest;
 import com.Maathacare.Backend.model.entity.MotherProfile;
+import com.Maathacare.Backend.model.entity.PHMProfile;
 import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.model.enums.Role;
 import com.Maathacare.Backend.repository.MotherProfileRepository;
+import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
@@ -16,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
@@ -30,6 +36,9 @@ public class UserController {
     private MotherProfileRepository motherProfileRepository;
 
     @Autowired
+    private PHMProfileRepository phmProfileRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -38,26 +47,24 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    /**
-     * Registers a new Mother and creates her associated MotherProfile.
-     */
+    // ----------------------------------------------------
+    // 🤱 MOTHER ENDPOINTS
+    // ----------------------------------------------------
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRegistrationRequest request) {
         try {
-            // 1. Check if the user already exists using the phone number as user_id
-            if (userRepository.findByUserId(request.getPhoneNumber()).isPresent()) {
+            if (userRepository.findById(request.getPhoneNumber()).isPresent()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number already registered.");
             }
 
-            // 2. Create and save the base User entity
             User newUser = new User();
             newUser.setUserId(request.getPhoneNumber());
             newUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
             newUser.setRole(Role.MOTHER);
             newUser.setActive(true);
+
             User savedUser = userRepository.save(newUser);
 
-            // 3. Create the Mother Profile linked to the new User
             MotherProfile profile = new MotherProfile();
             profile.setUser(savedUser);
             profile.setFullName(request.getFullName());
@@ -70,57 +77,130 @@ public class UserController {
             profile.setDistrict(request.getDistrict());
             profile.setProvince(request.getProvince());
 
-            // 4. Persist the full profile to the database
             motherProfileRepository.save(profile);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Account and Profile created successfully!");
-
+            return ResponseEntity.status(HttpStatus.CREATED).body("Mother Account and Profile created!");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating account: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
 
-    /**
-     * Standard Login for Mothers using Phone Number.
-     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> requestData) {
         try {
             String phone = requestData.get("phoneNumber");
             String password = requestData.get("password");
-
-            // Delegate to Service to handle token generation
-            AuthResponse response = userService.loginUser(phone, password);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(userService.loginUser(phone, password));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
-    /**
-     * Secure Login for PHM Staff using Staff ID.
-     */
-    @PostMapping("/staff/login")
-    public ResponseEntity<?> staffLogin(@RequestBody AuthRequest request) {
-        // Use the centralized login logic to ensure consistency across the app
+    // ----------------------------------------------------
+    // 👩‍⚕️ STAFF MANAGEMENT ENDPOINTS
+    // ----------------------------------------------------
+    @PostMapping("/staff/register")
+    public ResponseEntity<?> registerStaff(@RequestBody StaffRegistrationRequest request) {
         try {
-            AuthResponse response = userService.loginUser(request.getStaffId(), request.getPassword());
-
-            // Safety check: ensure only PHM roles use this endpoint
-            if (!response.getRole().equals("PHM")) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied: Only Staff allowed.");
+            if (userRepository.findByStaffId(request.getStaffId()).isPresent()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Staff ID already in use.");
             }
 
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            User newStaff = new User();
+            newStaff.setUserId(request.getNic());
+            newStaff.setStaffId(request.getStaffId());
+            newStaff.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+            newStaff.setRole(Role.PHM);
+            newStaff.setActive(true);
+            User savedUser = userRepository.save(newStaff);
+
+            PHMProfile profile = new PHMProfile();
+            profile.setUser(savedUser);
+            profile.setFullName(request.getFullName());
+            profile.setRegistrationNumber(request.getStaffId());
+            profile.setMohArea(request.getMohArea()); // Includes MOH Area
+            phmProfileRepository.save(profile);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body("Staff registered: " + request.getFullName());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
 
-    /**
-     * Helper endpoint to generate test data for development.
-     */
+    @PostMapping("/staff/login")
+    public ResponseEntity<?> staffLogin(@RequestBody AuthRequest request) {
+        User user = userRepository.findByStaffId(request.getStaffId()).orElse(null);
+        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff ID not found.");
+        if (user.getRole() == Role.MOTHER) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied.");
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
+        }
+        return ResponseEntity.ok(new AuthResponse(jwtService.generateToken(user), user.getRole().name()));
+    }
+
+    @GetMapping("/staff/all")
+    public ResponseEntity<?> getAllStaff() {
+        try {
+            List<PHMProfile> profiles = phmProfileRepository.findAll();
+            List<StaffResponse> staffList = new ArrayList<>();
+
+            for (PHMProfile profile : profiles) {
+                StaffResponse dto = new StaffResponse();
+                dto.setFullName(profile.getFullName());
+                dto.setStaffId(profile.getRegistrationNumber());
+                dto.setMohArea(profile.getMohArea());
+                if (profile.getUser() != null) {
+                    dto.setNic(profile.getUser().getUserId());
+                }
+                staffList.add(dto);
+            }
+            return ResponseEntity.ok(staffList);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching staff list: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/staff/delete/{staffId}")
+    public ResponseEntity<?> deleteStaff(@PathVariable String staffId) {
+        try {
+            User user = userRepository.findByStaffId(staffId).orElse(null);
+            if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff member not found.");
+
+            List<PHMProfile> allProfiles = phmProfileRepository.findAll();
+            for (PHMProfile profile : allProfiles) {
+                if (staffId.equals(profile.getRegistrationNumber())) {
+                    phmProfileRepository.delete(profile);
+                    break;
+                }
+            }
+
+            userRepository.delete(user);
+            return ResponseEntity.ok("Staff member removed successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting staff: " + e.getMessage());
+        }
+    }
+
+    // ----------------------------------------------------
+    // ⚙️ SETUP & TESTING ENDPOINTS
+    // ----------------------------------------------------
+    @GetMapping("/admin/setup")
+    public ResponseEntity<String> setupMasterAdmin() {
+        if (userRepository.findByStaffId("ADMIN-MASTER").isPresent()) {
+            return ResponseEntity.ok("Master Admin already exists!");
+        }
+
+        User admin = new User();
+        admin.setUserId("ADMIN-MASTER");
+        admin.setStaffId("ADMIN-MASTER");
+        admin.setPasswordHash(passwordEncoder.encode("admin123"));
+        admin.setRole(Role.ADMIN);
+        admin.setActive(true);
+        userRepository.save(admin);
+
+        return ResponseEntity.ok("Master Admin Created! ID: ADMIN-MASTER | Password: admin123");
+    }
+
     @GetMapping("/staff/create-test")
     public ResponseEntity<String> createTestStaff() {
         if (userRepository.findByStaffId("PHM-100").isPresent()) {
@@ -128,13 +208,19 @@ public class UserController {
         }
 
         User testStaff = new User();
-        testStaff.setUserId("999999999V"); // Internal ID
-        testStaff.setStaffId("PHM-100");   // Login ID
+        testStaff.setUserId("999999999V");
+        testStaff.setStaffId("PHM-100");
         testStaff.setPasswordHash(passwordEncoder.encode("password123"));
         testStaff.setRole(Role.PHM);
         testStaff.setActive(true);
+        User savedUser = userRepository.save(testStaff);
 
-        userRepository.save(testStaff);
-        return ResponseEntity.ok("Test Midwife Created! Staff ID: PHM-100 | Password: password123");
+        PHMProfile profile = new PHMProfile();
+        profile.setUser(savedUser);
+        profile.setFullName("Test Midwife");
+        profile.setRegistrationNumber("PHM-100");
+        phmProfileRepository.save(profile);
+
+        return ResponseEntity.ok("Test Midwife and Profile Created!");
     }
 }

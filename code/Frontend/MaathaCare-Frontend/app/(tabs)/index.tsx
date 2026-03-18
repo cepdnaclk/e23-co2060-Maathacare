@@ -2,12 +2,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function GatewayScreen() {
@@ -67,6 +67,21 @@ export default function GatewayScreen() {
         >
           <Text style={styles.buttonTitle}>Healthcare Staff</Text>
           <Text style={styles.buttonSub}>Secure PHM & Admin Portal</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            marginTop: 30,
+            padding: 15,
+            backgroundColor: "#333",
+            borderRadius: 10,
+          }}
+          // Change '/admin' to '/admin/admin_hub' if that's what you named the file
+          onPress={() => router.push("/admin/admin_login")}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            🔧 Go to Admin Dashboard
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
