@@ -95,8 +95,8 @@ public class MotherProfile {
         return lastMenstrualPeriod;
     }
 
-    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
-        this.lastMenstrualPeriod = LastMenstrualPeriod;
+    public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) {
+        this.lastMenstrualPeriod = lastMenstrualPeriod;
     }
 
     public ZonedDateTime getCreatedAt() { return createdAt; }

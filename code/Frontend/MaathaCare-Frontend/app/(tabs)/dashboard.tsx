@@ -29,7 +29,7 @@ export default function Dashboard() {
   useEffect(() => {
     // We use the exact same IP address your friend used!
     axios
-      .get("http://192.168.131.223:8080/api/milestones/1")
+      .get("http://10.161.201.226:8080/api/milestones/1")
       .then((response) => {
         setMilestone(response.data); // Save the Lemon data into our state!
       })
@@ -61,7 +61,7 @@ export default function Dashboard() {
 
       // 3. Send the POST request with the real typed data!
       const response = await axios.post(
-        "http://192.168.131.223:8080/api/mothers/profile",
+        "http://10.161.201.226:8080/api/mothers/profile",
         {
           userId: realUserId,
           fullName: fullName,
@@ -107,9 +107,9 @@ export default function Dashboard() {
       // 🟢 FIXED: Clear the specific items from AsyncStorage
       await AsyncStorage.removeItem("userToken");
       await AsyncStorage.removeItem("userRole");
-      
+
       // OR use this to wipe everything: await AsyncStorage.clear();
-      
+
       router.replace("/");
     } catch (error) {
       console.error("Error logging out:", error);

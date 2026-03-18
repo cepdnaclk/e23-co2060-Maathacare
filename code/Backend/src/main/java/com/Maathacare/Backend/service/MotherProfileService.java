@@ -1,7 +1,7 @@
 package com.Maathacare.Backend.service;
 
 import com.Maathacare.Backend.dto.MotherProfileRequest;
-import com.Maathacare.Backend.dto.MotherProfileResponse; // 🟢 Added
+import com.Maathacare.Backend.dto.MotherProfileResponse;
 import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.repository.MotherProfileRepository;
@@ -39,11 +39,11 @@ public class MotherProfileService {
         newProfile.setNic(request.getNic());
         newProfile.setDateOfBirth(request.getDateOfBirth());
         newProfile.setBloodGroup(request.getBloodGroup());
+        newProfile.setLastMenstrualPeriod(request.getLastMenstrualPeriod());
         newProfile.setEmergencyContactNumber(request.getEmergencyContactNumber());
         newProfile.setAddress(request.getAddress());
         newProfile.setDistrict(request.getDistrict());
         newProfile.setProvince(request.getProvince());
-
         newProfile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
 
         return motherProfileRepository.save(newProfile);
@@ -60,6 +60,7 @@ public class MotherProfileService {
         response.setDateOfBirth(profile.getDateOfBirth());
         response.setAddress(profile.getAddress());
         response.setEmergencyContactNumber(profile.getEmergencyContactNumber());
+        response.setLastMenstrualPeriod(profile.getLastMenstrualPeriod());
         response.setBloodGroup(profile.getBloodGroup());
         response.setDistrict(profile.getDistrict()); // 🟢 Now mapped
         response.setProvince(profile.getProvince()); // 🟢 Now mapped

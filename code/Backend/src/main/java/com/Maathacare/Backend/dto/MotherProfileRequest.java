@@ -10,12 +10,13 @@ public class MotherProfileRequest {
     private String nic;
     private LocalDate dateOfBirth;
     private String bloodGroup;
-    private LocalDate LastMenstrualPeriod;
+    private LocalDate lastMenstrualPeriod;
     private String emergencyContactNumber;
     private String address;
     private String chronicDiseaseStatus;
     private String district;
     private String province;
+
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -52,12 +53,12 @@ public class MotherProfileRequest {
         this.bloodGroup = bloodGroup;
     }
 
-    public LocalDate getLastMenstrualPeriod() {
-        return LastMenstrualPeriod;
+    public LocalDate getLastMenstrualPeriod() { // 🟢 Must be 'getLast...'
+        return lastMenstrualPeriod;
     }
 
-    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
-        this.LastMenstrualPeriod = LastMenstrualPeriod;
+    public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) { // 🟢 Must be 'setLast...'
+        this.lastMenstrualPeriod = lastMenstrualPeriod;
     }
 
     public String getEmergencyContactNumber() {

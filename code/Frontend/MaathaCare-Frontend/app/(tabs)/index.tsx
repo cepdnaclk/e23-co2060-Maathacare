@@ -21,6 +21,12 @@ export default function GatewayScreen() {
         const userRole = await AsyncStorage.getItem("userRole");
 
         if (userToken && userRole) {
+          if (userRole === "MOTHER") {
+            router.replace("/(tabs)"); // This points to your new home tab
+            return;
+          }
+
+
           if (userRole === "PHM") {
             router.replace("/phm_dashboard");
             return;

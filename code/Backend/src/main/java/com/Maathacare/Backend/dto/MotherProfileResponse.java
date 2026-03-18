@@ -6,6 +6,7 @@ public class MotherProfileResponse {
     private String fullName;
     private String nic;
     private LocalDate dateOfBirth;
+    private LocalDate lastMenstrualPeriod;
     private String address;
     private String emergencyContactNumber;
     private String bloodGroup;
@@ -24,6 +25,10 @@ public class MotherProfileResponse {
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
+    public LocalDate getLastMenstrualPeriod() { return lastMenstrualPeriod; }
+    public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) {
+        this.lastMenstrualPeriod = lastMenstrualPeriod;
+    }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 

@@ -8,33 +8,36 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity, // 🟢 Added for the button
 } from "react-native";
+import { useRouter } from "expo-router"; // 🟢 Added for navigation
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://10.161.201.226:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter(); // 🟢 Initialize router
 
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    const fetchProfile = async () => {
+      try {
+        const userId = await AsyncStorage.getItem("userId");
+        const token = await AsyncStorage.getItem("userToken");
 
-  const fetchProfile = async () => {
-    try {
-      // 🔑 Pulling keys from the AsyncStorage "Vault"
-      const userId = await AsyncStorage.getItem("userId");
-      const token = await AsyncStorage.getItem("userToken");
+        // 🚨 ADD THESE TWO LINES TO SPY ON THE STORAGE:
+        console.log("👉 1. The phone thinks the User ID is:", userId);
+        console.log("👉 2. Does the phone have a Token?", token ? "YES" : "NO");
 
-      console.log("🔍 Checking Profile Storage - ID:", userId, "Token exists:", !!token);
-
-      // 🛡️ Security Guard: If no token, stop the request early
-      if (!token || !userId) {
-        Alert.alert("Session Expired", "Please log in again.");
-        setLoading(false);
-        return;
-      }
+        // 🛡️ BLOCK the request if the token is missing or too short
+        if (!token || token.split(".").length !== 3) {
+          console.warn(
+            "No valid JWT token found in storage. Redirecting to login...",
+          );
+          setLoading(false);
+          return;
+        }
 
       // 🛑 Requesting data with the 'Bearer' token as a VIP pass
       const response = await axios.get(
@@ -56,6 +59,16 @@ export default function ProfileScreen() {
     }
   };
 
+  // 🟢 LOGOUT FUNCTION
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear(); // 🛡️ Clears token, userId, and everything else
+      router.replace("/"); // 🚀 Sends mother back to the Home/Login screen
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   if (loading)
     return <ActivityIndicator size="large" color="#FF69B4" style={styles.centered} />;
 
@@ -70,6 +83,11 @@ export default function ProfileScreen() {
         <DetailItem label="Address" value={profile?.address} />
         <DetailItem label="District" value={profile?.district} />
         <DetailItem label="Province" value={profile?.province} />
+
+        {/* 🟢 LOGOUT BUTTON ADDED HERE */}
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -84,11 +102,60 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
 );
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fdf2f8", padding: 20 },
-  centered: { flex: 1, justifyContent: "center", marginTop: 100 },
-  title: { fontSize: 26, fontWeight: "bold", color: "#db2777", marginBottom: 20, marginTop: 40 },
-  card: { backgroundColor: "white", borderRadius: 15, padding: 20, elevation: 4 },
-  itemContainer: { marginBottom: 15, borderBottomWidth: 1, borderBottomColor: "#f0f0f0", paddingBottom: 10 },
-  label: { fontSize: 12, color: "#9ca3af", fontWeight: "600", textTransform: "uppercase" },
-  value: { fontSize: 18, color: "#374151", marginTop: 4 },
-});
+  container: {
+    flex: 1,
+    backgroundColor: "#fdf2f8",
+    padding: 20
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    marginTop: 100
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#db2777",
+    marginBottom: 20,
+    marginTop: 40
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 20,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    marginBottom: 40,
+  },
+  itemContainer: {
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    paddingBottom: 10
+  },
+  label: {
+    fontSize: 12,
+    color: "#9ca3af",
+    fontWeight: "600",
+    textTransform: "uppercase"
+  },
+  value: {
+      fontSize: 18,
+      color: "#374151",
+      marginTop: 4
+    },
+    logoutButton: {
+      backgroundColor: "#ef4444",
+      padding: 15,
+      borderRadius: 10,
+      marginTop: 20,
+      alignItems: "center",
+    },
+    logoutText: {
+      color: "white",
+      fontWeight: "bold",
+      fontSize: 16,
+    },
+  });
