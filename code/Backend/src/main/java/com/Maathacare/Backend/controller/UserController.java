@@ -1,5 +1,18 @@
 package com.Maathacare.Backend.controller;
 
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus; // 🟢 NEW IMPORT
+import org.springframework.http.ResponseEntity; // 🟢 NEW IMPORT
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping; // 🟢 NEW IMPORT
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.Maathacare.Backend.dto.AuthRequest;
 import com.Maathacare.Backend.dto.AuthResponse;
 import com.Maathacare.Backend.dto.StaffRegistrationRequest;
@@ -7,10 +20,13 @@ import com.Maathacare.Backend.dto.StaffResponse;
 import com.Maathacare.Backend.dto.UserRegistrationRequest;
 import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.PHMProfile;
+import com.Maathacare.Backend.dto.UserRegistrationRequest;
+import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.model.enums.Role;
 import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
+import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
@@ -85,6 +101,9 @@ public class UserController {
         }
     }
 
+    // ----------------------------------------------------
+    // UPDATED: MOTHER LOGIN ENDPOINT
+    // ----------------------------------------------------
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> requestData) {
         try {

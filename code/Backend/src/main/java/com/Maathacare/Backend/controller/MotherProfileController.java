@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/mothers")
+@CrossOrigin(origins = "*")
 public class MotherProfileController {
 
     private final MotherProfileService motherProfileService;
