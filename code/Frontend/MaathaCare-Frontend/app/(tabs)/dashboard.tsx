@@ -1,6 +1,6 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react"; // <-- Added useEffect here!
 import {
@@ -29,7 +29,7 @@ export default function Dashboard() {
   useEffect(() => {
     // We use the exact same IP address your friend used!
     axios
-      .get("http://172.20.10.2:8080/api/milestones/1")
+      .get("http://10.163.129.223:8080/api/milestones/1")
       .then((response) => {
         setMilestone(response.data); // Save the Lemon data into our state!
       })
@@ -46,8 +46,8 @@ export default function Dashboard() {
     }
 
     try {
-      // 2. Get the VIP pass
-      const token = await SecureStore.getItemAsync("userToken");
+      // 🟢 FIXED: Grab the token from AsyncStorage instead of SecureStore
+      const token = await AsyncStorage.getItem("userToken");
 
       if (!token) {
         Alert.alert("Error", "No token found! Please log in again.");
@@ -61,7 +61,7 @@ export default function Dashboard() {
 
       // 3. Send the POST request with the real typed data!
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/mothers/profile",
+        "http://10.163.129.223:8080/api/mothers/profile",
         {
           userId: realUserId,
           fullName: fullName,
@@ -104,8 +104,12 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     try {
-      await SecureStore.deleteItemAsync("userToken");
-      await SecureStore.deleteItemAsync("userRole");
+      // 🟢 FIXED: Clear the specific items from AsyncStorage
+      await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.removeItem("userRole");
+      
+      // OR use this to wipe everything: await AsyncStorage.clear();
+      
       router.replace("/");
     } catch (error) {
       console.error("Error logging out:", error);
