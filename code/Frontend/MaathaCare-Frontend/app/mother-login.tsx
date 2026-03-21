@@ -46,7 +46,7 @@ export default function App() {
       console.log("Sending request to backend...");
 
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/users/login",
+        "http://10.163.129.223:8080/api/users/login",
         {
           phoneNumber: phoneNumber,
           password: password,

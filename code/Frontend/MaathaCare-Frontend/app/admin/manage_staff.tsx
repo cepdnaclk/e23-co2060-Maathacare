@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 // Define the shape of our data based on the Backend DTO
@@ -29,7 +29,7 @@ export default function ManageStaff() {
   const fetchStaffList = async () => {
     try {
       const response = await fetch(
-        "http://172.20.10.2:8080/api/users/staff/all",
+        "http://10.163.129.223:8080/api/users/staff/all",
       );
       if (response.ok) {
         const data = await response.json();
@@ -56,7 +56,7 @@ export default function ManageStaff() {
           onPress: async () => {
             try {
               const response = await fetch(
-                `http://172.20.10.2:8080/api/users/staff/delete/${staffId}`,
+                `http://10.163.129.223:8080/api/users/staff/delete/${staffId}`,
                 {
                   method: "DELETE",
                 },

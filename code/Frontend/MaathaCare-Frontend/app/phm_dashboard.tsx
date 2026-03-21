@@ -1,196 +1,175 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
+  Alert // 🟢 Added
+  ,
   FlatList,
+  StatusBar,
   StyleSheet,
   Text,
+  TextInput, // 🟢 Added
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const API_BASE_URL = "http://172.20.10.2:8080";
+const API_BASE_URL = "http://10.163.129.223:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();
-  const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [phmInfo, setPhmInfo] = useState<any>(null);
+  const [patients, setPatients] = useState([]);
+  const [searchNic, setSearchNic] = useState(""); // 🟢 State for search
 
-  // 1. New states for our secure data
-  const [patients, setPatients] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  useFocusEffect(
+    useCallback(() => {
+      loadDashboardData();
+    }, [])
+  );
 
-  useEffect(() => {
-    // Open the backpack and check who is logged in!
-    const loadData = async () => {
-      const savedRole = await AsyncStorage.getItem("userRole");
-      if (savedRole) setRole(savedRole);
-    };
-    loadData();
-  }, []);
-
-  // --- 🔒 THE MAGIC SECURE FETCH FUNCTION ---
-  const fetchSecureData = async () => {
-    setLoading(true);
+  const loadDashboardData = async () => {
     try {
-      // 🎒 Grab the VIP Token from the backpack
       const token = await AsyncStorage.getItem("userToken");
-
       if (!token) {
-        Alert.alert("Error", "No security token found. Please log in again.");
+        router.replace("/");
         return;
       }
-
-      // 🛑 Make the request AND attach the token as a VIP badge!
-      const response = await fetch(`${API_BASE_URL}/api/phm/patients`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // <--- THIS UNLOCKS THE VAULT!
-        },
+      
+      const profileRes = await fetch(`${API_BASE_URL}/api/phm/me`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setPatients(data); // Save the data to show on screen
-      } else {
-        Alert.alert(
-          "Access Denied!",
-          "The Spring Boot Bouncer rejected your token.",
-        );
+      if (profileRes.ok) {
+        const profileData = await profileRes.json();
+        setPhmInfo(profileData);
       }
+
+      const patientsRes = await fetch(`${API_BASE_URL}/api/phm/patients`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (patientsRes.ok) {
+        const patientsData = await patientsRes.json();
+        setPatients(patientsData);
+      }
+
     } catch (error) {
-      console.error(error);
-      Alert.alert(
-        "Network Error!",
-        "Is Spring Boot running and your IP address correct?",
-      );
+      console.error("Dashboard Load Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = async () => {
-    // 🗑️ Empty the backpack
-    await AsyncStorage.removeItem("userToken");
-    await AsyncStorage.removeItem("userRole");
+  // 🟢 NEW: Function to link a mother using her NIC
+  const handleAssignMother = async () => {
+    if (!searchNic) return;
+    const token = await AsyncStorage.getItem("userToken");
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/phm/assign-mother/${searchNic}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}` }
+      });
 
-    // Send them back to the main Gateway screen
+      if (response.ok) {
+        Alert.alert("Success", "Mother added to your list!");
+        setSearchNic("");
+        loadDashboardData(); // Refresh the list
+      } else {
+        const errorMsg = await response.text();
+        Alert.alert("Error", errorMsg);
+      }
+    } catch (error) {
+      console.error("Assignment Error:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
     router.replace("/");
   };
 
+  if (loading) return (
+    <View style={styles.centered}><ActivityIndicator size="large" color="#0056b3" /></View>
+  );
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#0056b3" />
+      
       <View style={styles.header}>
-        <Text style={styles.title}>Midwife Dashboard</Text>
-        <Text style={styles.subtitle}>Welcome back, {role}!</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.portalLabel}>PHM PORTAL</Text>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.welcomeText}>Welcome back,</Text>
+        <Text style={styles.phmName}>{phmInfo?.fullName || "Staff Member"}</Text>
+        <Text style={styles.areaLabel}>📍 {phmInfo?.mohArea || "Assigned Area"}</Text>
       </View>
 
-      {/* Button to test the Secure Connection */}
-      <TouchableOpacity style={styles.fetchButton} onPress={fetchSecureData}>
-        <Text style={styles.fetchText}>Fetch My Patients (Secure)</Text>
-      </TouchableOpacity>
-
-      {/* The Loading Spinner */}
-      {loading && (
-        <ActivityIndicator
-          size="large"
-          color="#0056b3"
-          style={{ marginVertical: 20 }}
+      {/* 🟢 MODIFIED: Added Search Input to link existing mothers */}
+      <View style={styles.searchSection}>
+        <TextInput 
+          style={styles.searchInput}
+          placeholder="Enter Mother's NIC to add..."
+          value={searchNic}
+          onChangeText={setSearchNic}
         />
-      )}
+        <TouchableOpacity style={styles.addBtn} onPress={handleAssignMother}>
+          <Text style={styles.addBtnText}>Add to List</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* The List of Data from Spring Boot */}
-      <FlatList
-        data={patients}
-        keyExtractor={(item, index) => index.toString()}
-        style={styles.list}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardText}>{item}</Text>
-          </View>
-        )}
-      />
-
-      {/* Logout Button */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </View>
+      <View style={styles.listSection}>
+        <Text style={styles.sectionTitle}>Your Patient List ({patients.length})</Text>
+        <FlatList
+          data={patients}
+          keyExtractor={(item: any) => item.id}
+          renderItem={({ item }: any) => (
+            <TouchableOpacity 
+              style={styles.patientCard}
+              onPress={() => router.push({ pathname: "/mother_details", params: { motherId: item.user?.userId } })}
+            >
+              <View>
+                <Text style={styles.patientName}>{item.fullName}</Text>
+                <Text style={styles.patientDetails}>NIC: {item.nic} | Blood: {item.bloodGroup}</Text>
+              </View>
+              <Text style={styles.detailLink}>Details →</Text>
+            </TouchableOpacity>
+          )}
+          ListEmptyComponent={<Text style={styles.emptyText}>No patients assigned to you yet.</Text>}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
-// --- STYLES ---
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F4F7FB",
-    paddingTop: 60,
-    paddingHorizontal: 20,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#0056b3",
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: "#6c757d",
-  },
-  fetchButton: {
-    backgroundColor: "#28a745", // A nice success green
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    marginBottom: 10,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  fetchText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  list: {
-    flex: 1,
-    marginTop: 10,
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
-  cardText: {
-    fontSize: 16,
-    color: "#333",
-    fontWeight: "500",
-  },
-  logoutButton: {
-    backgroundColor: "#FF3B30",
-    paddingVertical: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 30,
-  },
-  logoutText: {
-    color: "#ffffff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
+  container: { flex: 1, backgroundColor: "#F8FAFC" },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  header: { backgroundColor: "#0056b3", padding: 25, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
+  portalLabel: { color: '#BBDEFB', fontWeight: 'bold', fontSize: 12 },
+  logoutBtn: { backgroundColor: 'rgba(255,255,255,0.2)', padding: 8, borderRadius: 10 },
+  logoutText: { color: 'white', fontSize: 12, fontWeight: 'bold' },
+  welcomeText: { color: '#E3F2FD', fontSize: 16 },
+  phmName: { color: 'white', fontSize: 28, fontWeight: 'bold' },
+  areaLabel: { color: '#BBDEFB', fontSize: 14, marginTop: 5 },
+  
+  searchSection: { flexDirection: 'row', padding: 20, gap: 10 },
+  searchInput: { flex: 1, backgroundColor: 'white', padding: 12, borderRadius: 12, elevation: 2, borderWidth: 1, borderColor: '#E2E8F0' },
+  addBtn: { backgroundColor: '#0056b3', paddingHorizontal: 15, justifyContent: 'center', borderRadius: 12 },
+  addBtnText: { color: 'white', fontWeight: 'bold' },
+
+  listSection: { flex: 1, paddingHorizontal: 20 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#1E293B', marginBottom: 15 },
+  patientCard: { backgroundColor: 'white', padding: 18, borderRadius: 15, marginBottom: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 1 },
+  patientName: { fontSize: 16, fontWeight: 'bold', color: '#333' },
+  patientDetails: { fontSize: 13, color: '#64748B', marginTop: 4 },
+  detailLink: { color: '#0056b3', fontWeight: 'bold' },
+  emptyText: { textAlign: 'center', color: '#94A3B8', marginTop: 40 }
 });

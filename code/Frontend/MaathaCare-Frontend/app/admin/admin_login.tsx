@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function AdminLoginScreen() {
@@ -26,7 +26,7 @@ export default function AdminLoginScreen() {
     try {
       // 🚀 Ensure this IP matches your laptop
       const response = await fetch(
-        "http://172.20.10.2:8080/api/users/staff/login",
+        "http://10.163.129.223:8080/api/users/staff/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
