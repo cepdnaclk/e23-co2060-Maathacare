@@ -6,13 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="3212ed52-ce60-4457-b241-6986873bed95" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/AppointmentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/AppointmentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/.expo/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/.expo/settings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/phm-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/phm-profile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/profile.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/register.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/admin/admin_login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/admin/admin_login.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/admin/manage_staff.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/admin/manage_staff.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/admin/register_staff.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/admin/register_staff.tsx" afterDir="false" />
@@ -22,7 +22,6 @@
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/week/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/week/[id].tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,9 +43,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HttpClientOnboardingState"><![CDATA[{
-  "isOnboardingCommentShown": true
-}]]></component>
+  <component name="HttpClientOnboardingState">{
+  &quot;isOnboardingCommentShown&quot;: true
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -54,10 +53,10 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="3CQuFZ8LsDPixz4cXkwo0cfoQvB" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -70,7 +69,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.BackendApplication.executor": "Run",
-    "git-widget-placeholder": "feature/phm-appointments",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/chemi/Desktop/SEM 3/CO2060/app2/e23-co2060-Maathacare",
     "project.structure.last.edited": "Modules",
@@ -93,11 +92,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Spring Boot.BackendApplication" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
