@@ -3,7 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
 
-const API_BASE_URL = "http://10.163.129.223:8080";
+const API_BASE_URL = "http://192.168.131.223:8080";
 
 export default function MotherDetails() {
   const { motherId } = useLocalSearchParams(); // Get ID from navigation

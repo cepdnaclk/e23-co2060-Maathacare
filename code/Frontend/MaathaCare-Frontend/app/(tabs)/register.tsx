@@ -14,7 +14,7 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://10.163.129.223:8080";
+const API_BASE_URL = "http://192.168.131.223:8080";
 
 const districtMap: Record<string, { label: string; value: string }[]> = {
   Central: [{ label: "Kandy", value: "Kandy" }, { label: "Matale", value: "Matale" }, { label: "Nuwara Eliya", value: "Nuwara Eliya" }],
