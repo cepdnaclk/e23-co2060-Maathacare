@@ -1,17 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Alert} from "react-native";
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity, // 🟢 Added for the button
+  TouchableOpacity,
+  Alert,
 } from "react-native";
-import { useRouter } from "expo-router"; // 🟢 Added for navigation
+import { useRouter } from "expo-router";
 
 // 🌍 Use your current active IP
 const API_BASE_URL = "http://192.168.1.9:8080";
@@ -19,7 +18,7 @@ const API_BASE_URL = "http://192.168.1.9:8080";
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter(); // 🟢 Initialize router
+  const router = useRouter();
 
   useEffect(() => {
     fetchProfile();
@@ -27,35 +26,19 @@ export default function ProfileScreen() {
 
   const fetchProfile = async () => {
     try {
+      setLoading(true);
       // 🔑 Pulling keys from the AsyncStorage "Vault"
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
 
       console.log("🔍 Checking Profile Storage - ID:", userId, "Token exists:", !!token);
 
-      // 🛡️ Security Guard: If no token, stop the request early
+      // 🛡️ Security Guard
       if (!token || !userId) {
-        Alert.alert("Session Expired", "Please log in again.");
         setLoading(false);
         return;
       }
 
-        const response = await axios.get(
-          `http://192.168.1.9:8080/api/mothers/profile/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        console.log("Backend sent this profile data:", response.data);
-        setProfile(response.data);
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
       // 🛑 Requesting data with the 'Bearer' token as a VIP pass
       const response = await axios.get(
         `${API_BASE_URL}/api/mothers/profile/${userId}`,
@@ -64,10 +47,10 @@ export default function ProfileScreen() {
         }
       );
 
+      console.log("Backend sent profile data:", response.data);
       setProfile(response.data);
     } catch (error: any) {
       console.error("Profile Fetch Error:", error);
-      // Handle 403 Forbidden (Token invalid/expired)
       if (error.response?.status === 403) {
         Alert.alert("Security Error", "Your session has expired. Please log in again.");
       }
@@ -76,30 +59,32 @@ export default function ProfileScreen() {
     }
   };
 
-  //  LOGOUT FUNCTION
+  // 🟢 LOGOUT FUNCTION
   const handleLogout = async () => {
     try {
       console.log("Logout sequence started...");
-
-      // 1. Clear AsyncStorage completely
-      await AsyncStorage.clear(); 
+      await AsyncStorage.clear();
       console.log("Storage cleared successfully.");
 
       setTimeout(() => {
-        // Reset the navigation state so you can't go 'back' to the dashboard
         if (router.canGoBack()) {
           router.dismissAll();
         }
-        router.replace("/"); 
+        router.replace("/");
       }, 50);
-
     } catch (error) {
       console.error("Logout error details:", error);
       Alert.alert("Logout Failed", "Please restart the app.");
     }
   };
-  if (loading)
-    return <ActivityIndicator size="large" color="#FF69B4" style={styles.centered} />;
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#FF69B4" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -113,7 +98,6 @@ export default function ProfileScreen() {
         <DetailItem label="District" value={profile?.district} />
         <DetailItem label="Province" value={profile?.province} />
 
-        {/* 🟢 LOGOUT BUTTON ADDED HERE */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
@@ -132,7 +116,7 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fdf2f8", padding: 20 },
-  centered: { flex: 1, justifyContent: "center" },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   title: {
     fontSize: 26,
     fontWeight: "bold",
@@ -148,7 +132,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    marginBottom: 40, // Space at bottom
+    marginBottom: 40,
   },
   itemContainer: {
     marginBottom: 15,
@@ -157,20 +141,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   label: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#9ca3af",
     fontWeight: "600",
     textTransform: "uppercase",
   },
-  centered: { flex: 1, justifyContent: "center", marginTop: 100 },
-  title: { fontSize: 26, fontWeight: "bold", color: "#db2777", marginBottom: 20, marginTop: 40 },
-  card: { backgroundColor: "white", borderRadius: 15, padding: 20, elevation: 4 },
-  itemContainer: { marginBottom: 15, borderBottomWidth: 1, borderBottomColor: "#f0f0f0", paddingBottom: 10 },
-  label: { fontSize: 12, color: "#9ca3af", fontWeight: "600", textTransform: "uppercase" },
   value: { fontSize: 18, color: "#374151", marginTop: 4 },
-  // 🟢 NEW LOGOUT STYLES
   logoutButton: {
-    backgroundColor: "#ef4444", // Red color
+    backgroundColor: "#ef4444",
     padding: 15,
     borderRadius: 10,
     marginTop: 20,
