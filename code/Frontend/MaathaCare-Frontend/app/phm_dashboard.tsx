@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // 🟢 Stable Android API
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://192.168.1.9:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();
@@ -45,7 +45,7 @@ export default function PHMDashboard() {
         router.replace("/");
         return;
       }
-      
+
       const profileRes = await fetch(`${API_BASE_URL}/api/phm/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -132,9 +132,9 @@ export default function PHMDashboard() {
     try {
       const response = await fetch(`${API_BASE_URL}/api/appointments/schedule`, {
         method: 'POST',
-        headers: { 
+        headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}` 
+            Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
@@ -161,7 +161,7 @@ export default function PHMDashboard() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0056b3" />
-      
+
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <Text style={styles.portalLabel}>PHM PORTAL</Text>
@@ -175,7 +175,7 @@ export default function PHMDashboard() {
       </View>
 
       <View style={styles.searchSection}>
-        <TextInput 
+        <TextInput
           style={styles.searchInput}
           placeholder="Enter Mother's NIC to add..."
           value={searchNic}
@@ -193,16 +193,16 @@ export default function PHMDashboard() {
           keyExtractor={(item: any) => item.id}
           renderItem={({ item }: any) => (
             <View style={styles.patientCard}>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={{ flex: 1 }}
                 onPress={() => router.push({ pathname: "/mother_details", params: { motherId: item.user?.userId } })}
               >
                 <Text style={styles.patientName}>{item.fullName}</Text>
                 <Text style={styles.patientDetails}>NIC: {item.nic} | Blood: {item.bloodGroup}</Text>
               </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={styles.scheduleBtn} 
+
+              <TouchableOpacity
+                style={styles.scheduleBtn}
                 onPress={() => {
                   setSelectedMother(item);
                   setModalVisible(true);

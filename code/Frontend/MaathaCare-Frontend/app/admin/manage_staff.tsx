@@ -29,7 +29,7 @@ export default function ManageStaff() {
   const fetchStaffList = async () => {
     try {
       const response = await fetch(
-        "http://192.168.131.223:8080/api/users/staff/all",
+        "http://192.168.1.9:8080/api/users/staff/all",
       );
       if (response.ok) {
         const data = await response.json();
@@ -56,7 +56,7 @@ export default function ManageStaff() {
           onPress: async () => {
             try {
               const response = await fetch(
-                `http://192.168.131.223:8080/api/users/staff/delete/${staffId}`,
+                `http://192.168.1.9:8080/api/users/staff/delete/${staffId}`,
                 {
                   method: "DELETE",
                 },

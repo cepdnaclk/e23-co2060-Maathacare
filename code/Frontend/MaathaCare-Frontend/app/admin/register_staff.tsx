@@ -24,7 +24,7 @@ export default function RegisterStaff() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://192.168.131.223:8080/api/users/staff/register",
+        "http://192.168.1.9:8080/api/users/staff/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

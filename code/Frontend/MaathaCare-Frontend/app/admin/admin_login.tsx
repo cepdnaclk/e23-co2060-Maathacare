@@ -26,7 +26,7 @@ export default function AdminLoginScreen() {
     try {
       // 🚀 Ensure this IP matches your laptop
       const response = await fetch(
-        "http://192.168.131.223:8080/api/users/staff/login",
+        "http://192.168.1.9:8080/api/users/staff/login",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
