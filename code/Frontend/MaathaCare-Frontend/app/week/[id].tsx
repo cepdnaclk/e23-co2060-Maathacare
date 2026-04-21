@@ -17,7 +17,7 @@ export default function WeekDetails() {
   useEffect(() => {
     // 🟢 FIXED: Updated URL path to match your Backend Controller
     // 🟢 FIXED: Added more detailed error logging
-    const fetchUrl = `http://192.168.8.180:8080/api/weekly-milestones/${id}`;
+    const fetchUrl = `http://192.168.131.223:8080/api/weekly-milestones/${id}`;
 
     console.log("🚀 Attempting to fetch from:", fetchUrl);
 

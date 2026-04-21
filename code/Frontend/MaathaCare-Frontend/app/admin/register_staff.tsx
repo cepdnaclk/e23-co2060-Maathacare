@@ -1,12 +1,12 @@
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 
 export default function RegisterStaff() {
@@ -24,7 +24,7 @@ export default function RegisterStaff() {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://172.20.10.2:8080/api/users/staff/register",
+        "http://192.168.131.223:8080/api/users/staff/register",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -38,7 +38,7 @@ export default function StaffLogin() {
     try {
       // 🚀 INDUSTRIAL FIX: Point to the correct Controller path
       // Ensure the IP matches your current laptop IPv4 (cmd -> ipconfig)
-      const backendUrl = "http://172.20.10.2:8080/api/users/staff/login";
+      const backendUrl = "http://192.168.131.223:8080/api/users/staff/login";
 
       console.log(`Sending request to: ${backendUrl} for Staff ID: ${staffId}`);
 
