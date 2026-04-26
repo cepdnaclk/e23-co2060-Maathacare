@@ -9,17 +9,29 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://172.20.10.2:8080";
 
 const districtMap: Record<string, { label: string; value: string }[]> = {
-  Central: [{ label: "Kandy", value: "Kandy" }, { label: "Matale", value: "Matale" }, { label: "Nuwara Eliya", value: "Nuwara Eliya" }],
-  Southern: [{ label: "Galle", value: "Galle" }, { label: "Hambantota", value: "Hambantota" }, { label: "Matara", value: "Matara" }],
-  Western: [{ label: "Colombo", value: "Colombo" }, { label: "Gampaha", value: "Gampaha" }, { label: "Kalutara", value: "Kalutara" }],
+  Central: [
+    { label: "Kandy", value: "Kandy" },
+    { label: "Matale", value: "Matale" },
+    { label: "Nuwara Eliya", value: "Nuwara Eliya" },
+  ],
+  Southern: [
+    { label: "Galle", value: "Galle" },
+    { label: "Hambantota", value: "Hambantota" },
+    { label: "Matara", value: "Matara" },
+  ],
+  Western: [
+    { label: "Colombo", value: "Colombo" },
+    { label: "Gampaha", value: "Gampaha" },
+    { label: "Kalutara", value: "Kalutara" },
+  ],
   // ... (Keep your other districts here)
 };
 
@@ -46,7 +58,14 @@ export default function Register() {
 
   const handleRegister = async () => {
     // 1. Check for missing fields
-    if (!phoneNumber || !password || !fullName || !nic || !bloodGroup || !district) {
+    if (
+      !phoneNumber ||
+      !password ||
+      !fullName ||
+      !nic ||
+      !bloodGroup ||
+      !district
+    ) {
       Alert.alert("Error", "Please fill in all required fields.");
       return;
     }
@@ -59,7 +78,7 @@ export default function Register() {
 
     try {
       setIsLoading(true);
-      
+
       const payload = {
         phoneNumber,
         password,
@@ -75,52 +94,136 @@ export default function Register() {
         lastMenstrualPeriod: lmp.toISOString().split("T")[0],
       };
 
-      const response = await axios.post(`${API_BASE_URL}/api/users/register`, payload);
+      const response = await axios.post(
+        `${API_BASE_URL}/api/users/register`,
+        payload,
+      );
 
       // 3. 🚀 CRITICAL: Save the phone number as userId so the Profile can find it!
-      await AsyncStorage.setItem("userId", phoneNumber); 
+      await AsyncStorage.setItem("userId", phoneNumber);
 
       Alert.alert("Success", "Account Created! Please log in.", [
-        { text: "OK", onPress: () => router.replace("/mother-login") }
+        { text: "OK", onPress: () => router.replace("/mother-login") },
       ]);
     } catch (error: any) {
       console.error("Reg Error:", error.response?.data || error.message);
-      Alert.alert("Registration Failed", error.response?.data || "Connection Error");
+      Alert.alert(
+        "Registration Failed",
+        error.response?.data || "Connection Error",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer} nestedScrollEnabled={true}>
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      nestedScrollEnabled={true}
+    >
       <Text style={styles.title}>Create Account</Text>
-      
-      <TextInput style={styles.input} placeholder="Phone Number" value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" />
-      <TextInput style={styles.input} placeholder="Password" value={password} onChangeText={setPassword} secureTextEntry />
-      <TextInput style={styles.input} placeholder="Confirm Password" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
-      <TextInput style={styles.input} placeholder="Full Name" value={fullName} onChangeText={setFullName} />
-      <TextInput style={styles.input} placeholder="NIC Number (12 characters)" value={nic} onChangeText={setNic} maxLength={12} />
-      
-      <Text style={styles.label}>Blood Group</Text>
-      <DropDownPicker
-        open={bloodGroupOpen} value={bloodGroup} setOpen={setBloodGroupOpen} setValue={setBloodGroup}
-        items={[{label: 'A+', value: 'A+'}, {label: 'O+', value: 'O+'}, {label: 'B+', value: 'B+'}, {label: 'AB+', value: 'AB+'}]}
-        listMode="SCROLLVIEW" style={styles.dropdown}
+
+      <TextInput
+        style={styles.input}
+        placeholder="Phone Number"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Full Name"
+        value={fullName}
+        onChangeText={setFullName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="NIC Number (12 characters)"
+        value={nic}
+        onChangeText={setNic}
+        maxLength={12}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={isLoading}>
-        {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Sign Up</Text>}
+      <Text style={styles.label}>Blood Group</Text>
+      <DropDownPicker
+        open={bloodGroupOpen}
+        value={bloodGroup}
+        setOpen={setBloodGroupOpen}
+        setValue={setBloodGroup}
+        items={[
+          { label: "A+", value: "A+" },
+          { label: "O+", value: "O+" },
+          { label: "B+", value: "B+" },
+          { label: "AB+", value: "AB+" },
+        ]}
+        listMode="SCROLLVIEW"
+        style={styles.dropdown}
+      />
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleRegister}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Sign Up</Text>
+        )}
       </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: { flexGrow: 1, padding: 20, paddingTop: 50, backgroundColor: "#F8F9FA" },
-  title: { fontSize: 32, fontWeight: "bold", color: "#FF69B4", marginBottom: 20, textAlign: 'center' },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 20,
+    paddingTop: 50,
+    backgroundColor: "#F8F9FA",
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#FF69B4",
+    marginBottom: 20,
+    textAlign: "center",
+  },
   label: { fontSize: 14, fontWeight: "600", color: "#495057", marginBottom: 5 },
-  input: { backgroundColor: "#fff", borderRadius: 8, padding: 15, marginBottom: 15, borderWidth: 1, borderColor: "#dee2e6" },
-  dropdown: { backgroundColor: "#fff", borderRadius: 8, marginBottom: 15, borderColor: "#dee2e6" },
-  button: { backgroundColor: "#FF69B4", padding: 15, borderRadius: 8, alignItems: "center", marginTop: 20 },
+  input: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 15,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "#dee2e6",
+  },
+  dropdown: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 15,
+    borderColor: "#dee2e6",
+  },
+  button: {
+    backgroundColor: "#FF69B4",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 20,
+  },
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
 });

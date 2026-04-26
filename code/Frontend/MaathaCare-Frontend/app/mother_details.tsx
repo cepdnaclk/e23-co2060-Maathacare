@@ -1,9 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://172.20.10.2:8080";
 
 export default function MotherDetails() {
   const { motherId } = useLocalSearchParams(); // Get ID from navigation
@@ -18,9 +24,12 @@ export default function MotherDetails() {
     try {
       const token = await AsyncStorage.getItem("userToken");
       // Use your existing endpoint or create a specific one for full details
-      const res = await fetch(`${API_BASE_URL}/api/mothers/profile/${motherId}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/api/mothers/profile/${motherId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (res.ok) {
         const data = await res.json();
         setDetails(data);
@@ -32,7 +41,8 @@ export default function MotherDetails() {
     }
   };
 
-  if (loading) return <ActivityIndicator size="large" style={styles.centered} />;
+  if (loading)
+    return <ActivityIndicator size="large" style={styles.centered} />;
 
   return (
     <ScrollView style={styles.container}>
@@ -45,7 +55,10 @@ export default function MotherDetails() {
         <Text style={styles.sectionTitle}>Medical Information</Text>
         <DetailRow label="Blood Group" value={details?.bloodGroup} />
         <DetailRow label="LMP" value={details?.lastMenstrualPeriod} />
-        <DetailRow label="Emergency Contact" value={details?.emergencyContactNumber} />
+        <DetailRow
+          label="Emergency Contact"
+          value={details?.emergencyContactNumber}
+        />
       </View>
 
       <View style={styles.card}>
@@ -73,9 +86,27 @@ const styles = StyleSheet.create({
   header: { backgroundColor: "#0056b3", padding: 30, alignItems: "center" },
   name: { color: "white", fontSize: 24, fontWeight: "bold" },
   nic: { color: "#BBDEFB", fontSize: 16, marginTop: 5 },
-  card: { backgroundColor: "white", margin: 15, padding: 20, borderRadius: 15, elevation: 3 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", color: "#1E293B", marginBottom: 15, borderBottomWidth: 1, borderBottomColor: "#E2E8F0", paddingBottom: 5 },
-  row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 10 },
+  card: {
+    backgroundColor: "white",
+    margin: 15,
+    padding: 20,
+    borderRadius: 15,
+    elevation: 3,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#1E293B",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E2E8F0",
+    paddingBottom: 5,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
   label: { color: "#64748B", fontWeight: "600" },
-  value: { color: "#1E293B", fontWeight: "bold" }
+  value: { color: "#1E293B", fontWeight: "bold" },
 });

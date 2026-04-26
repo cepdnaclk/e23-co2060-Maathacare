@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://172.20.10.2:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
@@ -27,7 +27,12 @@ export default function ProfileScreen() {
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
 
-      console.log("🔍 Checking Profile Storage - ID:", userId, "Token exists:", !!token);
+      console.log(
+        "🔍 Checking Profile Storage - ID:",
+        userId,
+        "Token exists:",
+        !!token,
+      );
 
       // 🛡️ Security Guard: If no token, stop the request early
       if (!token || !userId) {
@@ -41,7 +46,7 @@ export default function ProfileScreen() {
         `${API_BASE_URL}/api/mothers/profile/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       setProfile(response.data);
@@ -49,7 +54,10 @@ export default function ProfileScreen() {
       console.error("Profile Fetch Error:", error);
       // Handle 403 Forbidden (Token invalid/expired)
       if (error.response?.status === 403) {
-        Alert.alert("Security Error", "Your session has expired. Please log in again.");
+        Alert.alert(
+          "Security Error",
+          "Your session has expired. Please log in again.",
+        );
       }
     } finally {
       setLoading(false);
@@ -57,7 +65,9 @@ export default function ProfileScreen() {
   };
 
   if (loading)
-    return <ActivityIndicator size="large" color="#FF69B4" style={styles.centered} />;
+    return (
+      <ActivityIndicator size="large" color="#FF69B4" style={styles.centered} />
+    );
 
   return (
     <ScrollView style={styles.container}>
@@ -66,7 +76,10 @@ export default function ProfileScreen() {
         <DetailItem label="Full Name" value={profile?.fullName} />
         <DetailItem label="NIC Number" value={profile?.nic} />
         <DetailItem label="Blood Group" value={profile?.bloodGroup} />
-        <DetailItem label="Emergency Contact" value={profile?.emergencyContactNumber} />
+        <DetailItem
+          label="Emergency Contact"
+          value={profile?.emergencyContactNumber}
+        />
         <DetailItem label="Address" value={profile?.address} />
         <DetailItem label="District" value={profile?.district} />
         <DetailItem label="Province" value={profile?.province} />
@@ -86,9 +99,30 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fdf2f8", padding: 20 },
   centered: { flex: 1, justifyContent: "center", marginTop: 100 },
-  title: { fontSize: 26, fontWeight: "bold", color: "#db2777", marginBottom: 20, marginTop: 40 },
-  card: { backgroundColor: "white", borderRadius: 15, padding: 20, elevation: 4 },
-  itemContainer: { marginBottom: 15, borderBottomWidth: 1, borderBottomColor: "#f0f0f0", paddingBottom: 10 },
-  label: { fontSize: 12, color: "#9ca3af", fontWeight: "600", textTransform: "uppercase" },
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#db2777",
+    marginBottom: 20,
+    marginTop: 40,
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 20,
+    elevation: 4,
+  },
+  itemContainer: {
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+    paddingBottom: 10,
+  },
+  label: {
+    fontSize: 12,
+    color: "#9ca3af",
+    fontWeight: "600",
+    textTransform: "uppercase",
+  },
   value: { fontSize: 18, color: "#374151", marginTop: 4 },
 });

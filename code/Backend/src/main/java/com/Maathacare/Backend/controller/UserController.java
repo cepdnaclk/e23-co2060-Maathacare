@@ -223,4 +223,40 @@ public class UserController {
 
         return ResponseEntity.ok("Test Midwife and Profile Created!");
     }
+    
+
+    // ----------------------------------------------------
+    // 🔐 SECURITY ENDPOINTS (PASTE THIS ENTIRE BLOCK HERE)
+    // ----------------------------------------------------
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
+        try {
+            String userId = request.get("userId");
+            String oldPassword = request.get("oldPassword");
+            String newPassword = request.get("newPassword");
+
+            // Find the user by either Staff ID or Phone Number
+            User user = userRepository.findByUserId(userId)
+                    .orElseGet(() -> userRepository.findByStaffId(userId)
+                            .orElse(null));
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+
+            // Verify the old password matches what is in the database
+            if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect current password.");
+            }
+
+            // Encrypt and save the new password
+            user.setPasswordHash(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Password successfully updated!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating password: " + e.getMessage());
+        }
+    }
+
 }
