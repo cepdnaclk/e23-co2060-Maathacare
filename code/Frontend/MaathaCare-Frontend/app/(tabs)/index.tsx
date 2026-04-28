@@ -23,7 +23,7 @@ export default function HomeTab() {
             return;
           }
 
-          const ip = "192.168.1.9"; 
+          const ip = "10.224.114.226";
           
           const response = await axios.get(`http://${ip}:8080/api/mothers/profile/${userId}`, {
             headers: { Authorization: `Bearer ${token}` } // 🛡️ Pass Token
