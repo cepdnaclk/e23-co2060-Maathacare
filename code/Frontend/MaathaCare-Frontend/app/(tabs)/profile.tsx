@@ -13,7 +13,7 @@ import {
 import { useRouter } from "expo-router";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://192.168.1.9:8080";
+const API_BASE_URL = "http://10.224.114.226:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
