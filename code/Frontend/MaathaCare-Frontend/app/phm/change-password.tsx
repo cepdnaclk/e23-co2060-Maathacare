@@ -2,13 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function ChangePasswordScreen() {
@@ -46,7 +46,7 @@ export default function ChangePasswordScreen() {
 
       // ⚠️ IMPORTANT: Make sure this IP matches your computer's actual Wi-Fi IP address!
       const response = await fetch(
-        "http://10.224.114.226:8080/api/users/change-password",
+        "http://192.168.131.223:8080/api/users/change-password",
         {
           method: "POST",
           headers: {

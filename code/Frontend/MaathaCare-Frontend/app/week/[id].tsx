@@ -2,11 +2,11 @@ import axios from "axios";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 export default function WeekDetails() {
@@ -17,7 +17,7 @@ export default function WeekDetails() {
   useEffect(() => {
     // 🟢 FIXED: Updated URL path to match your Backend Controller
     // 🟢 FIXED: Added more detailed error logging
-    const fetchUrl = `http://10.224.114.226:8080/api/weekly-milestones/${id}`;
+    const fetchUrl = `http://192.168.131.223:8080/api/weekly-milestones/${id}`;
 
     console.log("🚀 Attempting to fetch from:", fetchUrl);
 
