@@ -36,7 +36,7 @@ export default function GatewayScreen() {
           if (userRole === "MOTHER") {
             router.replace("/(tabs)");
           } else if (userRole === "PHM") {
-            router.replace("/phm_dashboard");
+            router.replace("/phm/phm_dashboard");
           } else if (userRole === "ADMIN") {
              // router.replace("/admin/admin_hub");
           } else {
