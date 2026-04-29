@@ -115,19 +115,39 @@ export default function HomeTab() {
       {/* QUICK ACTIONS GRID */}
       <Text style={styles.sectionTitle}>Quick Actions</Text>
       <View style={styles.grid}>
-        <ActionCard icon={<Activity color="#DB2777" />} label="Log Symptoms" color="#FCE7F3" />
-        <ActionCard icon={<Calendar color="#0369A1" />} label="Upcoming Clinic" color="#E0F2FE" />
-        <ActionCard icon={<Footprints color="#065F46" />} label="Kick Counter" color="#D1FAE5" />
+        <ActionCard 
+          icon={<Activity color="#DB2777" />} 
+          label="Log Symptoms" 
+          color="#FCE7F3" 
+        />
+        <ActionCard 
+          icon={<Calendar color="#0369A1" />} 
+          label="Upcoming Clinic" 
+          color="#E0F2FE" 
+        />
         
+        {/* Now spanning the full width below the first two cards */}
+        <ActionCard 
+          icon={<Footprints color="#065F46" />} 
+          label="Kick Counter" 
+          color="#D1FAE5" 
+          fullWidth={true} 
+        />
       </View>
     </ScrollView>
   );
 }
 
-// Sub-component for Grid Items
-function ActionCard({ icon, label, color }: { icon: any, label: string, color: string }) {
+// Updated Sub-component
+function ActionCard({ icon, label, color, fullWidth }: { icon: any, label: string, color: string, fullWidth?: boolean }) {
   return (
-    <TouchableOpacity style={[styles.actionCard, { backgroundColor: color }]}>
+    <TouchableOpacity 
+      style={[
+        styles.actionCard, 
+        { backgroundColor: color },
+        fullWidth && { width: '100%' } // Conditionally apply full width
+      ]}
+    >
       <View style={styles.actionIcon}>{icon}</View>
       <Text style={styles.actionLabel}>{label}</Text>
     </TouchableOpacity>
