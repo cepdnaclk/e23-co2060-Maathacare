@@ -1,45 +1,60 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
-import { useColorScheme } from "react-native";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#FF69B4", // Your MaathaCare Pink
+        tabBarActiveTintColor: "#FF69B4", // MaathaCare Pink
+        tabBarInactiveTintColor: "#888",
         headerShown: false,
+        tabBarStyle: { 
+          height: 65, 
+          paddingBottom: 10,
+          backgroundColor: '#FFFFFF',
+          borderTopWidth: 1,
+          borderTopColor: '#F0F0F0'
+        },
       }}
     >
+      {/* 1. HOME (The Pregnancy Dashboard - Visible after login) */}
       <Tabs.Screen
-        name="index"
+        name="index" 
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home" size={28} color={color} />
+            <Ionicons name="home" size={24} color={color} />
           ),
         }}
       />
+
+      {/* 2. EXPLORE (Visible after login) */}
       <Tabs.Screen
         name="explore"
         options={{
           title: "Explore",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="search" size={28} color={color} />
+            <Ionicons name="search-outline" size={24} color={color} />
           ),
         }}
       />
+
+      {/* 3. PROFILE (Visible after login) */}
       <Tabs.Screen
-        name="phm-profile"
+        name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
-            <Ionicons name="person" size={28} color={color} />
+            <Ionicons name="person-outline" size={24} color={color} />
           ),
         }}
       />
+
+      {/* HIDE THE REST */}
+      <Tabs.Screen name="dashboard" options={{ href: null }} />
+      <Tabs.Screen name="phm-profile" options={{ href: null }} />
+      <Tabs.Screen name="register" options={{ href: null }} />
     </Tabs>
   );
 }

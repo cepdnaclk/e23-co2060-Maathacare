@@ -3,19 +3,22 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://172.20.10.2:8080";
+const API_BASE_URL = "http://10.224.114.226:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     fetchProfile();
@@ -23,20 +26,15 @@ export default function ProfileScreen() {
 
   const fetchProfile = async () => {
     try {
+      setLoading(true);
       // 🔑 Pulling keys from the AsyncStorage "Vault"
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
 
-      console.log(
-        "🔍 Checking Profile Storage - ID:",
-        userId,
-        "Token exists:",
-        !!token,
-      );
+      console.log("🔍 Checking Profile Storage - ID:", userId, "Token exists:", !!token);
 
-      // 🛡️ Security Guard: If no token, stop the request early
+      // 🛡️ Security Guard
       if (!token || !userId) {
-        Alert.alert("Session Expired", "Please log in again.");
         setLoading(false);
         return;
       }
@@ -46,28 +44,47 @@ export default function ProfileScreen() {
         `${API_BASE_URL}/api/mothers/profile/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        },
+        }
       );
 
+      console.log("Backend sent profile data:", response.data);
       setProfile(response.data);
     } catch (error: any) {
       console.error("Profile Fetch Error:", error);
-      // Handle 403 Forbidden (Token invalid/expired)
       if (error.response?.status === 403) {
-        Alert.alert(
-          "Security Error",
-          "Your session has expired. Please log in again.",
-        );
+        Alert.alert("Security Error", "Your session has expired. Please log in again.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading)
+  // 🟢 LOGOUT FUNCTION
+  const handleLogout = async () => {
+    try {
+      console.log("Logout sequence started...");
+      await AsyncStorage.clear();
+      console.log("Storage cleared successfully.");
+
+      setTimeout(() => {
+        if (router.canGoBack()) {
+          router.dismissAll();
+        }
+        router.replace("/");
+      }, 50);
+    } catch (error) {
+      console.error("Logout error details:", error);
+      Alert.alert("Logout Failed", "Please restart the app.");
+    }
+  };
+
+  if (loading) {
     return (
-      <ActivityIndicator size="large" color="#FF69B4" style={styles.centered} />
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#FF69B4" />
+      </View>
     );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -76,13 +93,14 @@ export default function ProfileScreen() {
         <DetailItem label="Full Name" value={profile?.fullName} />
         <DetailItem label="NIC Number" value={profile?.nic} />
         <DetailItem label="Blood Group" value={profile?.bloodGroup} />
-        <DetailItem
-          label="Emergency Contact"
-          value={profile?.emergencyContactNumber}
-        />
+        <DetailItem label="Emergency Contact" value={profile?.emergencyContactNumber} />
         <DetailItem label="Address" value={profile?.address} />
         <DetailItem label="District" value={profile?.district} />
         <DetailItem label="Province" value={profile?.province} />
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Log Out</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -98,7 +116,7 @@ const DetailItem = ({ label, value }: { label: string; value: string }) => (
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fdf2f8", padding: 20 },
-  centered: { flex: 1, justifyContent: "center", marginTop: 100 },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   title: {
     fontSize: 26,
     fontWeight: "bold",
@@ -111,6 +129,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    marginBottom: 40,
   },
   itemContainer: {
     marginBottom: 15,
@@ -125,4 +147,16 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   value: { fontSize: 18, color: "#374151", marginTop: 4 },
+  logoutButton: {
+    backgroundColor: "#ef4444",
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: "center",
+  },
+  logoutText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 });

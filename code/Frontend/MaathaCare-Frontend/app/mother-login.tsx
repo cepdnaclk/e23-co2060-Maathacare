@@ -23,7 +23,7 @@ export default function App() {
         const savedToken = await AsyncStorage.getItem("userToken");
         if (savedToken) {
           console.log("Found saved token! Auto-logging in...");
-          router.replace("/profile"); // Assuming you want them to go to profile or dashboard
+          router.replace("/(tabs)"); // Assuming you want them to go to profile or dashboard
         }
       } catch (error) {
         console.error("Error checking vault:", error);
@@ -46,7 +46,7 @@ export default function App() {
       console.log("Sending request to backend...");
 
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/users/login",
+        "http://10.224.114.226:8080/api/users/login",
         {
           phoneNumber: phoneNumber,
           password: password,
@@ -64,7 +64,7 @@ export default function App() {
       await AsyncStorage.setItem("userRole", role);
       await AsyncStorage.setItem("userId", phoneNumber);
 
-      router.replace("/profile");
+      router.replace("/(tabs)"); // Redirect to the main tab screen after login
     } catch (error) {
       const err = error as any;
       console.error("Full Login Error:", err);
