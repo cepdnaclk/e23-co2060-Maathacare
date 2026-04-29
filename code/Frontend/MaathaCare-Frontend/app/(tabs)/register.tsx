@@ -3,18 +3,18 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://172.20.10.2:8080";
+const API_BASE_URL = "http://192.168.131.223:8080";
 
 const districtMap: Record<string, { label: string; value: string }[]> = {
   Central: [

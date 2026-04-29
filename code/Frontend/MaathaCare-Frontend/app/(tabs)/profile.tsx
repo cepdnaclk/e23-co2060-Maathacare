@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://172.20.10.2:8080";
+const API_BASE_URL = "http://192.168.131.223:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
