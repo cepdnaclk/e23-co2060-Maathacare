@@ -1,8 +1,8 @@
+import React, { useState, useCallback } from 'react'; // 🟢 Added useCallback
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { useFocusEffect } from 'expo-router'; // 🟢 Added to refresh data when you view the tab
-import React, { useCallback, useState } from 'react'; // 🟢 Added useCallback
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function HomeTab() {
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ export default function HomeTab() {
             return;
           }
 
-          const ip = "192.168.131.223";
+          const ip = "10.224.114.226";
           
           const response = await axios.get(`http://${ip}:8080/api/mothers/profile/${userId}`, {
             headers: { Authorization: `Bearer ${token}` } // 🛡️ Pass Token

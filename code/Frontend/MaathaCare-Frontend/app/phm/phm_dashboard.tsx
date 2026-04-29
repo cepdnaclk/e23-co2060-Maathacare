@@ -20,7 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 // ⚠️ UPDATE THIS IP: Make sure this is your current computer Wi-Fi IP address!
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://10.224.114.226:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();
