@@ -1,19 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
-  Alert,
+  View,
 } from "react-native";
-import { useRouter } from "expo-router";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://10.224.114.226:8080";
+const API_BASE_URL = "http://192.168.131.223:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
