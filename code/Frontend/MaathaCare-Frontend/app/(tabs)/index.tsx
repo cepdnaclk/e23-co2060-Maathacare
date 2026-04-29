@@ -118,7 +118,7 @@ export default function HomeTab() {
         <ActionCard icon={<Activity color="#DB2777" />} label="Log Symptoms" color="#FCE7F3" />
         <ActionCard icon={<Calendar color="#0369A1" />} label="Upcoming Clinic" color="#E0F2FE" />
         <ActionCard icon={<Footprints color="#065F46" />} label="Kick Counter" color="#D1FAE5" />
-        <ActionCard icon={<Lightbulb color="#92400E" />} label="Daily Tip" color="#FEF3C7" />
+        
       </View>
     </ScrollView>
   );
