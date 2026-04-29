@@ -26,6 +26,7 @@ export default function PHMDashboard() {
   const [patients, setPatients] = useState([]);
   const [activeTab, setActiveTab] = useState<'Home' | 'Appointment' | 'Profile'>('Home');
 
+  // Appointment & Search States
   const [searchNic, setSearchNic] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMother, setSelectedMother] = useState<any>(null);
@@ -49,10 +50,12 @@ export default function PHMDashboard() {
       }
 
       const headers = { Authorization: `Bearer ${token}` };
-      const profileRes = await fetch(`${API_BASE_URL}/api/phm/me`, { headers });
-      if (profileRes.ok) setPhmInfo(await profileRes.json());
+      const [profileRes, patientsRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/phm/me`, { headers }),
+        fetch(`${API_BASE_URL}/api/phm/patients`, { headers })
+      ]);
 
-      const patientsRes = await fetch(`${API_BASE_URL}/api/phm/patients`, { headers });
+      if (profileRes.ok) setPhmInfo(await profileRes.json());
       if (patientsRes.ok) setPatients(await patientsRes.json());
     } catch (error) {
       console.error("Dashboard Load Error:", error);
@@ -81,11 +84,6 @@ export default function PHMDashboard() {
     } catch (error) {
       console.error("Assignment Error:", error);
     }
-  };
-
-  const handleLogout = async () => {
-    await AsyncStorage.clear();
-    router.replace("/");
   };
 
   const handleSaveAppointment = async () => {
@@ -138,14 +136,25 @@ export default function PHMDashboard() {
     }
   };
 
-  // --- RENDERING COMPONENTS ---
+  // --- TAB RENDERING ---
 
   const renderHome = () => (
     <View style={styles.contentSection}>
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Text style={styles.statNumber}>{patients.length}</Text>
+          <Text style={styles.statLabel}>Total Patients</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={[styles.statNumber, { color: '#059669' }]}>Active</Text>
+          <Text style={styles.statLabel}>Service Status</Text>
+        </View>
+      </View>
+
       <View style={styles.searchSection}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Enter Mother's NIC..."
+          placeholder="Enter NIC to link mother..."
           placeholderTextColor="#94A3B8"
           value={searchNic}
           onChangeText={setSearchNic}
@@ -154,24 +163,25 @@ export default function PHMDashboard() {
           <Text style={styles.addBtnText}>Add</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.sectionTitle}>Your Patient List ({patients.length})</Text>
+
+      <Text style={styles.sectionTitle}>Maternal Care List</Text>
       <FlatList
         data={patients}
         keyExtractor={(item: any) => item.id}
         renderItem={({ item }: any) => (
           <View style={styles.patientCard}>
-            <TouchableOpacity
-              style={{ flex: 1 }}
+            <TouchableOpacity 
+              style={{ flex: 1 }} 
               onPress={() => router.push({ pathname: "/mother_details" as any, params: { motherId: item.user?.userId } })}
             >
               <Text style={styles.patientName}>{item.fullName}</Text>
-              <Text style={styles.patientDetails}>NIC: {item.nic}</Text>
+              <Text style={styles.patientDetails}>NIC: {item.nic} • Blood: {item.bloodGroup}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.scheduleBtn}
-              onPress={() => router.push({ pathname: "/mother_details" as any, params: { motherId: item.user?.userId } })}
+            <TouchableOpacity 
+               style={styles.actionCircle}
+               onPress={() => router.push({ pathname: "/mother_details" as any, params: { motherId: item.user?.userId } })}
             >
-              <Text style={styles.scheduleBtnText}>👤</Text>
+              <Text style={{ fontSize: 14 }}>👤</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -179,30 +189,9 @@ export default function PHMDashboard() {
     </View>
   );
 
-  const renderProfile = () => (
-    <View style={styles.contentSection}>
-      <View style={styles.profileCard}>
-        <Text style={styles.profileLabel}>Full Name</Text>
-        <Text style={styles.profileValue}>{phmInfo?.fullName || "Staff Member"}</Text>
-        <Text style={styles.profileLabel}>PHM ID</Text>
-        <Text style={styles.profileValue}>{phmInfo?.staffId || "N/A"}</Text>
-        <Text style={styles.profileLabel}>Phone Number</Text>
-        <Text style={styles.profileValue}>{phmInfo?.phoneNumber || "Not Set"}</Text>
-        <Text style={styles.profileLabel}>District / Area</Text>
-        <Text style={styles.profileValue}>{phmInfo?.mohArea}</Text>
-      </View>
-      <TouchableOpacity style={styles.changePassBtn} onPress={() => router.push("/phm/change-password" as any)}>
-        <Text style={styles.changePassText}>🔑 Change Password</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.logoutBtnLarge} onPress={handleLogout}>
-        <Text style={styles.logoutTextLarge}>Log Out</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
   const renderAppointments = () => (
     <View style={styles.contentSection}>
-      <Text style={styles.sectionTitle}>Select Mother to Schedule Appointment</Text>
+      <Text style={styles.sectionTitle}>Schedule Checkup</Text>
       <FlatList
         data={patients}
         keyExtractor={(item: any) => item.id}
@@ -210,21 +199,58 @@ export default function PHMDashboard() {
           <View style={styles.patientCard}>
             <View style={{ flex: 1 }}>
               <Text style={styles.patientName}>{item.fullName}</Text>
-              <Text style={styles.patientDetails}>NIC: {item.nic}</Text>
+              <Text style={styles.patientDetails}>Schedule next routine visit</Text>
             </View>
-            <TouchableOpacity
-              style={[styles.scheduleBtn, { backgroundColor: '#E0F2FE' }]}
+            <TouchableOpacity 
+              style={styles.scheduleBtn} 
               onPress={() => {
                 setSelectedMother(item);
                 setModalVisible(true);
               }}
             >
-              <Text style={styles.scheduleBtnText}>📅</Text>
+              <Text style={styles.scheduleBtnText}>📅 Schedule</Text>
             </TouchableOpacity>
           </View>
         )}
-        ListEmptyComponent={<Text style={styles.emptyText}>No patients available for scheduling.</Text>}
+        ListEmptyComponent={<Text style={styles.emptyText}>No patients assigned to schedule.</Text>}
       />
+    </View>
+  );
+
+  const renderProfile = () => (
+    <View style={styles.contentSection}>
+      <View style={styles.profileAvatarSection}>
+         <View style={styles.avatarCircle}>
+           <Text style={styles.avatarText}>{phmInfo?.fullName?.charAt(0) || "P"}</Text>
+         </View>
+         <Text style={styles.profileMainName}>{phmInfo?.fullName}</Text>
+         <Text style={styles.profileMainId}>Public Health Midwife • ID: {phmInfo?.staffId}</Text>
+      </View>
+
+      <View style={styles.infoCard}>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Assigned Area</Text>
+          <Text style={styles.infoValue}>{phmInfo?.mohArea}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Phone Number</Text>
+          <Text style={styles.infoValue}>{phmInfo?.phoneNumber || "Not Set"}</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity 
+        style={styles.changePassBtn} 
+        onPress={() => router.push("/phm/change-password" as any)}
+      >
+        <Text style={styles.changePassText}>🔑 Change Password</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity 
+        style={styles.logoutBtn} 
+        onPress={async () => { await AsyncStorage.clear(); router.replace("/"); }}
+      >
+        <Text style={styles.logoutText}>Log Out</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -233,28 +259,30 @@ export default function PHMDashboard() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0056b3" />
-      <View style={styles.header}>
-        <Text style={styles.portalLabel}>PHM PORTAL</Text>
-        <Text style={styles.headerTitle}>{phmInfo?.fullName}</Text>
-        <Text style={styles.headerSubtitle}>ID: {phmInfo?.staffId}</Text>
+      
+      <View style={styles.slimHeader}>
+        <Text style={styles.headerPortalText}>MAATHACARE PORTAL</Text>
+        <Text style={styles.headerLocationText}>📍 {phmInfo?.mohArea}</Text>
       </View>
+
       <View style={{ flex: 1 }}>
         {activeTab === 'Home' && renderHome()}
         {activeTab === 'Appointment' && renderAppointments()}
         {activeTab === 'Profile' && renderProfile()}
       </View>
+
       <View style={styles.tabBar}>
-        <TouchableOpacity onPress={() => setActiveTab('Home')} style={styles.tabItem}>
-          <Text style={[styles.tabIcon, activeTab === 'Home' && styles.activeTab]}>🏠</Text>
-          <Text style={[styles.tabLabel, activeTab === 'Home' && styles.activeTab]}>Home</Text>
+        <TouchableOpacity onPress={() => setActiveTab('Home')} style={styles.tabButton}>
+          <Text style={[styles.tabIcon, activeTab === 'Home' && styles.tabActiveText]}>🏠</Text>
+          <Text style={[styles.tabLabel, activeTab === 'Home' && styles.tabActiveText]}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveTab('Appointment')} style={styles.tabItem}>
-          <Text style={[styles.tabIcon, activeTab === 'Appointment' && styles.activeTab]}>📅</Text>
-          <Text style={[styles.tabLabel, activeTab === 'Appointment' && styles.activeTab]}>Appointments</Text>
+        <TouchableOpacity onPress={() => setActiveTab('Appointment')} style={styles.tabButton}>
+          <Text style={[styles.tabIcon, activeTab === 'Appointment' && styles.tabActiveText]}>📅</Text>
+          <Text style={[styles.tabLabel, activeTab === 'Appointment' && styles.tabActiveText]}>Appointments</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setActiveTab('Profile')} style={styles.tabItem}>
-          <Text style={[styles.tabIcon, activeTab === 'Profile' && styles.activeTab]}>👤</Text>
-          <Text style={[styles.tabLabel, activeTab === 'Profile' && styles.activeTab]}>Profile</Text>
+        <TouchableOpacity onPress={() => setActiveTab('Profile')} style={styles.tabButton}>
+          <Text style={[styles.tabIcon, activeTab === 'Profile' && styles.tabActiveText]}>👤</Text>
+          <Text style={[styles.tabLabel, activeTab === 'Profile' && styles.tabActiveText]}>Profile</Text>
         </TouchableOpacity>
       </View>
 
@@ -263,11 +291,13 @@ export default function PHMDashboard() {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>New Appointment</Text>
             <Text style={styles.modalSub}>Patient: {selectedMother?.fullName}</Text>
+
             <TouchableOpacity onPress={() => { setPickerMode("date"); setShowPicker(true); }} style={styles.dateSelectorButton}>
               <Text style={styles.dateSelectorText}>
                 {`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} at ${String(date.getHours() % 12 || 12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")} ${date.getHours() >= 12 ? "PM" : "AM"}`}
               </Text>
             </TouchableOpacity>
+
             {showPicker && (
               <DateTimePicker
                 value={date}
@@ -277,6 +307,7 @@ export default function PHMDashboard() {
                 onChange={onChangeDate}
               />
             )}
+
             <TextInput
               style={styles.modalInput}
               placeholder="Reason (e.g. Monthly Checkup)"
@@ -284,6 +315,7 @@ export default function PHMDashboard() {
               value={remarks}
               onChangeText={setRemarks}
             />
+
             <View style={styles.modalActions}>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}>
                 <Text style={{ color: "#475569", fontWeight: "bold" }}>Cancel</Text>
@@ -302,33 +334,43 @@ export default function PHMDashboard() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F8FAFC" },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  header: { backgroundColor: "#0056b3", padding: 25, borderBottomLeftRadius: 25, borderBottomRightRadius: 25, alignItems: 'center' },
-  portalLabel: { color: "#BBDEFB", fontSize: 10, fontWeight: "bold", marginBottom: 5 },
-  headerTitle: { color: "white", fontSize: 22, fontWeight: "bold" },
-  headerSubtitle: { color: "#E3F2FD", fontSize: 13 },
+  slimHeader: { backgroundColor: "#0056b3", padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  headerPortalText: { color: 'white', fontWeight: 'bold', fontSize: 11, letterSpacing: 1 },
+  headerLocationText: { color: '#BBDEFB', fontSize: 11 },
   contentSection: { flex: 1, padding: 20 },
+  statsRow: { flexDirection: 'row', gap: 15, marginBottom: 20 },
+  statCard: { flex: 1, backgroundColor: 'white', padding: 15, borderRadius: 15, elevation: 2, alignItems: 'center' },
+  statNumber: { fontSize: 20, fontWeight: 'bold', color: '#0056b3' },
+  statLabel: { fontSize: 11, color: '#64748B', marginTop: 4 },
   searchSection: { flexDirection: "row", gap: 10, marginBottom: 20 },
-  searchInput: { flex: 1, backgroundColor: "white", padding: 12, borderRadius: 10, borderWidth: 1, borderColor: "#E2E8F0" },
-  addBtn: { backgroundColor: "#0056b3", paddingHorizontal: 15, borderRadius: 10, justifyContent: 'center' },
+  searchInput: { flex: 1, backgroundColor: "white", padding: 12, borderRadius: 12, borderWidth: 1, borderColor: "#E2E8F0" },
+  addBtn: { backgroundColor: "#0056b3", paddingHorizontal: 20, borderRadius: 12, justifyContent: 'center' },
   addBtnText: { color: "white", fontWeight: "bold" },
-  sectionTitle: { fontSize: 16, fontWeight: "bold", marginBottom: 12, color: "#1E293B" },
-  patientCard: { backgroundColor: "white", padding: 18, borderRadius: 15, marginBottom: 10, flexDirection: "row", alignItems: "center", elevation: 2 },
-  patientName: { fontSize: 16, fontWeight: "bold", color: "#333" },
-  patientDetails: { fontSize: 13, color: "#64748B", marginTop: 4 },
-  scheduleBtn: { backgroundColor: "#F1F5F9", padding: 10, borderRadius: 10 },
-  scheduleBtnText: { fontSize: 18 },
-  profileCard: { backgroundColor: "white", padding: 20, borderRadius: 15, elevation: 3 },
-  profileLabel: { color: "#64748B", fontSize: 12, fontWeight: "bold", marginTop: 10 },
-  profileValue: { fontSize: 17, color: "#1E293B", fontWeight: "500" },
+  sectionTitle: { fontSize: 16, fontWeight: "bold", color: "#1E293B", marginBottom: 15 },
+  patientCard: { backgroundColor: "white", padding: 16, borderRadius: 16, marginBottom: 12, flexDirection: "row", alignItems: "center", elevation: 2 },
+  patientName: { fontSize: 15, fontWeight: "bold", color: "#334155" },
+  patientDetails: { fontSize: 12, color: "#64748B", marginTop: 2 },
+  actionCircle: { width: 34, height: 34, borderRadius: 17, backgroundColor: '#F1F5F9', justifyContent: 'center', alignItems: 'center' },
+  scheduleBtn: { backgroundColor: "#0056b3", paddingVertical: 8, paddingHorizontal: 15, borderRadius: 10 },
+  scheduleBtnText: { color: 'white', fontSize: 12, fontWeight: 'bold' },
+  profileAvatarSection: { alignItems: 'center', marginVertical: 20 },
+  avatarCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: '#0056b3', justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
+  avatarText: { color: 'white', fontSize: 32, fontWeight: 'bold' },
+  profileMainName: { fontSize: 24, fontWeight: 'bold', color: '#1E293B' },
+  profileMainId: { fontSize: 13, color: '#64748B' },
+  infoCard: { backgroundColor: 'white', padding: 20, borderRadius: 20, elevation: 2 },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
+  infoLabel: { color: '#64748B', fontSize: 13 },
+  infoValue: { fontWeight: 'bold', fontSize: 13, color: '#1E293B' },
+  tabBar: { flexDirection: "row", height: 75, backgroundColor: "white", borderTopWidth: 1, borderColor: "#E2E8F0", paddingBottom: 10 },
+  tabButton: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  tabIcon: { fontSize: 20, color: '#94A3B8' },
+  tabLabel: { fontSize: 10, color: '#94A3B8', marginTop: 4 },
+  tabActiveText: { color: '#0056b3', fontWeight: 'bold' }, // 🟢 Matches what you use in TabBar
   changePassBtn: { marginTop: 20, backgroundColor: "#F1F5F9", padding: 15, borderRadius: 12, alignItems: 'center' },
   changePassText: { color: "#0056b3", fontWeight: "bold" },
-  logoutBtnLarge: { marginTop: 15, backgroundColor: "#FEE2E2", padding: 15, borderRadius: 12, alignItems: 'center' },
-  logoutTextLarge: { color: "#B91C1C", fontWeight: "bold" },
-  tabBar: { flexDirection: "row", height: 75, backgroundColor: "white", borderTopWidth: 1, borderColor: "#E2E8F0", paddingBottom: 10 },
-  tabItem: { flex: 1, justifyContent: "center", alignItems: "center" },
-  tabIcon: { fontSize: 22, color: "#94A3B8" },
-  tabLabel: { fontSize: 11, color: "#94A3B8", marginTop: 4 },
-  activeTab: { color: "#0056b3", fontWeight: "bold" },
+  logoutBtn: { marginTop: 15, backgroundColor: '#FEE2E2', padding: 15, borderRadius: 12, alignItems: 'center' },
+  logoutText: { color: '#B91C1C', fontWeight: 'bold' },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", padding: 20 },
   modalContent: { backgroundColor: "white", borderRadius: 20, padding: 25, elevation: 5 },
   modalTitle: { fontSize: 20, fontWeight: "bold", color: "#1E293B" },

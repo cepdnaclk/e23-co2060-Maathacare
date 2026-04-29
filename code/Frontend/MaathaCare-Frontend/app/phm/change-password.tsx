@@ -2,14 +2,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
+
+// 🌍 Ensure this matches your computer's actual Wi-Fi IP address!
+const API_BASE_URL = "http://192.168.131.223:8080";
 
 export default function ChangePasswordScreen() {
   const [oldPassword, setOldPassword] = useState("");
@@ -19,6 +22,7 @@ export default function ChangePasswordScreen() {
   const router = useRouter();
 
   const handleUpdatePassword = async () => {
+    // 1. Validation
     if (!oldPassword || !newPassword || !confirmPassword) {
       Alert.alert("Missing Fields", "Please fill in all password fields.");
       return;
@@ -30,31 +34,25 @@ export default function ChangePasswordScreen() {
     }
 
     if (newPassword.length < 6) {
-      Alert.alert(
-        "Weak Password",
-        "New password must be at least 6 characters.",
-      );
+      Alert.alert("Weak Password", "New password must be at least 6 characters.");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      // Get the logged-in user's details
-      const staffId = (await AsyncStorage.getItem("userId")) || "";
       const token = (await AsyncStorage.getItem("userToken")) || "";
 
-      // ⚠️ IMPORTANT: Make sure this IP matches your computer's actual Wi-Fi IP address!
+      // 2. Fetch API Call
       const response = await fetch(
-        "http://192.168.131.223:8080/api/users/change-password",
+        `${API_BASE_URL}/api/phm/change-password`,
         {
-          method: "POST",
+          method: "PUT", // 🟢 Changed from POST to PUT to match Backend
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            userId: staffId,
             oldPassword: oldPassword,
             newPassword: newPassword,
           }),
@@ -63,15 +61,15 @@ export default function ChangePasswordScreen() {
 
       if (response.ok) {
         Alert.alert("Success! 🔒", "Your password has been securely updated.");
-        router.back(); // Sends them back to the previous screen automatically
+        router.back(); 
       } else {
         const errorText = await response.text();
-        Alert.alert("Failed", errorText);
+        Alert.alert("Failed", errorText || "Could not update password.");
       }
     } catch (error) {
       Alert.alert(
         "Network Error",
-        "Could not connect to the MaathaCare server.",
+        "Could not connect to the MaathaCare server."
       );
     } finally {
       setIsLoading(false);
@@ -82,17 +80,18 @@ export default function ChangePasswordScreen() {
     <View style={styles.container}>
       <Text style={styles.headerTitle}>Update Password</Text>
       <Text style={styles.subText}>
-        For your security, please change your default NIC password.
+        For your security, please change your default password.
       </Text>
 
       <View style={styles.inputContainer}>
-        <Text style={styles.label}>Current Password (NIC)</Text>
+        <Text style={styles.label}>Current Password</Text>
         <TextInput
           style={styles.input}
           secureTextEntry
           value={oldPassword}
           onChangeText={setOldPassword}
           placeholder="Enter current password"
+          placeholderTextColor="#94a3b8"
         />
 
         <Text style={styles.label}>New Password</Text>
@@ -102,6 +101,7 @@ export default function ChangePasswordScreen() {
           value={newPassword}
           onChangeText={setNewPassword}
           placeholder="Enter new password"
+          placeholderTextColor="#94a3b8"
         />
 
         <Text style={styles.label}>Confirm New Password</Text>
@@ -111,6 +111,7 @@ export default function ChangePasswordScreen() {
           value={confirmPassword}
           onChangeText={setConfirmPassword}
           placeholder="Re-type new password"
+          placeholderTextColor="#94a3b8"
         />
       </View>
 
@@ -124,6 +125,13 @@ export default function ChangePasswordScreen() {
         ) : (
           <Text style={styles.buttonText}>Save New Password</Text>
         )}
+      </TouchableOpacity>
+      
+      <TouchableOpacity 
+        onPress={() => router.back()} 
+        style={{ marginTop: 20, alignItems: 'center' }}
+      >
+        <Text style={{ color: '#64748b', fontWeight: '500' }}>Cancel</Text>
       </TouchableOpacity>
     </View>
   );
@@ -164,9 +172,10 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     backgroundColor: "#f8fafc",
+    color: '#1e293b'
   },
   button: {
-    backgroundColor: "#2563eb",
+    backgroundColor: "#0056b3",
     padding: 16,
     borderRadius: 8,
     alignItems: "center",

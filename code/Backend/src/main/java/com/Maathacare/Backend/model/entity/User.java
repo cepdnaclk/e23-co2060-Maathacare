@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 public class User {
     @Id
     @Column(name = "user_id", length = 15, unique = true, nullable = false)
-    private String userId; // This is the property name others must reference
+    private String userId;
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
@@ -33,6 +33,8 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
+
+    // --- MANUAL GETTERS AND SETTERS (No Lombok Required) ---
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
