@@ -3,18 +3,17 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
-// --- NEW: The Province-to-District Map ---
 const districtMap: Record<string, { label: string; value: string }[]> = {
   Central: [
     { label: "Kandy", value: "Kandy" },
@@ -64,27 +63,22 @@ const districtMap: Record<string, { label: string; value: string }[]> = {
 export default function Register() {
   const router = useRouter();
 
-  // Basic States
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Profile States
   const [fullName, setFullName] = useState("");
   const [nic, setNic] = useState("");
   const [address, setAddress] = useState("");
   const [emergencyContactNumber, setEmergencyContactNumber] = useState("");
 
-  // Date Picker States
   const [dob, setDob] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [lmp, setLmp] = useState(new Date());
   const [showLmpPicker, setShowLmpPicker] = useState(false);
 
-  // --- Dropdown States ---
-  // Blood Group
   const [bloodGroupOpen, setBloodGroupOpen] = useState(false);
   const [bloodGroup, setBloodGroup] = useState<string | null>(null);
   const [bloodGroupItems, setBloodGroupItems] = useState([
@@ -98,19 +92,19 @@ export default function Register() {
     { label: "AB-", value: "AB-" },
   ]);
 
-  // Province
   const [provinceOpen, setProvinceOpen] = useState(false);
   const [province, setProvince] = useState<string | null>(null);
   const [provinceItems, setProvinceItems] = useState(
     Object.keys(districtMap).map((prov) => ({ label: prov, value: prov })),
   );
 
-  // District
   const [districtOpen, setDistrictOpen] = useState(false);
   const [district, setDistrict] = useState<string | null>(null);
   const [districtItems, setDistrictItems] = useState<
     { label: string; value: string }[]
   >([]);
+
+  const [division, setDivision] = useState("");
 
   const handleRegister = async () => {
     if (
@@ -122,7 +116,8 @@ export default function Register() {
       !emergencyContactNumber ||
       !bloodGroup ||
       !district ||
-      !province
+      !province ||
+      !division
     ) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
@@ -140,7 +135,6 @@ export default function Register() {
 
     try {
       setIsLoading(true);
-      console.log("Sending registration request to backend...");
 
       const payload = {
         phoneNumber: phoneNumber,
@@ -153,22 +147,15 @@ export default function Register() {
         bloodGroup: bloodGroup,
         district: district,
         province: province,
+        residentialDivision: division,
         dateOfBirth: dob.toISOString().split("T")[0],
         lastMenstrualPeriod: lmp.toISOString().split("T")[0],
       };
 
-      console.log("------------------------------------");
-      console.log("CHECKING FRONTEND DATA:");
-      console.log("LMP State value:", lmp);
-      console.log("LMP formatted for Payload:", lmp.toISOString().split("T")[0]);
-      console.log("Full Payload:", JSON.stringify(payload, null, 2));
-      console.log("------------------------------------");
       const response = await axios.post(
-        "http://192.168.131.223:8080/api/users/register",
+        "http://172.20.10.2:8080/api/users/register",
         payload,
       );
-
-      console.log("Registration Success:", response.data);
 
       Alert.alert(
         "Account Created!",
@@ -177,7 +164,6 @@ export default function Register() {
       );
     } catch (error) {
       const err = error as any;
-      console.error("Full Error Details:", err);
       setIsLoading(false);
 
       if (err.response) {
@@ -201,7 +187,6 @@ export default function Register() {
       <Text style={styles.title}>Create Account</Text>
       <Text style={styles.subtitle}>Join MaathaCare today</Text>
 
-      {/* Account Details */}
       <Text style={styles.label}>Phone Number</Text>
       <TextInput
         style={styles.input}
@@ -232,7 +217,6 @@ export default function Register() {
         editable={!isLoading}
       />
 
-      {/* Profile Details */}
       <Text style={styles.label}>Full Name</Text>
       <TextInput
         style={styles.input}
@@ -271,7 +255,6 @@ export default function Register() {
         editable={!isLoading}
       />
 
-      {/* Date of Birth Picker */}
       <Text style={styles.label}>Date of Birth</Text>
       <TouchableOpacity
         style={styles.dateInput}
@@ -291,7 +274,6 @@ export default function Register() {
         />
       )}
 
-      {/* 1. Blood Group */}
       <Text style={styles.label}>Blood Group</Text>
       <DropDownPicker
         open={bloodGroupOpen}
@@ -309,7 +291,6 @@ export default function Register() {
         listMode="SCROLLVIEW"
       />
 
-      {/* 🚀 NEW: Last Menstrual Period Picker */}
       <Text style={styles.label}>Last Menstrual Period (LMP) Date</Text>
       <TouchableOpacity
         style={styles.dateInput}
@@ -322,7 +303,6 @@ export default function Register() {
           value={lmp}
           mode="date"
           display="default"
-          // Important: prevent selecting future dates for an LMP!
           maximumDate={new Date()}
           onChange={(event, selectedDate) => {
             setShowLmpPicker(false);
@@ -331,7 +311,6 @@ export default function Register() {
         />
       )}
 
-      {/* 2. Province */}
       <Text style={styles.label}>Province</Text>
       <DropDownPicker
         open={provinceOpen}
@@ -348,17 +327,15 @@ export default function Register() {
         zIndexInverse={2000}
         listMode="SCROLLVIEW"
         onChangeValue={(value) => {
-          // --- NEW: Update District items when Province changes ---
           if (value) {
             setDistrictItems(districtMap[value] || []);
           } else {
             setDistrictItems([]);
           }
-          setDistrict(null); // Reset the district selection
+          setDistrict(null);
         }}
       />
 
-      {/* 3. District */}
       <Text style={styles.label}>District</Text>
       <DropDownPicker
         open={districtOpen}
@@ -370,10 +347,19 @@ export default function Register() {
         placeholder={province ? "Select District" : "Select a Province first"}
         style={[styles.dropdown, !province && { backgroundColor: "#f0f0f0" }]}
         dropDownContainerStyle={styles.dropdownContainer}
-        disabled={isLoading || !province} // Disable until a province is chosen
+        disabled={isLoading || !province}
         zIndex={1000}
         zIndexInverse={3000}
         listMode="SCROLLVIEW"
+      />
+
+      <Text style={styles.label}>Residential Division (MOH Area)</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="e.g. Walgama North"
+        value={division}
+        onChangeText={setDivision}
+        editable={!isLoading}
       />
 
       <TouchableOpacity

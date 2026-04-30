@@ -46,7 +46,7 @@ export default function ChangePasswordScreen() {
 
       // ⚠️ IMPORTANT: Make sure this IP matches your computer's actual Wi-Fi IP address!
       const response = await fetch(
-        "http://192.168.131.223:8080/api/users/change-password",
+        "http:// 172.20.10.2:8080/api/users/change-password",
         {
           method: "POST",
           headers: {

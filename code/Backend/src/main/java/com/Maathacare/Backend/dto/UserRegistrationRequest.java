@@ -19,6 +19,7 @@ public class UserRegistrationRequest {
     private LocalDate lastMenstrualPeriod;
     private String district;
     private String province;
+    private String residentialDivision;
 
     // --- Existing Getters and Setters ---
     public String getPhoneNumber() {
@@ -116,5 +117,13 @@ public class UserRegistrationRequest {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    public String getResidentialDivision() {
+        return residentialDivision;
+    }
+
+    public void setResidentialDivision(String residentialDivision) {
+        this.residentialDivision = residentialDivision;
     }
 }

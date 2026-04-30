@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -92,6 +93,16 @@ public class UserController {
             profile.setLastMenstrualPeriod(request.getLastMenstrualPeriod());
             profile.setDistrict(request.getDistrict());
             profile.setProvince(request.getProvince());
+            profile.setResidentialDivision(request.getResidentialDivision());
+
+            if (request.getResidentialDivision() != null && !request.getResidentialDivision().trim().isEmpty()) {
+                Optional<PHMProfile> assignedPhm = phmProfileRepository.findByPhmDivision(request.getResidentialDivision());
+                if (assignedPhm.isPresent()) {
+                    profile.setPhmProfile(assignedPhm.get());
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No PHM assigned to division: " + request.getResidentialDivision());
+                }
+            }
 
             motherProfileRepository.save(profile);
 

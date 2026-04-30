@@ -1,16 +1,16 @@
 import axios from "axios";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useVideoPlayer, VideoView } from "expo-video";
+import { ChevronLeft } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
-  View,
   TouchableOpacity,
+  View,
 } from "react-native";
-import { useVideoPlayer, VideoView } from 'expo-video';
-import { ChevronLeft } from "lucide-react-native";
 
 export default function WeekDetails() {
   const { id } = useLocalSearchParams();
@@ -22,46 +22,88 @@ export default function WeekDetails() {
   // This maps the ID to your physical files in assets/videos/
   const getVideoSource = (weekId: string | string[]) => {
     switch (weekId) {
-      case "1": return require("../../assets/videos/week1.mp4");
-      case "2": return require("../../assets/videos/week2.mp4");
-      case "3": return require("../../assets/videos/week3.mp4");
-      case "4": return require("../../assets/videos/week4.mp4");
-      case "5": return require("../../assets/videos/week5.mp4");
-      case "6": return require("../../assets/videos/week6.mp4");
-      case "7": return require("../../assets/videos/week7.mp4");
-      case "8": return require("../../assets/videos/week8.mp4");
-      case "9": return require("../../assets/videos/week2.mp4");
-      case "10": return require("../../assets/videos/week2.mp4");
-      case "11": return require("../../assets/videos/week2.mp4");
-      case "12": return require("../../assets/videos/week12.mp4");
-      case "13": return require("../../assets/videos/week13.mp4");
-      case "14": return require("../../assets/videos/week14.mp4");
-      case "15": return require("../../assets/videos/week15.mp4");
-      case "16": return require("../../assets/videos/week16.mp4");
-      case "17": return require("../../assets/videos/week17.mp4");
-      case "18": return require("../../assets/videos/week18.mp4");
-      case "19": return require("../../assets/videos/week19.mp4");
-      case "20": return require("../../assets/videos/week20.mp4");
-      case "21": return require("../../assets/videos/week21.mp4");
-      case "22": return require("../../assets/videos/week22.mp4");
-      case "23": return require("../../assets/videos/week23.mp4");
-      case "24": return require("../../assets/videos/week24.mp4");
-      case "25": return require("../../assets/videos/week25.mp4");
-      case "26": return require("../../assets/videos/week26.mp4");
-      case "27": return require("../../assets/videos/week27.mp4");
-      case "28": return require("../../assets/videos/week28.mp4");
-      case "29": return require("../../assets/videos/week2.mp4");
-      case "30": return require("../../assets/videos/week2.mp4");
-      case "31": return require("../../assets/videos/week2.mp4");
-      case "32": return require("../../assets/videos/week2.mp4");
-      case "33": return require("../../assets/videos/week2.mp4");
-      case "34": return require("../../assets/videos/week2.mp4");
-      case "35": return require("../../assets/videos/week2.mp4");
-      case "36": return require("../../assets/videos/week2.mp4");
-      case "37": return require("../../assets/videos/week2.mp4");case "2": return require("../../assets/videos/week2.mp4");
-      case "38": return require("../../assets/videos/week2.mp4");
-      case "39": return require("../../assets/videos/week2.mp4");
-      case "40": return require("../../assets/videos/week2.mp4");
+      case "1":
+        return require("../../assets/videos/week1.mp4");
+      case "2":
+        return require("../../assets/videos/week2.mp4");
+      case "3":
+        return require("../../assets/videos/week3.mp4");
+      case "4":
+        return require("../../assets/videos/week4.mp4");
+      case "5":
+        return require("../../assets/videos/week5.mp4");
+      case "6":
+        return require("../../assets/videos/week6.mp4");
+      case "7":
+        return require("../../assets/videos/week7.mp4");
+      case "8":
+        return require("../../assets/videos/week8.mp4");
+      case "9":
+        return require("../../assets/videos/week2.mp4");
+      case "10":
+        return require("../../assets/videos/week2.mp4");
+      case "11":
+        return require("../../assets/videos/week2.mp4");
+      case "12":
+        return require("../../assets/videos/week12.mp4");
+      case "13":
+        return require("../../assets/videos/week13.mp4");
+      case "14":
+        return require("../../assets/videos/week14.mp4");
+      case "15":
+        return require("../../assets/videos/week15.mp4");
+      case "16":
+        return require("../../assets/videos/week16.mp4");
+      case "17":
+        return require("../../assets/videos/week17.mp4");
+      case "18":
+        return require("../../assets/videos/week18.mp4");
+      case "19":
+        return require("../../assets/videos/week19.mp4");
+      case "20":
+        return require("../../assets/videos/week20.mp4");
+      case "21":
+        return require("../../assets/videos/week21.mp4");
+      case "22":
+        return require("../../assets/videos/week22.mp4");
+      case "23":
+        return require("../../assets/videos/week23.mp4");
+      case "24":
+        return require("../../assets/videos/week24.mp4");
+      case "25":
+        return require("../../assets/videos/week25.mp4");
+      case "26":
+        return require("../../assets/videos/week26.mp4");
+      case "27":
+        return require("../../assets/videos/week27.mp4");
+      case "28":
+        return require("../../assets/videos/week28.mp4");
+      case "29":
+        return require("../../assets/videos/week2.mp4");
+      case "30":
+        return require("../../assets/videos/week2.mp4");
+      case "31":
+        return require("../../assets/videos/week2.mp4");
+      case "32":
+        return require("../../assets/videos/week2.mp4");
+      case "33":
+        return require("../../assets/videos/week2.mp4");
+      case "34":
+        return require("../../assets/videos/week2.mp4");
+      case "35":
+        return require("../../assets/videos/week2.mp4");
+      case "36":
+        return require("../../assets/videos/week2.mp4");
+      case "37":
+        return require("../../assets/videos/week2.mp4");
+      case "2":
+        return require("../../assets/videos/week2.mp4");
+      case "38":
+        return require("../../assets/videos/week2.mp4");
+      case "39":
+        return require("../../assets/videos/week2.mp4");
+      case "40":
+        return require("../../assets/videos/week2.mp4");
     }
   };
 
@@ -72,7 +114,7 @@ export default function WeekDetails() {
 
   useEffect(() => {
     // 🟢 Ensure this IP matches your laptop's current IPv4
-    const fetchUrl = `http://172.20.10.4:8080/api/weekly-milestones/${id}`;
+    const fetchUrl = `http://172.20.10.2:8080/api/weekly-milestones/${id}`;
 
     axios
       .get(fetchUrl)
@@ -107,11 +149,11 @@ export default function WeekDetails() {
 
       {/* 📹 VIDEO PLAYER SECTION */}
       <View style={styles.videoWrapper}>
-        <VideoView 
-          style={styles.video} 
-          player={player} 
-          allowsFullscreen 
-          allowsPictureInPicture 
+        <VideoView
+          style={styles.video}
+          player={player}
+          allowsFullscreen
+          allowsPictureInPicture
           nativeControls={false} // Set to true if you want play/pause buttons
         />
         <View style={styles.videoOverlay}>
@@ -136,7 +178,7 @@ export default function WeekDetails() {
           {/* BABY DEVELOPMENT */}
           <View style={styles.infoCard}>
             <Text style={styles.cardHeader}>👶 Your Baby's Development</Text>
-            <Text style={styles.cardText}>{data.babyDevelopment }</Text>
+            <Text style={styles.cardText}>{data.babyDevelopment}</Text>
           </View>
 
           {/* MOTHER'S CHANGES */}
@@ -169,71 +211,105 @@ export default function WeekDetails() {
 const styles = StyleSheet.create({
   container: { padding: 20, backgroundColor: "#FDF2F8", flexGrow: 1 },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  backButton: { 
-    flexDirection: "row", 
-    alignItems: "center", 
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
-    marginTop: 10 
+    marginTop: 10,
   },
-  backText: { color: "#ED70A1", fontSize: 18, fontWeight: "600", marginLeft: 5 },
+  backText: {
+    color: "#ED70A1",
+    fontSize: 18,
+    fontWeight: "600",
+    marginLeft: 5,
+  },
   header: {
     fontSize: 32,
     fontWeight: "bold",
     color: "#ED70A1",
     marginBottom: 20,
-    textAlign: "center"
+    textAlign: "center",
   },
   videoWrapper: {
-    width: '100%',
+    width: "100%",
     height: 250,
-    backgroundColor: 'black',
+    backgroundColor: "black",
     borderRadius: 25,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: 25,
     elevation: 5,
   },
-  video: { width: '100%', height: '100%' },
+  video: { width: "100%", height: "100%" },
   videoOverlay: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 12,
     left: 15,
-    backgroundColor: 'rgba(237, 112, 161, 0.8)',
+    backgroundColor: "rgba(237, 112, 161, 0.8)",
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 12,
   },
-  overlayText: { color: 'white', fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase' },
+  overlayText: {
+    color: "white",
+    fontSize: 10,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+  },
   content: { paddingBottom: 20 },
-  statsRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
-  statCard: { 
-    backgroundColor: 'white', 
-    width: '48%', 
-    padding: 15, 
-    borderRadius: 20, 
-    alignItems: 'center',
-    elevation: 2 
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
   },
-  infoCard: { 
-    backgroundColor: "white", 
-    padding: 20, 
-    borderRadius: 20, 
-    marginBottom: 15, 
-    elevation: 2 
+  statCard: {
+    backgroundColor: "white",
+    width: "48%",
+    padding: 15,
+    borderRadius: 20,
+    alignItems: "center",
+    elevation: 2,
   },
-  cardHeader: { fontSize: 18, fontWeight: "bold", color: "#DB2777", marginBottom: 8 },
+  infoCard: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 20,
+    marginBottom: 15,
+    elevation: 2,
+  },
+  cardHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#DB2777",
+    marginBottom: 8,
+  },
   cardText: { fontSize: 15, color: "#4B5563", lineHeight: 22 },
-  clinicCard: { 
-    padding: 20, 
-    borderRadius: 20, 
-    backgroundColor: "#E0F2FE", 
-    borderStyle: 'dashed', 
-    borderWidth: 2, 
-    borderColor: "#0369A1", 
-    marginBottom: 15 
+  clinicCard: {
+    padding: 20,
+    borderRadius: 20,
+    backgroundColor: "#E0F2FE",
+    borderStyle: "dashed",
+    borderWidth: 2,
+    borderColor: "#0369A1",
+    marginBottom: 15,
   },
-  clinicHeader: { fontSize: 17, fontWeight: "bold", color: "#0369A1", marginBottom: 5 },
-  clinicText: { fontSize: 14, color: "#0C4A6E", fontWeight: "500", lineHeight: 20 },
-  label: { fontSize: 12, color: "#9CA3AF", fontWeight: "700", textTransform: 'uppercase' },
+  clinicHeader: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#0369A1",
+    marginBottom: 5,
+  },
+  clinicText: {
+    fontSize: 14,
+    color: "#0C4A6E",
+    fontWeight: "500",
+    lineHeight: 20,
+  },
+  label: {
+    fontSize: 12,
+    color: "#9CA3AF",
+    fontWeight: "700",
+    textTransform: "uppercase",
+  },
   value: { fontSize: 16, color: "#1F2937", fontWeight: "bold", marginTop: 4 },
   tipContainer: {
     marginTop: 10,
@@ -241,10 +317,20 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     borderLeftWidth: 5,
-    borderLeftColor: "#ED70A1"
+    borderLeftColor: "#ED70A1",
   },
-  tipTitle: { fontSize: 20, fontWeight: "bold", color: "#DB2777", marginBottom: 8 },
-  tipText: { fontSize: 16, color: "#4B5563", lineHeight: 24, fontStyle: "italic" },
+  tipTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#DB2777",
+    marginBottom: 8,
+  },
+  tipText: {
+    fontSize: 16,
+    color: "#4B5563",
+    lineHeight: 24,
+    fontStyle: "italic",
+  },
   loadingText: { marginTop: 10, color: "#ED70A1" },
   errorText: { textAlign: "center", color: "#6B7280", marginTop: 50 },
 });

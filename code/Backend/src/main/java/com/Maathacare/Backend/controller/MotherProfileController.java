@@ -7,6 +7,8 @@ import com.Maathacare.Backend.service.MotherProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/mothers")
 @CrossOrigin(origins = "*")
@@ -39,6 +41,16 @@ public class MotherProfileController {
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Profile not found: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/phm/{userId}/patients")
+    public ResponseEntity<?> getPhmPatients(@PathVariable String userId) {
+        try {
+            List<MotherProfileResponse> patients = motherProfileService.getPatientsForPhm(userId);
+            return ResponseEntity.ok(patients);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

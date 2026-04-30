@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useFocusEffect, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import {
@@ -16,26 +17,23 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// 🍎🤖 CROSS-PLATFORM IMPORT
-import DateTimePicker from "@react-native-community/datetimepicker";
-
-// ⚠️ UPDATE THIS IP: Make sure this is your current computer Wi-Fi IP address!
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://172.20.10.2:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [phmInfo, setPhmInfo] = useState<any>(null);
   const [patients, setPatients] = useState([]);
-  const [searchNic, setSearchNic] = useState("");
+  const [activeTab, setActiveTab] = useState<
+    "Home" | "Appointment" | "Profile"
+  >("Home");
 
-  // Appointment States
+  // Appointment & Search States
+  const [searchNic, setSearchNic] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMother, setSelectedMother] = useState<any>(null);
   const [date, setDate] = useState(new Date());
   const [remarks, setRemarks] = useState("");
-
-  // 🍎🤖 Cross-Platform Picker States
   const [showPicker, setShowPicker] = useState(false);
   const [pickerMode, setPickerMode] = useState<"date" | "time">("date");
 
@@ -53,23 +51,14 @@ export default function PHMDashboard() {
         return;
       }
 
-      const profileRes = await fetch(`${API_BASE_URL}/api/phm/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const headers = { Authorization: `Bearer ${token}` };
+      const [profileRes, patientsRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/phm/me`, { headers }),
+        fetch(`${API_BASE_URL}/api/phm/patients`, { headers }),
+      ]);
 
-      if (profileRes.ok) {
-        const profileData = await profileRes.json();
-        setPhmInfo(profileData);
-      }
-
-      const patientsRes = await fetch(`${API_BASE_URL}/api/phm/patients`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (patientsRes.ok) {
-        const patientsData = await patientsRes.json();
-        setPatients(patientsData);
-      }
+      if (profileRes.ok) setPhmInfo(await profileRes.json());
+      if (patientsRes.ok) setPatients(await patientsRes.json());
     } catch (error) {
       console.error("Dashboard Load Error:", error);
     } finally {
@@ -99,37 +88,7 @@ export default function PHMDashboard() {
       }
     } catch (error) {
       console.error("Assignment Error:", error);
-      Alert.alert("Network Error", "Could not connect to the server.");
     }
-  };
-
-  // 🍎🤖 CROSS-PLATFORM PICKER LOGIC
-  const onChangeDate = (event: any, selectedDate?: Date) => {
-    // If user cancelled on Android, close picker
-    if (event.type === "dismissed") {
-      setShowPicker(false);
-      return;
-    }
-
-    const currentDate = selectedDate || date;
-    setDate(currentDate);
-
-    // If we are on Android, we need to hide the picker after selection
-    // and then pop up the time picker if we just finished picking the date
-    if (Platform.OS === "android") {
-      setShowPicker(false);
-      if (pickerMode === "date") {
-        setTimeout(() => {
-          setPickerMode("time");
-          setShowPicker(true);
-        }, 100);
-      }
-    }
-  };
-
-  const openPicker = () => {
-    setPickerMode("date");
-    setShowPicker(true);
   };
 
   const handleSaveAppointment = async () => {
@@ -160,18 +119,175 @@ export default function PHMDashboard() {
         Alert.alert("Success", "Appointment set successfully!");
         setModalVisible(false);
         setRemarks("");
-      } else {
-        Alert.alert("Error", "Failed to schedule appointment.");
       }
     } catch (error) {
       Alert.alert("Error", "Could not connect to server.");
     }
   };
 
-  const handleLogout = async () => {
-    await AsyncStorage.clear();
-    router.replace("/");
+  const onChangeDate = (event: any, selectedDate?: Date) => {
+    if (event.type === "dismissed") {
+      setShowPicker(false);
+      return;
+    }
+    const currentDate = selectedDate || date;
+    setDate(currentDate);
+
+    if (Platform.OS === "android") {
+      setShowPicker(false);
+      if (pickerMode === "date") {
+        setTimeout(() => {
+          setPickerMode("time");
+          setShowPicker(true);
+        }, 100);
+      }
+    }
   };
+
+  // --- TAB RENDERING ---
+
+  const renderHome = () => (
+    <View style={styles.contentSection}>
+      <View style={styles.statsRow}>
+        <View style={styles.statCard}>
+          <Text style={styles.statNumber}>{patients.length}</Text>
+          <Text style={styles.statLabel}>Total Patients</Text>
+        </View>
+        <View style={styles.statCard}>
+          <Text style={[styles.statNumber, { color: "#059669" }]}>Active</Text>
+          <Text style={styles.statLabel}>Service Status</Text>
+        </View>
+      </View>
+
+      <View style={styles.searchSection}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Enter NIC to link mother..."
+          placeholderTextColor="#94A3B8"
+          value={searchNic}
+          onChangeText={setSearchNic}
+        />
+        <TouchableOpacity style={styles.addBtn} onPress={handleAssignMother}>
+          <Text style={styles.addBtnText}>Add</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.sectionTitle}>Maternal Care List</Text>
+      <FlatList
+        data={patients}
+        keyExtractor={(item: any) => item.id}
+        renderItem={({ item }: any) => (
+          <View style={styles.patientCard}>
+            <TouchableOpacity
+              style={{ flex: 1 }}
+              onPress={() =>
+                router.push({
+                  pathname: "/mother_details" as any,
+                  params: { motherId: item.user?.userId },
+                })
+              }
+            >
+              <Text style={styles.patientName}>{item.fullName}</Text>
+              <Text style={styles.patientDetails}>
+                NIC: {item.nic} • Blood: {item.bloodGroup}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionCircle}
+              onPress={() =>
+                router.push({
+                  pathname: "/mother_details" as any,
+                  params: { motherId: item.user?.userId },
+                })
+              }
+            >
+              <Text style={{ fontSize: 14 }}>👤</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+    </View>
+  );
+
+  const renderAppointments = () => (
+    <View style={styles.contentSection}>
+      <Text style={styles.sectionTitle}>Schedule Checkup</Text>
+      <FlatList
+        data={patients}
+        keyExtractor={(item: any) => item.id}
+        renderItem={({ item }: any) => (
+          <View style={styles.patientCard}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.patientName}>{item.fullName}</Text>
+              <Text style={styles.patientDetails}>
+                Schedule next routine visit
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.scheduleBtn}
+              onPress={() => {
+                setSelectedMother(item);
+                setModalVisible(true);
+              }}
+            >
+              <Text style={styles.scheduleBtnText}>📅 Schedule</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>
+            No patients assigned to schedule.
+          </Text>
+        }
+      />
+    </View>
+  );
+
+  const renderProfile = () => (
+    <View style={styles.contentSection}>
+      <View style={styles.profileAvatarSection}>
+        <View style={styles.avatarCircle}>
+          <Text style={styles.avatarText}>
+            {phmInfo?.fullName?.charAt(0) || "P"}
+          </Text>
+        </View>
+        <Text style={styles.profileMainName}>{phmInfo?.fullName}</Text>
+        <Text style={styles.profileMainId}>
+          Public Health Midwife • ID: {phmInfo?.staffId}
+        </Text>
+      </View>
+
+      <View style={styles.infoCard}>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Assigned Area</Text>
+          <Text style={styles.infoValue}>{phmInfo?.mohArea}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Phone Number</Text>
+          <Text style={styles.infoValue}>
+            {phmInfo?.phoneNumber || "Not Set"}
+          </Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={styles.changePassBtn}
+        onPress={() => router.push("/phm/change-password" as any)}
+      >
+        <Text style={styles.changePassText}>🔑 Change Password</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.logoutBtn}
+        onPress={async () => {
+          await AsyncStorage.clear();
+          router.replace("/");
+        }}
+      >
+        <Text style={styles.logoutText}>Log Out</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   if (loading)
     return (
@@ -184,102 +300,83 @@ export default function PHMDashboard() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0056b3" />
 
-      <View style={styles.header}>
-        <View style={styles.headerRow}>
-          <Text style={styles.portalLabel}>PHM PORTAL</Text>
-          <TouchableOpacity onPress={handleLogout} style={styles.logoutBtn}>
-            <Text style={styles.logoutText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.welcomeText}>Welcome back,</Text>
-        <Text style={styles.phmName}>
-          {phmInfo?.fullName || "Staff Member"}
-        </Text>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: 5,
-          }}
-        >
-          <Text style={styles.areaLabel}>
-            📍 {phmInfo?.mohArea || "Assigned Area"}
-          </Text>
-
-          <TouchableOpacity
-            style={{
-              backgroundColor: "rgba(255,255,255,0.2)",
-              paddingVertical: 6,
-              paddingHorizontal: 12,
-              borderRadius: 8,
-            }}
-            onPress={() => router.push("/phm/change-password")}
-          >
-            <Text style={{ color: "white", fontWeight: "bold", fontSize: 12 }}>
-              🔑 Change Password
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.slimHeader}>
+        <Text style={styles.headerPortalText}>MAATHACARE PORTAL</Text>
+        <Text style={styles.headerLocationText}>📍 {phmInfo?.mohArea}</Text>
       </View>
 
-      <View style={styles.searchSection}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Enter Mother's NIC to add..."
-          value={searchNic}
-          onChangeText={setSearchNic}
-        />
-        <TouchableOpacity style={styles.addBtn} onPress={handleAssignMother}>
-          <Text style={styles.addBtnText}>Add to List</Text>
+      <View style={{ flex: 1 }}>
+        {activeTab === "Home" && renderHome()}
+        {activeTab === "Appointment" && renderAppointments()}
+        {activeTab === "Profile" && renderProfile()}
+      </View>
+
+      <View style={styles.tabBar}>
+        <TouchableOpacity
+          onPress={() => setActiveTab("Home")}
+          style={styles.tabButton}
+        >
+          <Text
+            style={[
+              styles.tabIcon,
+              activeTab === "Home" && styles.tabActiveText,
+            ]}
+          >
+            🏠
+          </Text>
+          <Text
+            style={[
+              styles.tabLabel,
+              activeTab === "Home" && styles.tabActiveText,
+            ]}
+          >
+            Home
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setActiveTab("Appointment")}
+          style={styles.tabButton}
+        >
+          <Text
+            style={[
+              styles.tabIcon,
+              activeTab === "Appointment" && styles.tabActiveText,
+            ]}
+          >
+            📅
+          </Text>
+          <Text
+            style={[
+              styles.tabLabel,
+              activeTab === "Appointment" && styles.tabActiveText,
+            ]}
+          >
+            Appointments
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setActiveTab("Profile")}
+          style={styles.tabButton}
+        >
+          <Text
+            style={[
+              styles.tabIcon,
+              activeTab === "Profile" && styles.tabActiveText,
+            ]}
+          >
+            👤
+          </Text>
+          <Text
+            style={[
+              styles.tabLabel,
+              activeTab === "Profile" && styles.tabActiveText,
+            ]}
+          >
+            Profile
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.listSection}>
-        <Text style={styles.sectionTitle}>
-          Your Patient List ({patients.length})
-        </Text>
-        <FlatList
-          data={patients}
-          keyExtractor={(item: any) => item.id}
-          renderItem={({ item }: any) => (
-            <View style={styles.patientCard}>
-              <TouchableOpacity
-                style={{ flex: 1 }}
-                onPress={() =>
-                  router.push({
-                    pathname: "/mother_details",
-                    params: { motherId: item.user?.userId },
-                  })
-                }
-              >
-                <Text style={styles.patientName}>{item.fullName}</Text>
-                <Text style={styles.patientDetails}>
-                  NIC: {item.nic} | Blood: {item.bloodGroup}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.scheduleBtn}
-                onPress={() => {
-                  setSelectedMother(item);
-                  setModalVisible(true);
-                }}
-              >
-                <Text style={styles.scheduleBtnText}>📅</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>
-              No patients assigned to you yet.
-            </Text>
-          }
-        />
-      </View>
-
-      {/* Appointment Modal */}
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -288,96 +385,31 @@ export default function PHMDashboard() {
               Patient: {selectedMother?.fullName}
             </Text>
 
-            {/* 📅 FIXED: Better styling so it looks like a button, not a text box */}
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "600",
-                color: "#475569",
-                marginBottom: 5,
-              }}
-            >
-              Select Date & Time
-            </Text>
             <TouchableOpacity
-              onPress={openPicker}
+              onPress={() => {
+                setPickerMode("date");
+                setShowPicker(true);
+              }}
               style={styles.dateSelectorButton}
             >
               <Text style={styles.dateSelectorText}>
-                {/* FIXED: Manual formatting that works 100% perfectly on iPhone */}
                 {`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} at ${String(date.getHours() % 12 || 12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")} ${date.getHours() >= 12 ? "PM" : "AM"}`}
               </Text>
-              <Text style={{ fontSize: 18 }}>🗓️</Text>
             </TouchableOpacity>
 
-            {/* The Actual Cross-Platform Picker component */}
             {showPicker && (
-              <View
-                style={
-                  Platform.OS === "ios"
-                    ? {
-                        marginBottom: 15,
-                        backgroundColor: "#f8fafc",
-                        borderRadius: 10,
-                      }
-                    : {}
-                }
-              >
-                <DateTimePicker
-                  value={date}
-                  mode={pickerMode}
-                  is24Hour={false}
-                  display={Platform.OS === "ios" ? "spinner" : "default"}
-                  onChange={onChangeDate}
-                />
-                {Platform.OS === "ios" && (
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (pickerMode === "date") {
-                        setPickerMode("time");
-                      } else {
-                        setShowPicker(false);
-                      }
-                    }}
-                    style={{
-                      padding: 12,
-                      alignItems: "center",
-                      backgroundColor: "#e2e8f0",
-                      borderBottomLeftRadius: 10,
-                      borderBottomRightRadius: 10,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontWeight: "bold",
-                        color: "#0056b3",
-                        fontSize: 16,
-                      }}
-                    >
-                      {pickerMode === "date"
-                        ? "Next: Set Time"
-                        : "Confirm Time"}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+              <DateTimePicker
+                value={date}
+                mode={pickerMode}
+                is24Hour={false}
+                display={Platform.OS === "ios" ? "spinner" : "default"}
+                onChange={onChangeDate}
+              />
             )}
 
-            {/* ✍️ FIXED: Added placeholderTextColor and text color so it is actually visible! */}
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "600",
-                color: "#475569",
-                marginBottom: 5,
-                marginTop: 10,
-              }}
-            >
-              Appointment Reason
-            </Text>
             <TextInput
               style={styles.modalInput}
-              placeholder="e.g. Monthly Checkup"
+              placeholder="Reason (e.g. Monthly Checkup)"
               placeholderTextColor="#94A3B8"
               value={remarks}
               onChangeText={setRemarks}
@@ -385,10 +417,7 @@ export default function PHMDashboard() {
 
             <View style={styles.modalActions}>
               <TouchableOpacity
-                onPress={() => {
-                  setModalVisible(false);
-                  setShowPicker(false);
-                }}
+                onPress={() => setModalVisible(false)}
                 style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
               >
                 <Text style={{ color: "#475569", fontWeight: "bold" }}>
@@ -400,7 +429,7 @@ export default function PHMDashboard() {
                 style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
               >
                 <Text style={{ color: "white", fontWeight: "bold" }}>
-                  Confirm & Schedule
+                  Confirm
                 </Text>
               </TouchableOpacity>
             </View>
@@ -414,66 +443,136 @@ export default function PHMDashboard() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F8FAFC" },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  header: {
+  slimHeader: {
     backgroundColor: "#0056b3",
-    padding: 25,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
-  },
-  headerRow: {
+    padding: 15,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
   },
-  portalLabel: { color: "#BBDEFB", fontWeight: "bold", fontSize: 12 },
-  logoutBtn: {
-    backgroundColor: "rgba(255,255,255,0.2)",
-    padding: 8,
-    borderRadius: 10,
+  headerPortalText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 11,
+    letterSpacing: 1,
   },
-  logoutText: { color: "white", fontSize: 12, fontWeight: "bold" },
-  welcomeText: { color: "#E3F2FD", fontSize: 16 },
-  phmName: { color: "white", fontSize: 28, fontWeight: "bold" },
-  areaLabel: { color: "#BBDEFB", fontSize: 14, marginTop: 5 },
-  searchSection: { flexDirection: "row", padding: 20, gap: 10 },
+  headerLocationText: { color: "#BBDEFB", fontSize: 11 },
+  contentSection: { flex: 1, padding: 20 },
+  statsRow: { flexDirection: "row", gap: 15, marginBottom: 20 },
+  statCard: {
+    flex: 1,
+    backgroundColor: "white",
+    padding: 15,
+    borderRadius: 15,
+    elevation: 2,
+    alignItems: "center",
+  },
+  statNumber: { fontSize: 20, fontWeight: "bold", color: "#0056b3" },
+  statLabel: { fontSize: 11, color: "#64748B", marginTop: 4 },
+  searchSection: { flexDirection: "row", gap: 10, marginBottom: 20 },
   searchInput: {
     flex: 1,
     backgroundColor: "white",
     padding: 12,
     borderRadius: 12,
-    elevation: 2,
     borderWidth: 1,
     borderColor: "#E2E8F0",
   },
   addBtn: {
     backgroundColor: "#0056b3",
-    paddingHorizontal: 15,
-    justifyContent: "center",
+    paddingHorizontal: 20,
     borderRadius: 12,
+    justifyContent: "center",
   },
   addBtnText: { color: "white", fontWeight: "bold" },
-  listSection: { flex: 1, paddingHorizontal: 20 },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#1E293B",
     marginBottom: 15,
   },
   patientCard: {
     backgroundColor: "white",
-    padding: 18,
-    borderRadius: 15,
+    padding: 16,
+    borderRadius: 16,
     marginBottom: 12,
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    elevation: 1,
+    elevation: 2,
   },
-  patientName: { fontSize: 16, fontWeight: "bold", color: "#333" },
-  patientDetails: { fontSize: 13, color: "#64748B", marginTop: 4 },
-  scheduleBtn: { backgroundColor: "#F1F5F9", padding: 10, borderRadius: 10 },
-  scheduleBtnText: { fontSize: 18 },
+  patientName: { fontSize: 15, fontWeight: "bold", color: "#334155" },
+  patientDetails: { fontSize: 12, color: "#64748B", marginTop: 2 },
+  actionCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scheduleBtn: {
+    backgroundColor: "#0056b3",
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+  },
+  scheduleBtnText: { color: "white", fontSize: 12, fontWeight: "bold" },
+  profileAvatarSection: { alignItems: "center", marginVertical: 20 },
+  avatarCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#0056b3",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  avatarText: { color: "white", fontSize: 32, fontWeight: "bold" },
+  profileMainName: { fontSize: 24, fontWeight: "bold", color: "#1E293B" },
+  profileMainId: { fontSize: 13, color: "#64748B" },
+  infoCard: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 20,
+    elevation: 2,
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F1F5F9",
+  },
+  infoLabel: { color: "#64748B", fontSize: 13 },
+  infoValue: { fontWeight: "bold", fontSize: 13, color: "#1E293B" },
+  tabBar: {
+    flexDirection: "row",
+    height: 75,
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderColor: "#E2E8F0",
+    paddingBottom: 10,
+  },
+  tabButton: { flex: 1, justifyContent: "center", alignItems: "center" },
+  tabIcon: { fontSize: 20, color: "#94A3B8" },
+  tabLabel: { fontSize: 10, color: "#94A3B8", marginTop: 4 },
+  tabActiveText: { color: "#0056b3", fontWeight: "bold" }, // 🟢 Matches what you use in TabBar
+  changePassBtn: {
+    marginTop: 20,
+    backgroundColor: "#F1F5F9",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  changePassText: { color: "#0056b3", fontWeight: "bold" },
+  logoutBtn: {
+    marginTop: 15,
+    backgroundColor: "#FEE2E2",
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  logoutText: { color: "#B91C1C", fontWeight: "bold" },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -488,24 +587,6 @@ const styles = StyleSheet.create({
   },
   modalTitle: { fontSize: 20, fontWeight: "bold", color: "#1E293B" },
   modalSub: { color: "#64748B", marginBottom: 20 },
-  dateSelector: {
-    backgroundColor: "#F8FAFC",
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    marginBottom: 15,
-  },
-  dateText: { fontSize: 16, color: "#1E293B" },
-  modalInput: {
-    backgroundColor: "#F8FAFC",
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    marginBottom: 20,
-  },
-
   dateSelectorButton: {
     backgroundColor: "#EFF6FF",
     padding: 15,
@@ -513,11 +594,22 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#BFDBFE",
     marginBottom: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
-  dateSelectorText: { fontSize: 16, color: "#1D4ED8", fontWeight: "bold" },
+  dateSelectorText: {
+    fontSize: 15,
+    color: "#1D4ED8",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalInput: {
+    backgroundColor: "#F8FAFC",
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    marginBottom: 20,
+    color: "#333",
+  },
   modalActions: { flexDirection: "row", justifyContent: "flex-end", gap: 10 },
   modalBtn: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8 },
   emptyText: { textAlign: "center", color: "#94A3B8", marginTop: 40 },

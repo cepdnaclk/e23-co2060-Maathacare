@@ -1,6 +1,7 @@
 package com.Maathacare.Backend.repository;
 
 import com.Maathacare.Backend.model.entity.MotherProfile;
+import com.Maathacare.Backend.model.entity.PHMProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -15,4 +16,5 @@ public interface MotherProfileRepository extends JpaRepository<MotherProfile, St
     List<MotherProfile> findByPhmProfile_Id(String phmId);
     // This finds a mother by her NIC number
     Optional<MotherProfile> findByNic(String nic);
+    List<MotherProfile> findByPhmProfile(PHMProfile phmProfile);
 }
