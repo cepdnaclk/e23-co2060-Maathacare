@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 // 🌍 Use your current active IP
-const API_BASE_URL = "http://192.168.131.223:8080";
+const API_BASE_URL = "http://172.20.10.2:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
@@ -31,7 +31,12 @@ export default function ProfileScreen() {
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
 
-      console.log("🔍 Checking Profile Storage - ID:", userId, "Token exists:", !!token);
+      console.log(
+        "🔍 Checking Profile Storage - ID:",
+        userId,
+        "Token exists:",
+        !!token,
+      );
 
       // 🛡️ Security Guard
       if (!token || !userId) {
@@ -44,7 +49,7 @@ export default function ProfileScreen() {
         `${API_BASE_URL}/api/mothers/profile/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       console.log("Backend sent profile data:", response.data);
@@ -52,7 +57,10 @@ export default function ProfileScreen() {
     } catch (error: any) {
       console.error("Profile Fetch Error:", error);
       if (error.response?.status === 403) {
-        Alert.alert("Security Error", "Your session has expired. Please log in again.");
+        Alert.alert(
+          "Security Error",
+          "Your session has expired. Please log in again.",
+        );
       }
     } finally {
       setLoading(false);
@@ -93,7 +101,10 @@ export default function ProfileScreen() {
         <DetailItem label="Full Name" value={profile?.fullName} />
         <DetailItem label="NIC Number" value={profile?.nic} />
         <DetailItem label="Blood Group" value={profile?.bloodGroup} />
-        <DetailItem label="Emergency Contact" value={profile?.emergencyContactNumber} />
+        <DetailItem
+          label="Emergency Contact"
+          value={profile?.emergencyContactNumber}
+        />
         <DetailItem label="Address" value={profile?.address} />
         <DetailItem label="District" value={profile?.district} />
         <DetailItem label="Province" value={profile?.province} />

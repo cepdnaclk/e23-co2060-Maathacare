@@ -14,6 +14,7 @@ public class MotherProfileRequest {
     private String emergencyContactNumber;
     private String address;
     private String chronicDiseaseStatus;
+    private String residentialDivision;
     private String district;
     private String province;
 
@@ -86,6 +87,15 @@ public class MotherProfileRequest {
 
 
     }
+
+    public String getResidentialDivision() {
+        return residentialDivision;
+    }
+
+    public void setResidentialDivision(String residentialDivision) {
+        this.residentialDivision = residentialDivision;
+    }
+
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }
 

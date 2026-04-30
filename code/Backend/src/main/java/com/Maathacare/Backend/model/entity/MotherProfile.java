@@ -45,6 +45,9 @@ public class MotherProfile {
     @Column(name = "last_menstrual_period")
     private LocalDate lastMenstrualPeriod;
 
+    @Column(name = "residential_division")
+    private String residentialDivision;
+
     @Column(name = "district", length = 50)
     private String district;
 
@@ -104,6 +107,9 @@ public class MotherProfile {
 
     public ZonedDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getResidentialDivision() { return residentialDivision; }
+    public void setResidentialDivision(String residentialDivision) { this.residentialDivision = residentialDivision; }
 
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }

@@ -7,18 +7,24 @@ import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import com.Maathacare.Backend.model.entity.PHMProfile;
+import com.Maathacare.Backend.repository.PHMProfileRepository;
 
 import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MotherProfileService {
 
     private final MotherProfileRepository motherProfileRepository;
     private final UserRepository userRepository;
+    private final PHMProfileRepository phmProfileRepository;
 
-    public MotherProfileService(MotherProfileRepository motherProfileRepository, UserRepository userRepository) {
+    public MotherProfileService(MotherProfileRepository motherProfileRepository, UserRepository userRepository, PHMProfileRepository phmProfileRepository) {
         this.motherProfileRepository = motherProfileRepository;
         this.userRepository = userRepository;
+        this.phmProfileRepository = phmProfileRepository;
     }
 
     public MotherProfile createMotherProfile(MotherProfileRequest request) {
@@ -42,9 +48,19 @@ public class MotherProfileService {
         newProfile.setLastMenstrualPeriod(request.getLastMenstrualPeriod());
         newProfile.setEmergencyContactNumber(request.getEmergencyContactNumber());
         newProfile.setAddress(request.getAddress());
+        newProfile.setResidentialDivision(request.getResidentialDivision());
         newProfile.setDistrict(request.getDistrict());
         newProfile.setProvince(request.getProvince());
         newProfile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
+
+        if (request.getResidentialDivision() != null) {
+            Optional<PHMProfile> assignedPhm = phmProfileRepository.findByPhmDivision(request.getResidentialDivision());
+            if (assignedPhm.isPresent()) {
+                newProfile.setPhmProfile(assignedPhm.get());
+            } else {
+                throw new RuntimeException("No PHM assigned to division: " + request.getResidentialDivision());
+            }
+        }
 
         return motherProfileRepository.save(newProfile);
     }
@@ -66,5 +82,31 @@ public class MotherProfileService {
         response.setProvince(profile.getProvince()); // 🟢 Now mapped
 
         return response;
+    }
+
+    public List<MotherProfileResponse> getPatientsForPhm(String phmUserId) {
+        Optional<PHMProfile> phmOptional = phmProfileRepository.findByUserUserId(phmUserId);
+
+        if (phmOptional.isEmpty()) {
+            throw new RuntimeException("PHM Profile not found for this user!");
+        }
+
+        // Find all mothers linked to this specific PHM
+        List<MotherProfile> patients = motherProfileRepository.findByPhmProfile(phmOptional.get());
+
+        // Convert the database entities into nice, clean DTOs for the mobile app
+        return patients.stream().map(profile -> {
+            MotherProfileResponse response = new MotherProfileResponse();
+            response.setFullName(profile.getFullName());
+            response.setNic(profile.getNic());
+            response.setDateOfBirth(profile.getDateOfBirth());
+            response.setAddress(profile.getAddress());
+            response.setEmergencyContactNumber(profile.getEmergencyContactNumber());
+            response.setLastMenstrualPeriod(profile.getLastMenstrualPeriod());
+            response.setBloodGroup(profile.getBloodGroup());
+            response.setDistrict(profile.getDistrict());
+            response.setProvince(profile.getProvince());
+            return response;
+        }).collect(Collectors.toList());
     }
 }
