@@ -7,6 +7,11 @@ import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import com.Maathacare.Backend.dto.KickCountRequest;
+import com.Maathacare.Backend.model.entity.KickRecord;
+import com.Maathacare.Backend.repository.KickRepository;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import com.Maathacare.Backend.model.entity.PHMProfile;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
 
@@ -19,12 +24,14 @@ public class MotherProfileService {
 
     private final MotherProfileRepository motherProfileRepository;
     private final UserRepository userRepository;
+    private final KickRepository kickRepository;
     private final PHMProfileRepository phmProfileRepository;
 
-    public MotherProfileService(MotherProfileRepository motherProfileRepository, UserRepository userRepository, PHMProfileRepository phmProfileRepository) {
+    public MotherProfileService(MotherProfileRepository motherProfileRepository, UserRepository userRepository, KickRepository kickRepository, PHMProfileRepository phmProfileRepository) {
         this.motherProfileRepository = motherProfileRepository;
         this.userRepository = userRepository;
         this.phmProfileRepository = phmProfileRepository;
+        this.kickRepository = kickRepository;
     }
 
     public MotherProfile createMotherProfile(MotherProfileRequest request) {
@@ -82,6 +89,23 @@ public class MotherProfileService {
         response.setProvince(profile.getProvince()); // 🟢 Now mapped
 
         return response;
+    }
+
+    public void saveDailyKicks(KickCountRequest request) {
+        // 1. Find the MotherProfile using the userId (e.g., Asani's ID E/23/427)
+        MotherProfile profile = motherProfileRepository.findByUserUserId(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+        // 2. Create a new entity to store in the DB
+        KickRecord record = new KickRecord();
+        record.setMotherProfile(profile);
+        record.setCount(request.getKickCount());
+
+        // 3. Parse the ISO date sent from React Native
+        record.setTimestamp(LocalDateTime.parse(request.getDate(), DateTimeFormatter.ISO_DATE_TIME));
+
+        // 4. Save to PostgreSQL on port 5432
+        kickRepository.save(record);
     }
 
     public List<MotherProfileResponse> getPatientsForPhm(String phmUserId) {

@@ -5,13 +5,14 @@ import axios from 'axios';
 import { useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Bell, Activity, Calendar, Footprints, Lightbulb } from 'lucide-react-native';
-
+import { useRouter } from "expo-router";
 const { width } = Dimensions.get('window');
 
 export default function HomeTab() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ weeks: 0, days: 0, totalDays: 0 });
   const [userName, setUserName] = useState("");
+  const router = useRouter();
 
   useFocusEffect(
     useCallback(() => {
@@ -119,11 +120,13 @@ export default function HomeTab() {
           icon={<Activity color="#DB2777" />} 
           label="Log Symptoms" 
           color="#FCE7F3" 
+          onPress={() => router.push('/log-symptoms')}
         />
         <ActionCard 
           icon={<Calendar color="#0369A1" />} 
           label="Upcoming Clinic" 
           color="#E0F2FE" 
+          onPress={() => router.push('/upcoming-clinic')}
         />
         
         {/* Now spanning the full width below the first two cards */}
@@ -132,6 +135,7 @@ export default function HomeTab() {
           label="Kick Counter" 
           color="#D1FAE5" 
           fullWidth={true} 
+          onPress={() => router.push('/kick-counter')}
         />
       </View>
     </ScrollView>
@@ -139,13 +143,15 @@ export default function HomeTab() {
 }
 
 // Updated Sub-component
-function ActionCard({ icon, label, color, fullWidth }: { icon: any, label: string, color: string, fullWidth?: boolean }) {
+function ActionCard({ icon, label, color, fullWidth, onPress }: 
+  { icon: any, label: string, color: string, fullWidth?: boolean, onPress?: () => void }) {
   return (
     <TouchableOpacity 
+      onPress={onPress}
       style={[
         styles.actionCard, 
         { backgroundColor: color },
-        fullWidth && { width: '100%' } // Conditionally apply full width
+        fullWidth && { width: '100%' }
       ]}
     >
       <View style={styles.actionIcon}>{icon}</View>

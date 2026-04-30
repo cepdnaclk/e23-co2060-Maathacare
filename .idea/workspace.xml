@@ -5,6 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3212ed52-ce60-4457-b241-6986873bed95" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/KickCountRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/entity/KickRecord.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/KickRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/MotherProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/MotherProfileController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/MotherProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/MotherProfileService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,6 +29,13 @@
         </projects_view>
       </state>
     </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
