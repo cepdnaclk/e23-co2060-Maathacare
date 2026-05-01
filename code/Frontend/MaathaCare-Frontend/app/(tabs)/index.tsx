@@ -76,65 +76,93 @@ export default function HomeTab() {
 
 
 
-  return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* HEADER SECTION */}
+   return (
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
         <View>
-          <Text style={styles.welcomeText}>Hello, {userName}!</Text>
-          <Text style={styles.subText}>Your pregnancy journey</Text>
+          <Text style={styles.welcomeText}>Hi, {userName}</Text>
+          <Text style={styles.subText}>Your gentle journey</Text>
         </View>
-        <TouchableOpacity style={styles.iconCircle}>
-          <Bell size={22} color="#ED70A1" />
+
+        <TouchableOpacity activeOpacity={0.8}>
+          <LinearGradient
+            colors={['#FFE2F1', '#E3F1FF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.iconCircle}
+          >
+            <Bell size={20} color="#8A6FA8" />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
 
-      {/* PRIMARY PROGRESS CARD */}
-      <View style={styles.statsCard}>
-        <Text style={styles.fruitText}>
-          {getBabySizeInfo(stats.weeks).icon} Baby is the size of {getBabySizeInfo(stats.weeks).size}
-        </Text>
-        <View style={styles.row}>
-          <Text style={styles.number}>{stats.weeks}</Text>
-          <Text style={styles.unit}> Weeks </Text>
-          <Text style={styles.number}>{stats.days}</Text>
-          <Text style={styles.unit}> Days</Text>
+      <LinearGradient
+        colors={['#FFE7F3', '#E8F3FF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.statsCard}
+      >
+        <View style={styles.topBadge}>
+          <Text style={styles.topBadgeText}>Today</Text>
         </View>
-        
-        {/* PROGRESS BAR */}
+
+        <View style={styles.babyBadge}>
+          <Text style={styles.babyIcon}>{getBabySizeInfo(stats.weeks).icon}</Text>
+        </View>
+
+        <Text style={styles.softLabel}>Baby size</Text>
+        <Text style={styles.fruitText}>{getBabySizeInfo(stats.weeks).size}</Text>
+
+        <View style={styles.weekRow}>
+          <View style={styles.timeCard}>
+            <Text style={styles.bigNumber}>{stats.weeks}</Text>
+            <Text style={styles.unitText}>Weeks</Text>
+          </View>
+
+          <View style={styles.timeCard}>
+            <Text style={styles.bigNumber}>{stats.days}</Text>
+            <Text style={styles.unitText}>Days</Text>
+          </View>
+        </View>
+
         <View style={styles.progressBarBackground}>
           <LinearGradient
-            colors={['#ED70A1', '#FF9A8B']}
+            colors={['#F59AC2', '#9ECDF8']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
           />
         </View>
-        <Text style={styles.progressLabel}>{Math.floor(progress * 100)}% of your journey complete</Text>
-      </View>
 
-      {/* QUICK ACTIONS GRID */}
+        <Text style={styles.progressLabel}>{Math.floor(progress * 100)}% complete</Text>
+      </LinearGradient>
+
       <Text style={styles.sectionTitle}>Quick Actions</Text>
+
       <View style={styles.grid}>
-        <ActionCard 
-          icon={<Activity color="#DB2777" />} 
-          label="Log Symptoms" 
-          color="#FCE7F3" 
+        <ActionCard
+          icon={<Activity color="#D962A0" size={23} />}
+          label="Symptoms"
+          colors={['#FFE6F2', '#FFF1F7']}
           onPress={() => router.push('/log-symptoms')}
         />
-        <ActionCard 
-          icon={<Calendar color="#0369A1" />} 
-          label="Upcoming Clinic" 
-          color="#E0F2FE" 
+
+        <ActionCard
+          icon={<Calendar color="#5D9CE6" size={23} />}
+          label="Clinic"
+          colors={['#E4F0FF', '#F1F7FF']}
           onPress={() => router.push('/upcoming-clinic')}
         />
-        
-        {/* Now spanning the full width below the first two cards */}
-        <ActionCard 
-          icon={<Footprints color="#065F46" />} 
-          label="Kick Counter" 
-          color="#D1FAE5" 
-          fullWidth={true} 
+
+        <ActionCard
+          icon={<Footprints color="#8C7CF3" size={23} />}
+          label="Kicks"
+          colors={['#F3E7FF', '#E8F2FF']}
+          fullWidth
           onPress={() => router.push('/kick-counter')}
         />
       </View>
@@ -142,45 +170,237 @@ export default function HomeTab() {
   );
 }
 
-// Updated Sub-component
-function ActionCard({ icon, label, color, fullWidth, onPress }: 
-  { icon: any, label: string, color: string, fullWidth?: boolean, onPress?: () => void }) {
+function ActionCard({
+  icon,
+  label,
+  colors,
+  fullWidth,
+  onPress
+}: {
+  icon: React.ReactNode;
+  label: string;
+  colors: string[];
+  fullWidth?: boolean;
+  onPress?: () => void;
+}) {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={onPress}
-      style={[
-        styles.actionCard, 
-        { backgroundColor: color },
-        fullWidth && { width: '100%' }
-      ]}
+      activeOpacity={0.82}
+      style={[styles.actionWrapper, fullWidth && styles.fullWidth]}
     >
-      <View style={styles.actionIcon}>{icon}</View>
-      <Text style={styles.actionLabel}>{label}</Text>
+      <LinearGradient
+        colors={colors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.actionCard}
+      >
+        <View style={styles.actionIcon}>{icon}</View>
+        <Text style={styles.actionLabel}>{label}</Text>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FDF2F8', padding: 20 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { marginTop: 60, marginBottom: 30, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  welcomeText: { fontSize: 28, fontWeight: 'bold', color: '#ED70A1' },
-  subText: { fontSize: 16, color: '#9CA3AF' },
-  iconCircle: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', elevation: 2 },
-  
-  statsCard: { backgroundColor: '#fff', padding: 25, borderRadius: 24, alignItems: 'center', elevation: 5, shadowColor: '#ED70A1', shadowOpacity: 0.1, shadowRadius: 10 },
-  fruitText: { fontSize: 14, color: '#DB2777', fontWeight: 'bold', marginBottom: 10, textTransform: 'uppercase' },
-  row: { flexDirection: 'row', alignItems: 'baseline', marginBottom: 20 },
-  number: { fontSize: 48, fontWeight: 'bold', color: '#1F2937', fontFamily: 'serif' },
-  unit: { fontSize: 18, color: '#4B5563', fontFamily: 'serif' },
-  
-  progressBarBackground: { width: '100%', height: 10, backgroundColor: '#F3F4F6', borderRadius: 5, overflow: 'hidden' },
-  progressBarFill: { height: '100%', borderRadius: 5 },
-  progressLabel: { fontSize: 12, color: '#9CA3AF', marginTop: 8, fontWeight: '500' },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF9FD',
+  },
 
-  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: '#1F2937', marginTop: 30, marginBottom: 15 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  actionCard: { width: '48%', height: 110, borderRadius: 20, padding: 15, marginBottom: 15, justifyContent: 'space-between' },
-  actionIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' },
-  actionLabel: { fontSize: 14, fontWeight: 'bold', color: '#374151' }
+  content: {
+    padding: 22,
+    paddingBottom: 36,
+  },
+
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  header: {
+    marginTop: 58,
+    marginBottom: 22,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#665A7A',
+    letterSpacing: -0.4,
+  },
+
+  subText: {
+    fontSize: 14,
+    color: '#988FA8',
+    marginTop: 4,
+  },
+
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#D8B0D2',
+    shadowOpacity: 0.16,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 3,
+  },
+
+  statsCard: {
+    borderRadius: 30,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#CDB6E5',
+    shadowOpacity: 0.14,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 4,
+  },
+
+  topBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,255,255,0.65)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    marginBottom: 14,
+  },
+
+  topBadgeText: {
+    fontSize: 12,
+    color: '#876F99',
+    fontWeight: '700',
+  },
+
+  babyBadge: {
+    width: 78,
+    height: 78,
+    borderRadius: 39,
+    backgroundColor: 'rgba(255,255,255,0.58)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+
+  babyIcon: {
+    fontSize: 38,
+  },
+
+  softLabel: {
+    fontSize: 12,
+    color: '#8F84A3',
+    marginBottom: 4,
+  },
+
+  fruitText: {
+    fontSize: 17,
+    color: '#61586F',
+    fontWeight: '700',
+    marginBottom: 18,
+  },
+
+  weekRow: {
+    width: '100%',
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 20,
+  },
+
+  timeCard: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.58)',
+    borderRadius: 22,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+
+  bigNumber: {
+    fontSize: 34,
+    fontWeight: '800',
+    color: '#625A75',
+  },
+
+  unitText: {
+    fontSize: 13,
+    color: '#9188A4',
+    fontWeight: '600',
+    marginTop: 2,
+  },
+
+  progressBarBackground: {
+    width: '100%',
+    height: 11,
+    backgroundColor: 'rgba(255,255,255,0.55)',
+    borderRadius: 999,
+    overflow: 'hidden',
+  },
+
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 999,
+  },
+
+  progressLabel: {
+    fontSize: 12,
+    color: '#8E84A2',
+    marginTop: 10,
+    fontWeight: '700',
+  },
+
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#665A7A',
+    marginTop: 28,
+    marginBottom: 14,
+  },
+
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+
+  actionWrapper: {
+    width: '48%',
+    marginBottom: 15,
+  },
+
+  fullWidth: {
+    width: '100%',
+  },
+
+  actionCard: {
+    minHeight: 112,
+    borderRadius: 24,
+    padding: 16,
+    justifyContent: 'space-between',
+    shadowColor: '#D9C6EB',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 2,
+  },
+
+  actionIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  actionLabel: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#665B77',
+  },
 });
