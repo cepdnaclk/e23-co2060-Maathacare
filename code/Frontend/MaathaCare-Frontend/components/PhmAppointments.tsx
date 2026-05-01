@@ -2,15 +2,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import {
+    ActivityIndicator,
     FlatList,
     Modal,
     ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
-import { Calendar } from "react-native-calendars"; // 🌟 Custom Calendar Library
+import { Calendar } from "react-native-calendars";
 
 const API_BASE_URL = "http://172.20.10.2:8080";
 
@@ -51,12 +52,8 @@ export default function PhmAppointments({
   const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
   const [actionModalVisible, setActionModalVisible] = useState(false);
 
-  // Use state for the full 'YYYY-MM-DD' selection
   const todayDate = new Date().toISOString().split("T")[0];
   const [selectedFullDate, setSelectedFullDate] = useState(todayDate);
-  const [selectedDayNum, setSelectedDayNum] = useState(
-    String(new Date().getDate()).padStart(2, "0"),
-  );
 
   useFocusEffect(
     useCallback(() => {
@@ -82,7 +79,6 @@ export default function PhmAppointments({
     }
   };
 
-  // 🌟 Logic to add dots to days with appointments
   const getMarkedDates = () => {
     const marked: any = {};
     appointments.forEach((appt) => {
@@ -90,7 +86,6 @@ export default function PhmAppointments({
         marked[appt.fullDate] = { marked: true, dotColor: "#0056b3" };
       }
     });
-    // Highlight the currently selected day
     marked[selectedFullDate] = {
       ...marked[selectedFullDate],
       selected: true,
@@ -135,7 +130,6 @@ export default function PhmAppointments({
 
   return (
     <View style={styles.container}>
-      {/* 15-Day Strip */}
       <View>
         <ScrollView
           horizontal
@@ -150,7 +144,6 @@ export default function PhmAppointments({
                 style={[styles.dateCard, isSelected && styles.dateCardActive]}
                 onPress={() => {
                   setSelectedFullDate(item.full);
-                  setSelectedDayNum(item.dayNumber);
                   setShowAll(false);
                 }}
               >
@@ -168,7 +161,6 @@ export default function PhmAppointments({
         </ScrollView>
       </View>
 
-      {/* Main List */}
       <View style={styles.listContainer}>
         <View style={styles.headerRow}>
           <Text style={styles.listHeader}>
@@ -186,57 +178,69 @@ export default function PhmAppointments({
           </TouchableOpacity>
         </View>
 
-        <FlatList
-          data={filteredAppointments}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.appointmentCard}
-              onPress={() => {
-                setSelectedAppointment(item);
-                setActionModalVisible(true);
-              }}
-            >
-              <View style={styles.timeColumn}>
-                <Text style={styles.timeText}>{item.time.split(" ")[0]}</Text>
-                <Text style={styles.amPmText}>{item.time.split(" ")[1]}</Text>
-              </View>
-              <View style={styles.detailsColumn}>
-                <View style={styles.cardHeader}>
-                  <Text style={styles.patientName}>{item.motherName}</Text>
-                  <View
-                    style={[
-                      styles.badge,
-                      {
-                        backgroundColor:
-                          item.status === "COMPLETED" ? "#DCFCE7" : "#DBEAFE",
-                      },
-                    ]}
-                  >
-                    <Text
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color="#0056b3"
+            style={{ marginTop: 50 }}
+          />
+        ) : (
+          <FlatList
+            data={filteredAppointments}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.appointmentCard}
+                onPress={() => {
+                  setSelectedAppointment(item);
+                  setActionModalVisible(true);
+                }}
+              >
+                <View style={styles.timeColumn}>
+                  <Text style={styles.timeText}>{item.time.split(" ")[0]}</Text>
+                  <Text style={styles.amPmText}>{item.time.split(" ")[1]}</Text>
+                </View>
+                <View style={styles.detailsColumn}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.patientName}>{item.motherName}</Text>
+                    <View
                       style={[
-                        styles.badgeText,
+                        styles.badge,
                         {
-                          color:
-                            item.status === "COMPLETED" ? "#15803D" : "#1D4ED8",
+                          backgroundColor:
+                            item.status === "COMPLETED" ? "#DCFCE7" : "#DBEAFE",
                         },
                       ]}
                     >
-                      {item.status}
-                    </Text>
+                      <Text
+                        style={[
+                          styles.badgeText,
+                          {
+                            color:
+                              item.status === "COMPLETED"
+                                ? "#15803D"
+                                : "#1D4ED8",
+                          },
+                        ]}
+                      >
+                        {item.status}
+                      </Text>
+                    </View>
                   </View>
+                  <Text style={styles.reasonText}>🩺 {item.reason}</Text>
                 </View>
-                <Text style={styles.reasonText}>🩺 {item.reason}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>No appointments for this date.</Text>
-          }
-        />
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>
+                No appointments for this date.
+              </Text>
+            }
+          />
+        )}
       </View>
 
-      {/* Floating Buttons */}
       <View style={styles.fabContainer}>
         <TouchableOpacity
           style={[styles.fab, { backgroundColor: "#F1F5F9", marginRight: 10 }]}
@@ -249,7 +253,6 @@ export default function PhmAppointments({
         </TouchableOpacity>
       </View>
 
-      {/* 🌟 CUSTOM CALENDAR MODAL */}
       <Modal visible={isCalendarOpen} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.calendarCard}>
@@ -257,7 +260,6 @@ export default function PhmAppointments({
               markedDates={getMarkedDates()}
               onDayPress={(day: any) => {
                 setSelectedFullDate(day.dateString);
-                setSelectedDayNum(String(day.day).padStart(2, "0"));
                 setIsCalendarOpen(false);
               }}
               theme={{
@@ -276,11 +278,14 @@ export default function PhmAppointments({
         </View>
       </Modal>
 
-      {/* Action Modal (Simplified for space) */}
       <Modal visible={actionModalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.actionContent}>
             <Text style={styles.modalTitle}>Update Appointment</Text>
+            <Text style={styles.modalSub}>
+              {selectedAppointment?.motherName}
+            </Text>
+
             <TouchableOpacity
               style={[styles.actionBtn, { backgroundColor: "#DCFCE7" }]}
               onPress={() => handleUpdateStatus("COMPLETED")}
@@ -289,11 +294,12 @@ export default function PhmAppointments({
                 Mark Completed
               </Text>
             </TouchableOpacity>
+
             <TouchableOpacity
               style={styles.closeBtn}
               onPress={() => setActionModalVisible(false)}
             >
-              <Text>Cancel</Text>
+              <Text style={styles.closeBtnText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -329,8 +335,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 15,
+    alignItems: "center",
   },
-  listHeader: { fontSize: 16, fontWeight: "bold" },
+  listHeader: { fontSize: 16, fontWeight: "bold", color: "#1E293B" },
   appointmentCard: {
     flexDirection: "row",
     backgroundColor: "white",
@@ -338,19 +345,29 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   timeColumn: {
     paddingRight: 15,
     borderRightWidth: 1,
     borderColor: "#E2E8F0",
     alignItems: "center",
+    minWidth: 70,
   },
   timeText: { fontSize: 18, fontWeight: "bold", color: "#0056b3" },
-  amPmText: { fontSize: 10, color: "#64748B" },
+  amPmText: { fontSize: 10, color: "#64748B", fontWeight: "bold" },
   detailsColumn: { flex: 1, paddingLeft: 15 },
-  cardHeader: { flexDirection: "row", justifyContent: "space-between" },
-  patientName: { fontWeight: "bold" },
-  badge: { padding: 4, borderRadius: 8 },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  patientName: { fontWeight: "bold", fontSize: 15, color: "#1E293B" },
+  badge: { paddingVertical: 4, paddingHorizontal: 8, borderRadius: 8 },
   badgeText: { fontSize: 10, fontWeight: "bold" },
   reasonText: { fontSize: 13, color: "#475569" },
   fabContainer: {
@@ -368,19 +385,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 4,
   },
-  fabIcon: { color: "white", fontSize: 24 },
+  fabIcon: { color: "white", fontSize: 28, fontWeight: "300" },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#1E293B",
-    textAlign: "center",
-    marginBottom: 20,
   },
   calendarCard: {
     backgroundColor: "white",
@@ -390,21 +400,40 @@ const styles = StyleSheet.create({
   },
   actionContent: {
     backgroundColor: "white",
-    borderRadius: 20,
+    borderRadius: 25,
     padding: 25,
-    width: "80%",
-  },
-  actionBtn: {
-    padding: 15,
-    borderRadius: 12,
+    width: "85%",
     alignItems: "center",
-    marginVertical: 10,
   },
-  closeBtn: { marginTop: 10, alignItems: "center", padding: 10 },
-  closeBtnText: { color: "#0056b3", fontWeight: "bold" },
-  toggleBtn: { backgroundColor: "#E2E8F0", padding: 6, borderRadius: 8 },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1E293B",
+    marginBottom: 10,
+  },
+  modalSub: { fontSize: 14, color: "#64748B", marginBottom: 20 },
+  actionBtn: {
+    width: "100%",
+    padding: 15,
+    borderRadius: 15,
+    alignItems: "center",
+    marginVertical: 5,
+  },
+  closeBtn: { marginTop: 15, padding: 10 },
+  closeBtnText: { color: "#0056b3", fontWeight: "bold", fontSize: 14 },
+  toggleBtn: {
+    backgroundColor: "#E2E8F0",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+  },
   toggleBtnActive: { backgroundColor: "#0056b3" },
-  toggleText: { fontSize: 12 },
+  toggleText: { fontSize: 12, color: "#64748B", fontWeight: "bold" },
   toggleTextActive: { color: "white" },
-  emptyText: { textAlign: "center", marginTop: 50, color: "#94A3B8" },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 50,
+    color: "#94A3B8",
+    fontSize: 15,
+  },
 });

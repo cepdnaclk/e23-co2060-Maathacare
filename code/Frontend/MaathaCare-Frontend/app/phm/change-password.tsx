@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -40,13 +43,12 @@ export default function ChangePasswordScreen() {
     setIsLoading(true);
 
     try {
-      // Get the logged-in user's details
       const staffId = (await AsyncStorage.getItem("userId")) || "";
       const token = (await AsyncStorage.getItem("userToken")) || "";
 
-      // ⚠️ IMPORTANT: Make sure this IP matches your computer's actual Wi-Fi IP address!
+      // 🔗 Make sure your Spring Boot backend is running on this IP
       const response = await fetch(
-        "http:// 172.20.10.2:8080/api/users/change-password",
+        "http://172.20.10.2:8080/api/users/change-password",
         {
           method: "POST",
           headers: {
@@ -63,10 +65,13 @@ export default function ChangePasswordScreen() {
 
       if (response.ok) {
         Alert.alert("Success! 🔒", "Your password has been securely updated.");
-        router.back(); // Sends them back to the previous screen automatically
+        router.back();
       } else {
         const errorText = await response.text();
-        Alert.alert("Failed", errorText);
+        Alert.alert(
+          "Update Failed",
+          errorText || "Please check your current password.",
+        );
       }
     } catch (error) {
       Alert.alert(
@@ -79,97 +84,153 @@ export default function ChangePasswordScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.headerTitle}>Update Password</Text>
-      <Text style={styles.subText}>
-        For your security, please change your default NIC password.
-      </Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.headerSection}>
+          <Text style={styles.headerTitle}>Update Password</Text>
+          <Text style={styles.subText}>
+            Protect your account by creating a strong new password.
+          </Text>
+        </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Current Password (NIC)</Text>
-        <TextInput
-          style={styles.input}
-          secureTextEntry
-          value={oldPassword}
-          onChangeText={setOldPassword}
-          placeholder="Enter current password"
-        />
+        <View style={styles.card}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Current Password (NIC)</Text>
+            <TextInput
+              style={styles.input}
+              secureTextEntry
+              value={oldPassword}
+              onChangeText={setOldPassword}
+              placeholder="••••••••"
+              placeholderTextColor="#94a3b8"
+            />
+          </View>
 
-        <Text style={styles.label}>New Password</Text>
-        <TextInput
-          style={styles.input}
-          secureTextEntry
-          value={newPassword}
-          onChangeText={setNewPassword}
-          placeholder="Enter new password"
-        />
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>New Password</Text>
+            <TextInput
+              style={styles.input}
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+              placeholder="••••••••"
+              placeholderTextColor="#94a3b8"
+            />
+          </View>
 
-        <Text style={styles.label}>Confirm New Password</Text>
-        <TextInput
-          style={styles.input}
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          placeholder="Re-type new password"
-        />
-      </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Confirm New Password</Text>
+            <TextInput
+              style={styles.input}
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              placeholder="••••••••"
+              placeholderTextColor="#94a3b8"
+            />
+          </View>
 
-      <TouchableOpacity
-        style={styles.button}
-        onPress={handleUpdatePassword}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Save New Password</Text>
-        )}
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity
+            style={[styles.button, isLoading && styles.buttonDisabled]}
+            onPress={handleUpdatePassword}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>🔒 Save New Password</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.cancelButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#F8FAFC",
+  },
+  scrollContent: {
     padding: 25,
-    backgroundColor: "#f4f7fb",
-    justifyContent: "center",
+    paddingTop: 60,
+  },
+  headerSection: {
+    marginBottom: 30,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
-    color: "#1e293b",
-    marginBottom: 10,
+    color: "#0f172a",
+    marginBottom: 8,
   },
-  subText: { fontSize: 14, color: "#64748b", marginBottom: 30, lineHeight: 20 },
-  inputContainer: {
+  subText: {
+    fontSize: 15,
+    color: "#64748b",
+    lineHeight: 22,
+  },
+  card: {
     backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
-    elevation: 2,
-    marginBottom: 25,
+    padding: 25,
+    borderRadius: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  inputGroup: {
+    marginBottom: 20,
   },
   label: {
     fontSize: 14,
-    fontWeight: "600",
-    color: "#475569",
+    fontWeight: "700",
+    color: "#334155",
     marginBottom: 8,
-    marginTop: 10,
+    marginLeft: 4,
   },
   input: {
-    borderWidth: 1,
-    borderColor: "#cbd5e1",
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: "#f1f5f9",
+    borderRadius: 15,
+    padding: 15,
     fontSize: 16,
-    backgroundColor: "#f8fafc",
+    color: "#1e293b",
+    borderWidth: 1,
+    borderColor: "#e2e8f0",
   },
   button: {
-    backgroundColor: "#2563eb",
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: "#0056b3",
+    padding: 18,
+    borderRadius: 15,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonDisabled: {
+    backgroundColor: "#94a3b8",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    marginTop: 20,
     alignItems: "center",
   },
-  buttonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  cancelButtonText: {
+    color: "#64748b",
+    fontSize: 14,
+    fontWeight: "600",
+  },
 });

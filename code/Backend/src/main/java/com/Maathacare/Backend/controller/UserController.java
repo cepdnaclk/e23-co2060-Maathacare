@@ -258,6 +258,7 @@ public class UserController {
     // ----------------------------------------------------
     // 🔐 SECURITY ENDPOINTS (PASTE THIS ENTIRE BLOCK HERE)
     // ----------------------------------------------------
+    @CrossOrigin(origins = "*")
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
         try {
