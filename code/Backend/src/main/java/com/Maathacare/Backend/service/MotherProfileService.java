@@ -65,7 +65,8 @@ public class MotherProfileService {
             if (assignedPhm.isPresent()) {
                 newProfile.setPhmProfile(assignedPhm.get());
             } else {
-                throw new RuntimeException("No PHM assigned to division: " + request.getResidentialDivision());
+                // We no longer throw an exception here. We just log a warning and let the registration finish!
+                System.out.println("Warning: Registered mother without a PHM. No PHM found for division: " + request.getResidentialDivision());
             }
         }
 
