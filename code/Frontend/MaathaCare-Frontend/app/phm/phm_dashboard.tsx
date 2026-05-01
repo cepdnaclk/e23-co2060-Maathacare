@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import PhmAppointments from "../../components/PhmAppointments";
+import PhmAppointments from "../../components/PhmAppointments"; // Make sure path matches your project
 
 const API_BASE_URL = "http://172.20.10.2:8080";
 
@@ -103,18 +103,16 @@ export default function PHMDashboard() {
     }
   };
 
-  // 🌟 NEW: The Smart "Select All" Logic
   const toggleSelectAll = () => {
     if (selectedMothers.length === patients.length) {
-      setSelectedMothers([]); // If everyone is selected, clear it
+      setSelectedMothers([]);
     } else {
-      setSelectedMothers([...patients]); // Otherwise, select everyone
+      setSelectedMothers([...patients]);
     }
   };
 
   const handleSaveAppointment = async () => {
     if (selectedMothers.length === 0) return;
-
     const token = await AsyncStorage.getItem("userToken");
 
     try {
@@ -139,9 +137,7 @@ export default function PHMDashboard() {
       });
 
       const results = await Promise.all(promises);
-      const allOk = results.every((res) => res.ok);
-
-      if (allOk) {
+      if (results.every((res) => res.ok)) {
         Alert.alert(
           "Success",
           `Scheduled appointments for ${selectedMothers.length} patients!`,
@@ -169,7 +165,6 @@ export default function PHMDashboard() {
         return;
       }
       if (selectedDate) setDate(selectedDate);
-
       if (pickerMode === "date") {
         setShowPicker(false);
         setPickerMode("time");
@@ -209,7 +204,7 @@ export default function PHMDashboard() {
       <Text style={styles.sectionTitle}>Maternal Care List</Text>
       <FlatList
         data={patients}
-        keyExtractor={(item: any) => item.id}
+        keyExtractor={(item: any) => item.id.toString()}
         renderItem={({ item }: any) => (
           <View style={styles.patientCard}>
             <TouchableOpacity
@@ -245,9 +240,10 @@ export default function PHMDashboard() {
     </View>
   );
 
+  // 🌟 OFFICIAL PROFILE UI
   const renderProfile = () => (
-    <View style={styles.contentSection}>
-      <View style={styles.profileAvatarSection}>
+    <View style={styles.profileContainer}>
+      <View style={styles.profileTopCard}>
         <View style={styles.avatarCircle}>
           <Text style={styles.avatarText}>
             {phmInfo?.fullName?.charAt(0) || "P"}
@@ -255,29 +251,43 @@ export default function PHMDashboard() {
         </View>
         <Text style={styles.profileMainName}>{phmInfo?.fullName}</Text>
         <Text style={styles.profileMainId}>
-          Public Health Midwife • ID: {phmInfo?.staffId}
+          Public Health Midwife • ID:{" "}
+          {phmInfo?.staffId || phmInfo?.registrationNumber || "Pending"}
         </Text>
       </View>
 
+      <Text style={styles.sectionHeader}>ACCOUNT INFORMATION</Text>
+
       <View style={styles.infoCard}>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Assigned Area</Text>
+          <View style={styles.infoRowLeft}>
+            <Text style={styles.infoIcon}>📍</Text>
+            <Text style={styles.infoLabel}>Assigned Area</Text>
+          </View>
           <Text style={styles.infoValue}>{phmInfo?.mohArea}</Text>
         </View>
+        <View style={styles.divider} />
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Phone Number</Text>
+          <View style={styles.infoRowLeft}>
+            <Text style={styles.infoIcon}>📞</Text>
+            <Text style={styles.infoLabel}>Phone Number</Text>
+          </View>
           <Text style={styles.infoValue}>
             {phmInfo?.phoneNumber || "Not Set"}
           </Text>
         </View>
       </View>
 
+      <Text style={styles.sectionHeader}>SECURITY & SETTINGS</Text>
+
       <TouchableOpacity
         style={styles.changePassBtn}
         onPress={() => router.push("/phm/change-password" as any)}
       >
         <Text style={styles.changePassText}>🔑 Change Password</Text>
+        <Text style={styles.chevron}>›</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.logoutBtn}
         onPress={async () => {
@@ -392,6 +402,7 @@ export default function PHMDashboard() {
         </TouchableOpacity>
       </View>
 
+      {/* Scheduling Modal */}
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -399,7 +410,6 @@ export default function PHMDashboard() {
 
             {!isSelectingDate ? (
               <View>
-                {/* 🌟 NEW: The Select All Header Row */}
                 <View style={styles.selectAllHeaderRow}>
                   <Text style={styles.modalSub}>
                     Select patients to schedule:
@@ -417,7 +427,7 @@ export default function PHMDashboard() {
                 <View style={styles.patientListContainer}>
                   <FlatList
                     data={patients}
-                    keyExtractor={(item: any) => item.id}
+                    keyExtractor={(item: any) => item.id.toString()}
                     renderItem={({ item }) => {
                       const isSelected = selectedMothers.some(
                         (m) => m.id === item.id,
@@ -625,34 +635,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  profileAvatarSection: { alignItems: "center", marginVertical: 20 },
-  avatarCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#0056b3",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  avatarText: { color: "white", fontSize: 32, fontWeight: "bold" },
-  profileMainName: { fontSize: 24, fontWeight: "bold", color: "#1E293B" },
-  profileMainId: { fontSize: 13, color: "#64748B" },
-  infoCard: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 20,
-    elevation: 2,
-  },
-  infoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F1F5F9",
-  },
-  infoLabel: { color: "#64748B", fontSize: 13 },
-  infoValue: { fontWeight: "bold", fontSize: 13, color: "#1E293B" },
+
   tabBar: {
     flexDirection: "row",
     height: 75,
@@ -665,22 +648,6 @@ const styles = StyleSheet.create({
   tabIcon: { fontSize: 20, color: "#94A3B8" },
   tabLabel: { fontSize: 10, color: "#94A3B8", marginTop: 4 },
   tabActiveText: { color: "#0056b3", fontWeight: "bold" },
-  changePassBtn: {
-    marginTop: 20,
-    backgroundColor: "#F1F5F9",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  changePassText: { color: "#0056b3", fontWeight: "bold" },
-  logoutBtn: {
-    marginTop: 15,
-    backgroundColor: "#FEE2E2",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  logoutText: { color: "#B91C1C", fontWeight: "bold" },
 
   modalOverlay: {
     flex: 1,
@@ -726,8 +693,6 @@ const styles = StyleSheet.create({
   },
   modalActions: { flexDirection: "row", justifyContent: "flex-end", gap: 10 },
   modalBtn: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8 },
-
-  // Multi-Select Styles
   selectAllHeaderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -764,11 +729,104 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   changePatientText: { color: "#0056b3", fontWeight: "bold", fontSize: 14 },
-  cancelOnlyBtn: {
+
+  // --- OFFICIAL PROFILE STYLES ---
+  profileContainer: { flex: 1, padding: 20 },
+  profileTopCard: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 30,
     alignItems: "center",
-    padding: 12,
-    backgroundColor: "#F1F5F9",
-    borderRadius: 10,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    marginBottom: 25,
   },
-  cancelOnlyBtnText: { color: "#475569", fontWeight: "bold" },
+  avatarCircle: {
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: "#0056b3",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+    borderWidth: 4,
+    borderColor: "#EFF6FF",
+  },
+  avatarText: { color: "white", fontSize: 36, fontWeight: "bold" },
+  profileMainName: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#1E293B",
+    marginBottom: 5,
+  },
+  profileMainId: { fontSize: 14, color: "#64748B", fontWeight: "600" },
+
+  sectionHeader: {
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#94A3B8",
+    marginLeft: 10,
+    marginBottom: 10,
+    letterSpacing: 1,
+  },
+
+  infoCard: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    marginBottom: 25,
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 18,
+  },
+  infoRowLeft: { flexDirection: "row", alignItems: "center" },
+  infoIcon: { fontSize: 16, marginRight: 12 },
+  infoLabel: { color: "#64748B", fontSize: 14, fontWeight: "600" },
+  infoValue: { fontWeight: "bold", fontSize: 15, color: "#1E293B" },
+  divider: { height: 1, backgroundColor: "#F1F5F9", width: "100%" },
+
+  changePassBtn: {
+    backgroundColor: "white",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 18,
+    borderRadius: 16,
+    alignItems: "center",
+    marginBottom: 15,
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOpacity: 0.03,
+    shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: "#F1F5F9",
+  },
+  changePassText: { color: "#0056b3", fontWeight: "bold", fontSize: 15 },
+  chevron: {
+    color: "#94A3B8",
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: -2,
+  },
+
+  logoutBtn: {
+    backgroundColor: "#FEF2F2",
+    padding: 18,
+    borderRadius: 16,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#FECACA",
+  },
+  logoutText: { color: "#DC2626", fontWeight: "bold", fontSize: 15 },
 });

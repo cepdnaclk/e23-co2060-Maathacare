@@ -3,13 +3,14 @@ import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import {
     ActivityIndicator,
+    Alert,
     FlatList,
     Modal,
     ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
-    View
+    View,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 
@@ -21,6 +22,7 @@ interface Props {
   refreshTrigger?: number;
 }
 
+// 🌟 HELPER: Checks if the appointment time has already passed[cite: 3]
 const isTimePassed = (appointment: any) => {
   if (!appointment || !appointment.fullDate || !appointment.time) return false;
   const dateParts = appointment.fullDate.split("-");
@@ -94,6 +96,7 @@ export default function PhmAppointments({
     return marked;
   };
 
+  // 🌟 NEW: Update Appointment Status (Completed / Missed)[cite: 3]
   const handleUpdateStatus = async (status: string) => {
     const token = await AsyncStorage.getItem("userToken");
     const res = await fetch(
@@ -107,6 +110,31 @@ export default function PhmAppointments({
       setActionModalVisible(false);
       loadAppointments();
     }
+  };
+
+  // 🌟 NEW: Delete Appointment[cite: 3]
+  const handleDeleteAppointment = () => {
+    Alert.alert("Cancel Appointment", "Delete this appointment record?", [
+      { text: "No", style: "cancel" },
+      {
+        text: "Yes, Delete",
+        style: "destructive",
+        onPress: async () => {
+          const token = await AsyncStorage.getItem("userToken");
+          const res = await fetch(
+            `${API_BASE_URL}/api/appointments/${selectedAppointment.id}`,
+            {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          if (res.ok) {
+            setActionModalVisible(false);
+            loadAppointments();
+          }
+        },
+      },
+    ]);
   };
 
   const generateDateStrip = () => {
@@ -209,7 +237,11 @@ export default function PhmAppointments({
                         styles.badge,
                         {
                           backgroundColor:
-                            item.status === "COMPLETED" ? "#DCFCE7" : "#DBEAFE",
+                            item.status === "COMPLETED"
+                              ? "#DCFCE7"
+                              : item.status === "MISSED"
+                                ? "#FFEDD5"
+                                : "#DBEAFE",
                         },
                       ]}
                     >
@@ -220,7 +252,9 @@ export default function PhmAppointments({
                             color:
                               item.status === "COMPLETED"
                                 ? "#15803D"
-                                : "#1D4ED8",
+                                : item.status === "MISSED"
+                                  ? "#C2410C"
+                                  : "#1D4ED8",
                           },
                         ]}
                       >
@@ -278,7 +312,12 @@ export default function PhmAppointments({
         </View>
       </Modal>
 
-      <Modal visible={actionModalVisible} animationType="slide" transparent>
+      {/* 🌟 UPDATED: Action Modal with Missed, Completed, and Delete[cite: 3] */}
+      <Modal
+        visible={actionModalVisible}
+        animationType="slide"
+        transparent={true}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.actionContent}>
             <Text style={styles.modalTitle}>Update Appointment</Text>
@@ -286,12 +325,45 @@ export default function PhmAppointments({
               {selectedAppointment?.motherName}
             </Text>
 
+            {selectedAppointment?.status !== "COMPLETED" &&
+              selectedAppointment?.status !== "MISSED" &&
+              (isTimePassed(selectedAppointment) ? (
+                <>
+                  <TouchableOpacity
+                    style={[styles.actionBtn, { backgroundColor: "#DCFCE7" }]}
+                    onPress={() => handleUpdateStatus("COMPLETED")}
+                  >
+                    <Text style={{ color: "#15803D", fontWeight: "bold" }}>
+                      ✅ Mark Completed
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.actionBtn, { backgroundColor: "#FFEDD5" }]}
+                    onPress={() => handleUpdateStatus("MISSED")}
+                  >
+                    <Text style={{ color: "#C2410C", fontWeight: "bold" }}>
+                      ⚠️ Patient Missed Clinic
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <View style={styles.lockedContainer}>
+                  <Text style={styles.lockedText}>
+                    ⏳ Status updates will unlock after the appointment time
+                    passes.
+                  </Text>
+                </View>
+              ))}
+
             <TouchableOpacity
-              style={[styles.actionBtn, { backgroundColor: "#DCFCE7" }]}
-              onPress={() => handleUpdateStatus("COMPLETED")}
+              style={[
+                styles.actionBtn,
+                { backgroundColor: "#FEE2E2", marginTop: 10 },
+              ]}
+              onPress={handleDeleteAppointment}
             >
-              <Text style={{ color: "#15803D", fontWeight: "bold" }}>
-                Mark Completed
+              <Text style={{ color: "#B91C1C", fontWeight: "bold" }}>
+                🗑️ Delete Appointment
               </Text>
             </TouchableOpacity>
 
@@ -435,5 +507,20 @@ const styles = StyleSheet.create({
     marginTop: 50,
     color: "#94A3B8",
     fontSize: 15,
+  },
+  lockedContainer: {
+    backgroundColor: "#F8FAFC",
+    padding: 15,
+    borderRadius: 12,
+    width: "100%",
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+  },
+  lockedText: {
+    textAlign: "center",
+    color: "#64748B",
+    fontSize: 13,
+    fontWeight: "600",
   },
 });
