@@ -64,44 +64,155 @@ export default function KickCounterScreen() {
     }
   };
 
-  return (
+    return (
     <View style={styles.container}>
-      <Text style={styles.title}>Baby Kick Counter</Text>
-      
-      <TouchableOpacity style={styles.counterCircle} onPress={handleIncrement}>
-        <Footprints size={80} color="white" />
-        <Text style={styles.countNumber}>{count}</Text>
-        <Text style={styles.tapText}>Tap for every kick</Text>
-      </TouchableOpacity>
+      <View style={styles.card}>
+        <Text style={styles.title}>Baby Kicks</Text>
 
-      <View style={styles.buttonRow}>
-        <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
-          <RotateCcw size={20} color="#6B7280" />
-          <Text style={styles.resetText}>Reset</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={[styles.saveBtn, isSaving && { opacity: 0.7 }]} 
-          onPress={saveKicksToBackend}
-          disabled={isSaving}
+        <TouchableOpacity
+          style={styles.counterButton}
+          onPress={handleIncrement}
+          activeOpacity={0.85}
         >
-          <Save size={20} color="white" />
-          <Text style={styles.saveText}>{isSaving ? "Saving..." : "Save Record"}</Text>
+          <View style={styles.iconWrapper}>
+            <Footprints size={46} color="#C97C8A" />
+          </View>
+
+          <Text style={styles.count}>{count}</Text>
+          <Text style={styles.tapText}>Tap</Text>
         </TouchableOpacity>
+
+        <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
+            <RotateCcw size={18} color="#9A7B82" />
+            <Text style={styles.resetText}>Reset</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.saveBtn, isSaving && styles.disabledBtn]}
+            onPress={saveKicksToBackend}
+            disabled={isSaving}
+          >
+            <Save size={18} color="#FFFFFF" />
+            <Text style={styles.saveText}>
+              {isSaving ? "Saving" : "Save"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FDF2F8', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#ED70A1', marginBottom: 50 },
-  counterCircle: { width: 250, height: 250, borderRadius: 125, backgroundColor: '#065F46', justifyContent: 'center', alignItems: 'center', elevation: 8, shadowOpacity: 0.3 },
-  countNumber: { fontSize: 72, fontWeight: 'bold', color: 'white' },
-  tapText: { color: 'white', fontSize: 14, marginTop: 10, opacity: 0.8 },
-  buttonRow: { flexDirection: 'row', marginTop: 60, gap: 20 },
-  saveBtn: { flexDirection: 'row', backgroundColor: '#ED70A1', paddingVertical: 15, paddingHorizontal: 30, borderRadius: 30, alignItems: 'center', gap: 10 },
-  saveText: { color: 'white', fontWeight: 'bold', fontSize: 16 },
-  resetBtn: { flexDirection: 'row', borderWidth: 1, borderColor: '#D1D5DB', paddingVertical: 15, paddingHorizontal: 30, borderRadius: 30, alignItems: 'center', gap: 10 },
-  resetText: { color: '#6B7280', fontWeight: 'bold' }
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF4F1',
+    justifyContent: 'center',
+    padding: 24,
+  },
+
+  card: {
+    backgroundColor: '#FFFBFA',
+    borderRadius: 36,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: '#C97C8A',
+    shadowOffset: { width: 0, height: 12 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+
+  title: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#7A4E57',
+    marginBottom: 32,
+  },
+
+  counterButton: {
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+    backgroundColor: '#F8D7DA',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 10,
+    borderColor: '#FDECEF',
+    shadowColor: '#C97C8A',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 20,
+    elevation: 7,
+  },
+
+  iconWrapper: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: '#FFF8F7',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+
+  count: {
+    fontSize: 72,
+    fontWeight: '900',
+    color: '#7A4E57',
+    lineHeight: 82,
+  },
+
+  tapText: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#9A7B82',
+  },
+
+  buttonRow: {
+    flexDirection: 'row',
+    marginTop: 36,
+    width: '100%',
+  },
+
+  resetBtn: {
+    flex: 1,
+    height: 54,
+    borderRadius: 18,
+    backgroundColor: '#F7E8E6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginRight: 10,
+  },
+
+  resetText: {
+    color: '#9A7B82',
+    fontWeight: '800',
+    fontSize: 15,
+    marginLeft: 8,
+  },
+
+  saveBtn: {
+    flex: 1,
+    height: 54,
+    borderRadius: 18,
+    backgroundColor: '#C97C8A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginLeft: 10,
+  },
+
+  saveText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 15,
+    marginLeft: 8,
+  },
+
+  disabledBtn: {
+    opacity: 0.6,
+  },
 });
