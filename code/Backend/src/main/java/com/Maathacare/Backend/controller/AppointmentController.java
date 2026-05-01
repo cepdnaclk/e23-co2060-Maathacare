@@ -1,15 +1,15 @@
 package com.Maathacare.Backend.controller;
 
-import com.Maathacare.Backend.model.entity.Appointment;
+import com.Maathacare.Backend.dto.AppointmentRequest;
 import com.Maathacare.Backend.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.UUID;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/appointments")
 public class AppointmentController {
+
     private final AppointmentService appointmentService;
 
     public AppointmentController(AppointmentService appointmentService) {
@@ -17,18 +17,43 @@ public class AppointmentController {
     }
 
     @PostMapping("/schedule")
-    public ResponseEntity<Appointment> createAppointment(@RequestBody Appointment appointment) {
-        return ResponseEntity.ok(appointmentService.scheduleAppointment(appointment));
+    public ResponseEntity<?> scheduleAppointment(@RequestBody AppointmentRequest request) {
+        try {
+            appointmentService.scheduleAppointment(request);
+            return ResponseEntity.ok("Appointment Scheduled Successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
-    @GetMapping("/mother/{motherId}")
-    public ResponseEntity<List<Appointment>> getMotherAppointments(@PathVariable String motherId) {
-        return ResponseEntity.ok(appointmentService.getAppointmentsForMother(motherId));
+    @GetMapping("/phm/{userId}")
+    public ResponseEntity<?> getPhmAppointments(@PathVariable String userId) {
+        try {
+            return ResponseEntity.ok(appointmentService.getAppointmentsForPhm(userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
-    @GetMapping("/phm")
-    public ResponseEntity<List<Appointment>> getPHMAppointments() {
-        // You'll need to add getAppointmentsForPHM to your Service
-        List<Appointment> appointments = appointmentService.getAppointmentsForLoggedInPHM();
-        return ResponseEntity.ok(appointments);
+
+    // 🌟 NEW API: Endpoint to update status
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateStatus(@PathVariable String id, @RequestParam String status) {
+        try {
+            appointmentService.updateAppointmentStatus(id, status);
+            return ResponseEntity.ok("Appointment marked as " + status);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    // 🌟 NEW API: Endpoint to delete
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAppointment(@PathVariable String id) {
+        try {
+            appointmentService.deleteAppointment(id);
+            return ResponseEntity.ok("Appointment deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 }
