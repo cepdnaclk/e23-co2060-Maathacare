@@ -1,12 +1,19 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import { useFocusEffect } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Bell, Activity, Calendar, Footprints, Lightbulb } from 'lucide-react-native';
-import { useRouter } from "expo-router";
-const { width } = Dimensions.get('window');
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect, useRouter } from "expo-router";
+import { Activity, Bell, Calendar, Footprints } from "lucide-react-native";
+import React, { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+const { width } = Dimensions.get("window");
 
 export default function HomeTab() {
   const [loading, setLoading] = useState(true);
@@ -14,22 +21,37 @@ export default function HomeTab() {
   const [userName, setUserName] = useState("");
   const router = useRouter();
 
+  // 🌟 Added state to hold the Midwife info
+  const [phmInfo, setPhmInfo] = useState({ name: "Loading...", id: "" });
+
   useFocusEffect(
     useCallback(() => {
       const fetchPregnancyData = async () => {
         try {
           const userId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
-          const ip = "10.224.114.226"; // Ensure this matches your current IP
-          
-          if (!token || !userId) { setLoading(false); return; }
+          const ip = "172.20.10.2"; // Ensure this matches your current IP
 
-          const response = await axios.get(`http://${ip}:8080/api/mothers/profile/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          if (!token || !userId) {
+            setLoading(false);
+            return;
+          }
+
+          const response = await axios.get(
+            `http://${ip}:8080/api/mothers/profile/${userId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
 
           const data = response.data;
-          setUserName(data.fullName ? data.fullName.split(' ')[0] : "Mother");
+          setUserName(data.fullName ? data.fullName.split(" ")[0] : "Mother");
+
+          // 🌟 Capture the PHM data sent from the backend
+          setPhmInfo({
+            name: data.phmName || "Pending",
+            id: data.phmId && data.phmId !== "Pending" ? data.phmId : "",
+          });
 
           if (data.lastMenstrualPeriod) {
             const lmp = new Date(data.lastMenstrualPeriod);
@@ -41,7 +63,7 @@ export default function HomeTab() {
               setStats({
                 weeks: Math.floor(totalDays / 7),
                 days: totalDays % 7,
-                totalDays: totalDays
+                totalDays: totalDays,
               });
             }
           }
@@ -52,31 +74,30 @@ export default function HomeTab() {
         }
       };
       fetchPregnancyData();
-    }, [])
+    }, []),
   );
 
   // Calculate progress percentage (Pregnancy is ~280 days)
   const progress = Math.min(stats.totalDays / 280, 1);
 
-  if (loading) return <ActivityIndicator style={styles.center} color="#ED70A1" />;
+  if (loading)
+    return <ActivityIndicator style={styles.center} color="#ED70A1" />;
 
-  //dynamic baby Size
+  // Dynamic baby Size
   const getBabySizeInfo = (week: number) => {
-  if (week <= 4) return { size: "a Poppy Seed", icon: "🌱" };
-  if (week <= 7) return { size: "a Blueberry", icon: "🫐" };
-  if (week <= 10) return { size: "a Strawberry", icon: "🍓" };
-  if (week <= 13) return { size: "a Lemon", icon: "🍋" };
-  if (week <= 17) return { size: "an Onion", icon: "🧅" };
-  if (week <= 21) return { size: "a Carrot", icon: "🥕" };
-  if (week <= 25) return { size: "an Eggplant", icon: "🍆" };
-  if (week <= 30) return { size: "a Cucumber", icon: "🥒" };
-  if (week <= 35) return { size: "a Pineapple", icon: "🍍" };
-  return { size: "a Watermelon", icon: "🍉" };
-};
+    if (week <= 4) return { size: "a Poppy Seed", icon: "🌱" };
+    if (week <= 7) return { size: "a Blueberry", icon: "🫐" };
+    if (week <= 10) return { size: "a Strawberry", icon: "🍓" };
+    if (week <= 13) return { size: "a Lemon", icon: "🍋" };
+    if (week <= 17) return { size: "an Onion", icon: "🧅" };
+    if (week <= 21) return { size: "a Carrot", icon: "🥕" };
+    if (week <= 25) return { size: "an Eggplant", icon: "🍆" };
+    if (week <= 30) return { size: "a Cucumber", icon: "🥒" };
+    if (week <= 35) return { size: "a Pineapple", icon: "🍍" };
+    return { size: "a Watermelon", icon: "🍉" };
+  };
 
-
-
-   return (
+  return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -90,7 +111,7 @@ export default function HomeTab() {
 
         <TouchableOpacity activeOpacity={0.8}>
           <LinearGradient
-            colors={['#FFE2F1', '#E3F1FF']}
+            colors={["#FFE2F1", "#E3F1FF"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.iconCircle}
@@ -100,8 +121,23 @@ export default function HomeTab() {
         </TouchableOpacity>
       </View>
 
+      {/* 🌟 NEW ASSIGNED MIDWIFE BADGE */}
+      <View style={styles.phmCard}>
+        <View style={styles.phmIconWrapper}>
+          <Text style={{ fontSize: 18 }}>👩‍⚕️</Text>
+        </View>
+        <View>
+          <Text style={styles.phmLabel}>Assigned Midwife</Text>
+          <Text style={styles.phmName}>
+            {phmInfo.name === "Pending"
+              ? "Assignment Pending"
+              : `${phmInfo.name} (${phmInfo.id})`}
+          </Text>
+        </View>
+      </View>
+
       <LinearGradient
-        colors={['#FFE7F3', '#E8F3FF']}
+        colors={["#FFE7F3", "#E8F3FF"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.statsCard}
@@ -111,11 +147,15 @@ export default function HomeTab() {
         </View>
 
         <View style={styles.babyBadge}>
-          <Text style={styles.babyIcon}>{getBabySizeInfo(stats.weeks).icon}</Text>
+          <Text style={styles.babyIcon}>
+            {getBabySizeInfo(stats.weeks).icon}
+          </Text>
         </View>
 
         <Text style={styles.softLabel}>Baby size</Text>
-        <Text style={styles.fruitText}>{getBabySizeInfo(stats.weeks).size}</Text>
+        <Text style={styles.fruitText}>
+          {getBabySizeInfo(stats.weeks).size}
+        </Text>
 
         <View style={styles.weekRow}>
           <View style={styles.timeCard}>
@@ -131,14 +171,16 @@ export default function HomeTab() {
 
         <View style={styles.progressBarBackground}>
           <LinearGradient
-            colors={['#F59AC2', '#9ECDF8']}
+            colors={["#F59AC2", "#9ECDF8"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
           />
         </View>
 
-        <Text style={styles.progressLabel}>{Math.floor(progress * 100)}% complete</Text>
+        <Text style={styles.progressLabel}>
+          {Math.floor(progress * 100)}% complete
+        </Text>
       </LinearGradient>
 
       <Text style={styles.sectionTitle}>Quick Actions</Text>
@@ -147,23 +189,23 @@ export default function HomeTab() {
         <ActionCard
           icon={<Activity color="#D962A0" size={23} />}
           label="Symptoms"
-          colors={['#FFE6F2', '#FFF1F7']}
-          onPress={() => router.push('/log-symptoms')}
+          colors={["#FFE6F2", "#FFF1F7"]}
+          onPress={() => router.push("/log-symptoms")}
         />
 
         <ActionCard
           icon={<Calendar color="#5D9CE6" size={23} />}
           label="Clinic"
-          colors={['#E4F0FF', '#F1F7FF']}
-          onPress={() => router.push('/upcoming-clinic')}
+          colors={["#E4F0FF", "#F1F7FF"]}
+          onPress={() => router.push("/upcoming-clinic")}
         />
 
         <ActionCard
           icon={<Footprints color="#8C7CF3" size={23} />}
           label="Kicks"
-          colors={['#F3E7FF', '#E8F2FF']}
+          colors={["#F3E7FF", "#E8F2FF"]}
           fullWidth
-          onPress={() => router.push('/kick-counter')}
+          onPress={() => router.push("/kick-counter")}
         />
       </View>
     </ScrollView>
@@ -175,7 +217,7 @@ function ActionCard({
   label,
   colors,
   fullWidth,
-  onPress
+  onPress,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -190,7 +232,7 @@ function ActionCard({
       style={[styles.actionWrapper, fullWidth && styles.fullWidth]}
     >
       <LinearGradient
-        colors={colors}
+        colors={colors as any}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.actionCard}
@@ -205,202 +247,206 @@ function ActionCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF9FD',
+    backgroundColor: "#FFF9FD",
   },
-
   content: {
     padding: 22,
     paddingBottom: 36,
   },
-
   center: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
-
   header: {
     marginTop: 58,
     marginBottom: 22,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-
   welcomeText: {
     fontSize: 28,
-    fontWeight: '800',
-    color: '#665A7A',
+    fontWeight: "800",
+    color: "#665A7A",
     letterSpacing: -0.4,
   },
-
   subText: {
     fontSize: 14,
-    color: '#988FA8',
+    color: "#988FA8",
     marginTop: 4,
   },
-
   iconCircle: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#D8B0D2',
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#D8B0D2",
     shadowOpacity: 0.16,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
     elevation: 3,
   },
-
+  // 🌟 NEW STYLES FOR PHM BADGE
+  phmCard: {
+    backgroundColor: "rgba(255,255,255,0.7)",
+    borderRadius: 16,
+    padding: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#F0E5F5",
+  },
+  phmIconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F3E7FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+  },
+  phmLabel: {
+    fontSize: 12,
+    color: "#988FA8",
+    fontWeight: "600",
+  },
+  phmName: {
+    fontSize: 15,
+    color: "#665A7A",
+    fontWeight: "800",
+    marginTop: 2,
+  },
   statsCard: {
     borderRadius: 30,
     padding: 24,
-    alignItems: 'center',
-    shadowColor: '#CDB6E5',
+    alignItems: "center",
+    shadowColor: "#CDB6E5",
     shadowOpacity: 0.14,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 8 },
     elevation: 4,
   },
-
   topBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255,255,255,0.65)',
+    alignSelf: "flex-start",
+    backgroundColor: "rgba(255,255,255,0.65)",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
     marginBottom: 14,
   },
-
   topBadgeText: {
     fontSize: 12,
-    color: '#876F99',
-    fontWeight: '700',
+    color: "#876F99",
+    fontWeight: "700",
   },
-
   babyBadge: {
     width: 78,
     height: 78,
     borderRadius: 39,
-    backgroundColor: 'rgba(255,255,255,0.58)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255,255,255,0.58)",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 12,
   },
-
   babyIcon: {
     fontSize: 38,
   },
-
   softLabel: {
     fontSize: 12,
-    color: '#8F84A3',
+    color: "#8F84A3",
     marginBottom: 4,
   },
-
   fruitText: {
     fontSize: 17,
-    color: '#61586F',
-    fontWeight: '700',
+    color: "#61586F",
+    fontWeight: "700",
     marginBottom: 18,
   },
-
   weekRow: {
-    width: '100%',
-    flexDirection: 'row',
+    width: "100%",
+    flexDirection: "row",
     gap: 12,
     marginBottom: 20,
   },
-
   timeCard: {
     flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.58)',
+    backgroundColor: "rgba(255,255,255,0.58)",
     borderRadius: 22,
     paddingVertical: 16,
-    alignItems: 'center',
+    alignItems: "center",
   },
-
   bigNumber: {
     fontSize: 34,
-    fontWeight: '800',
-    color: '#625A75',
+    fontWeight: "800",
+    color: "#625A75",
   },
-
   unitText: {
     fontSize: 13,
-    color: '#9188A4',
-    fontWeight: '600',
+    color: "#9188A4",
+    fontWeight: "600",
     marginTop: 2,
   },
-
   progressBarBackground: {
-    width: '100%',
+    width: "100%",
     height: 11,
-    backgroundColor: 'rgba(255,255,255,0.55)',
+    backgroundColor: "rgba(255,255,255,0.55)",
     borderRadius: 999,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
-
   progressBarFill: {
-    height: '100%',
+    height: "100%",
     borderRadius: 999,
   },
-
   progressLabel: {
     fontSize: 12,
-    color: '#8E84A2',
+    color: "#8E84A2",
     marginTop: 10,
-    fontWeight: '700',
+    fontWeight: "700",
   },
-
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '800',
-    color: '#665A7A',
+    fontWeight: "800",
+    color: "#665A7A",
     marginTop: 28,
     marginBottom: 14,
   },
-
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
-
   actionWrapper: {
-    width: '48%',
+    width: "48%",
     marginBottom: 15,
   },
-
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
-
   actionCard: {
     minHeight: 112,
     borderRadius: 24,
     padding: 16,
-    justifyContent: 'space-between',
-    shadowColor: '#D9C6EB',
+    justifyContent: "space-between",
+    shadowColor: "#D9C6EB",
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 5 },
     elevation: 2,
   },
-
   actionIcon: {
     width: 44,
     height: 44,
     borderRadius: 15,
-    backgroundColor: 'rgba(255,255,255,0.72)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(255,255,255,0.72)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-
   actionLabel: {
     fontSize: 16,
-    fontWeight: '800',
-    color: '#665B77',
+    fontWeight: "800",
+    color: "#665B77",
   },
 });

@@ -8,9 +8,8 @@ import java.util.Optional;
 
 @Repository
 public interface PHMProfileRepository extends JpaRepository<PHMProfile,String> {
-    Optional<PHMProfile> findByRegistrationNumber(String registrationNumber);
     Optional<PHMProfile> findByUserUserId(String userId);
     Optional<PHMProfile> findByUserStaffId(String staffId);
-    Optional<PHMProfile> findByPhmDivision(String phmDivision);
+    Optional<PHMProfile> findByMohArea(String mohArea);
 }
 
