@@ -2,6 +2,7 @@ package com.Maathacare.Backend.dto;
 
 import com.Maathacare.Backend.model.enums.Role;
 import java.time.LocalDate; // 🚨 Make sure this is imported!
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class UserRegistrationRequest {
     // Existing Fields
@@ -12,11 +13,17 @@ public class UserRegistrationRequest {
     // 🟢 NEW FIELDS for MotherProfile mapping
     private String fullName;
     private String nic;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
     private String address;
     private String emergencyContactNumber;
     private String bloodGroup;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate lastMenstrualPeriod;
+
     private String district;
     private String province;
     private String residentialDivision;

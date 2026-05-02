@@ -216,6 +216,8 @@ export default function Register() {
       const err = error as any;
       setIsLoading(false);
 
+      console.log("BACKEND REJECTION REASON:", err.response?.data);
+
       if (err.response) {
         Alert.alert("Server Rejected", `Error Code: ${err.response.status}`);
       } else if (err.request) {
