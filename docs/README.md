@@ -24,7 +24,7 @@ A HTML template integrated with the given GitHub repository templates, based on 
 ---
 
 ## Team
--  E23244, Name, [email](mailto:name@email.com)
+-  E/23/244, Name, [email](mailto:name@email.com)
 -  eNumber, Name, [email](mailto:name@email.com)
 -  eNumber, Name, [email](mailto:name@email.com)
 
