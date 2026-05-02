@@ -19,14 +19,15 @@ If your followed all the given instructions correctly, your repository will be a
 
 A HTML template integrated with the given GitHub repository templates, based on github.com/cepdnaclk/eYY-project-theme . If you like to remove this default theme and make your own web page, you can remove the file, docs/_config.yml and create the site using HTML. -->
 
-# Project Title
+# MaathaCare
 
 ---
 
 ## Team
--  E/23/244, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
--  eNumber, Name, [email](mailto:name@email.com)
+-  E/23/244, M.T.C.Newanma, [email](e23244@eng.pdn.ac.lk)
+-  E/23/211, A.M.G.M.Madubhashinie, [email](e23211@eng.pdn.ac.lk)
+-  E/23/427, A.S.Weerasinghe, [email](e23427@eng.pdn.ac.lk)
+-  E/23/360,  K.K.S.Semmindi, [email](e23360@eng.pdn.ac.lk)
 
 <!-- Image (photo/drawing of the final hardware) should be here -->
 
