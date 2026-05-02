@@ -87,4 +87,33 @@ public class AppointmentService {
     public void deleteAppointment(String appointmentId) {
         appointmentRepository.deleteById(appointmentId);
     }
+
+    // 🌟 NEW: Get appointments specifically formatted for the Mother's Mobile UI
+    public List<com.Maathacare.Backend.dto.MotherAppointmentResponse> getAppointmentsForMother(String motherUserId) {
+        List<Appointment> appointments = appointmentRepository.findByMotherUserUserIdOrderByAppointmentDateAsc(motherUserId);
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm a");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy");
+
+        return appointments.stream()
+                // Optional: Filter out completed/missed so the mother only sees upcoming ones
+                .filter(app -> app.getStatus() == AppointmentStatus.SCHEDULED)
+                .map(app -> {
+                    com.Maathacare.Backend.dto.MotherAppointmentResponse res = new com.Maathacare.Backend.dto.MotherAppointmentResponse();
+                    res.setId(app.getId());
+                    res.setLocation(app.getLocation());
+                    res.setPhmName(app.getPhm().getFullName());
+                    res.setNotes(app.getRemarks());
+
+                    // Convert UTC database time back to Sri Lanka local time
+                    ZonedDateTime localTime = app.getAppointmentDate().withZoneSameInstant(java.time.ZoneId.of("Asia/Colombo"));
+
+                    res.setTime(localTime.format(timeFormatter));
+                    res.setDate(localTime.format(dateFormatter));
+
+                    return res;
+                }).collect(Collectors.toList());
+    }
+
+
 }

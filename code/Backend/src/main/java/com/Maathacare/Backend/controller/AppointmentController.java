@@ -56,4 +56,13 @@ public class AppointmentController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
+    // 🌟 NEW API: Endpoint for the Mother's Mobile App
+    @GetMapping("/mother/{userId}")
+    public ResponseEntity<?> getMotherAppointments(@PathVariable String userId) {
+        try {
+            return ResponseEntity.ok(appointmentService.getAppointmentsForMother(userId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching appointments: " + e.getMessage());
+        }
+    }
 }

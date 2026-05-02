@@ -10,4 +10,5 @@ import java.util.List;
 public interface AppointmentRepository extends JpaRepository<Appointment, String> {
     // Finds all appointments for a specific PHM and orders them by date
     List<Appointment> findByPhmUserUserIdOrderByAppointmentDateAsc(String phmUserId);
+    List<Appointment> findByMotherUserUserIdOrderByAppointmentDateAsc(String userId);
 }
