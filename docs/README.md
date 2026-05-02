@@ -24,10 +24,10 @@ A HTML template integrated with the given GitHub repository templates, based on 
 ---
 
 ## Team
--  E/23/244, M.T.C.Newanma, [email](e23244@eng.pdn.ac.lk)
--  E/23/211, A.M.G.M.Madubhashinie, [email](e23211@eng.pdn.ac.lk)
--  E/23/427, A.S.Weerasinghe, [email](e23427@eng.pdn.ac.lk)
--  E/23/360,  K.K.S.Semmindi, [email](e23360@eng.pdn.ac.lk)
+- E/23/244, M.T.C.Newanma, [e23244@eng.pdn.ac.lk](mailto:e23244@eng.pdn.ac.lk)
+- E/23/211, A.M.G.M.Madubhashinie, [e23211@eng.pdn.ac.lk](mailto:e23211@eng.pdn.ac.lk)
+- E/23/427, A.S.Weerasinghe, [e23427@eng.pdn.ac.lk](mailto:e23427@eng.pdn.ac.lk)
+- E/23/360, K.K.S.Semmindi, [e23360@eng.pdn.ac.lk](mailto:e23360@eng.pdn.ac.lk)
 
 <!-- Image (photo/drawing of the final hardware) should be here -->
 
@@ -45,7 +45,7 @@ A HTML template integrated with the given GitHub repository templates, based on 
 
 ## Introduction
 
-Description of the real world problem and solution, impact
+MaathaCare is a smart digital healthcare ecosystem designed to modernize maternal support services within Sri Lanka’s public health sector. While the current healthcare framework is fundamentally robust, it is heavily reliant on manual, paper-based record-keeping. MaathaCare bridges this technological gap by digitizing the tracking of clinic schedules, supplement adherence, and high-risk pregnancy indicators, ensuring no mother is left behind due to administrative inefficiencies.
 
 
 ## Solution Architecture
