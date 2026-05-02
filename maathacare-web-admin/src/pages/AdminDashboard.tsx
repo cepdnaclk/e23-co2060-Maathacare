@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './AdminDashboard.css'; // Make sure this matches your CSS file name (e.g., App.css)
+import './AdminDashboard.css';
 
 interface PHM {
   staffId: string;
@@ -8,59 +8,97 @@ interface PHM {
   nic: string;
 }
 
-// 📌 Official MOH Areas & Abbreviations List
-const MOH_AREAS = [
-  { name: "Colombo", code: "COL" },
-  { name: "Gampaha", code: "GMP" },
-  { name: "Kalutara", code: "KAL" },
+// 📌 Official District Codes (Updated Kandy to KAN)
+const DISTRICTS = [
   { name: "Kandy", code: "KAN" },
-  { name: "Matale", code: "MTL" },
-  { name: "Nuwara Eliya", code: "NWE" },
-  { name: "Galle", code: "GAL" },
-  { name: "Matara", code: "MTR" },
-  { name: "Hambantota", code: "HAM" },
   { name: "Jaffna", code: "JAF" },
-  // Add more as needed...
+  { name: "Colombo", code: "COL" },
 ];
+
+// 📌 Official MOH Areas mapped to District Codes
+const MOH_AREAS: Record<string, { name: string; code: string }[]> = {
+  KAN: [
+    { name: "Akurana", code: "AKU" },
+    { name: "Bambaradeniya", code: "BAM" },
+    { name: "Deltota", code: "DEL" },
+    { name: "Doluwa", code: "DOL" },
+    { name: "Galagedara", code: "GLG" },
+    { name: "Galaha", code: "GLH" },
+    { name: "Gampola (Udapalatha)", code: "GMP" },
+    { name: "Ganga Ihala Korale", code: "GIK" },
+    { name: "Gangawata Korale", code: "GWK" },
+    { name: "Harispattuwa", code: "HAR" },
+    { name: "Hasalaka", code: "HAS" },
+    { name: "Hatharaliyadda", code: "HTH" },
+    { name: "Kadugannawa", code: "KDG" },
+    { name: "Kandy MC", code: "KMC" },
+    { name: "Kundasale", code: "KUN" },
+    { name: "Manikhinna", code: "MAN" },
+    { name: "Medadumbara", code: "MED" },
+    { name: "Nawalapitiya (Pasbage)", code: "NAW" },
+    { name: "Panvila", code: "PAN" },
+    { name: "Poojapitiya", code: "POO" },
+    { name: "Thalathuoya", code: "THA" },
+    { name: "Udadumbara", code: "UDD" },
+    { name: "Udunuwara", code: "UDN" },
+    { name: "Wattegama (Pathadumbara)", code: "WAT" },
+    { name: "Yatinuwara", code: "YAT" },
+  ],
+  JAF: [
+    { name: "Jaffna MC", code: "JMC" },
+    { name: "Nallur", code: "NAL" },
+    { name: "Chavakachcheri", code: "CHV" },
+    { name: "Kopay", code: "KOP" },
+    { name: "Uduvil", code: "UDV" },
+    { name: "Tellippalai", code: "TEL" },
+    { name: "Sandilipay", code: "SAN" },
+  ],
+  COL: [
+    { name: "Colombo MC", code: "CMC" },
+    { name: "Dehiwala", code: "DEH" },
+    { name: "Moratuwa", code: "MOR" },
+    { name: "Kolonnawa", code: "KOL" },
+  ]
+};
 
 const AdminDashboard: React.FC = () => {
   const [staffList, setStaffList] = useState<PHM[]>([]);
   
-  // Form States
   const [fullName, setFullName] = useState('');
   const [nic, setNic] = useState('');
+  
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
   const [selectedMohCode, setSelectedMohCode] = useState('');
+  
   const [generatedStaffId, setGeneratedStaffId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch existing staff on load
   useEffect(() => {
     fetchStaff();
   }, []);
 
-  // 🚀 MAGIC: Auto-Generate Staff ID whenever the MOH Area changes
+  // Auto-Generate Staff ID with District + MOH
   useEffect(() => {
-    if (selectedMohCode) {
-      // 1. Find all staff in this specific MOH area
-      const areaStaff = staffList.filter(staff => staff.staffId?.startsWith(`PHM-${selectedMohCode}-`));
+    if (selectedDistrictCode && selectedMohCode) {
+      const prefix = `PHM-${selectedDistrictCode}-${selectedMohCode}-`;
       
-      // 2. Find the highest existing number
+      const areaStaff = staffList.filter(staff => staff.staffId?.startsWith(prefix));
+      
       let maxNumber = 0;
       areaStaff.forEach(staff => {
-        const parts = staff.staffId.split('-'); // e.g., ["PHM", "MTR", "005"]
-        if (parts.length === 3) {
-          const num = parseInt(parts[2], 10);
+        const parts = staff.staffId.split('-'); 
+        if (parts.length === 4) {
+          const num = parseInt(parts[3], 10);
           if (num > maxNumber) maxNumber = num;
         }
       });
 
-      // 3. Format the next number with leading zeros (e.g., 006)
       const nextNumber = String(maxNumber + 1).padStart(3, '0');
-      setGeneratedStaffId(`PHM-${selectedMohCode}-${nextNumber}`);
+      setGeneratedStaffId(`${prefix}${nextNumber}`);
     } else {
       setGeneratedStaffId('');
     }
-  }, [selectedMohCode, staffList]);
+  }, [selectedDistrictCode, selectedMohCode, staffList]);
 
   const fetchStaff = async () => {
     try {
@@ -76,21 +114,20 @@ const AdminDashboard: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedMohCode) {
-      alert("Please select an MOH Area first.");
+    if (!selectedDistrictCode || !selectedMohCode) {
+      alert("Please select both a District and an MOH Area.");
       return;
     }
 
     setIsLoading(true);
     try {
-      // Get the full name of the MOH area to save in the database
-      const mohFullName = MOH_AREAS.find(m => m.code === selectedMohCode)?.name || '';
+      const mohFullName = MOH_AREAS[selectedDistrictCode].find(m => m.code === selectedMohCode)?.name || '';
 
       const payload = {
         fullName: fullName,
         nic: nic,
         staffId: generatedStaffId,
-        mohArea: mohFullName,
+        mohArea: mohFullName, 
         password: nic
       };
 
@@ -107,9 +144,9 @@ const AdminDashboard: React.FC = () => {
 
       if (response.ok) {
         alert("Official PHM Registration Successful!");
-        // Clear form
         setFullName('');
         setNic('');
+        setSelectedDistrictCode('');
         setSelectedMohCode('');
         fetchStaff(); 
       } else {
@@ -123,9 +160,37 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // 🌟 NEW: Handle Staff Removal
+  const handleRemove = async (staffId: string) => {
+    const isConfirmed = window.confirm(`Are you sure you want to remove staff member: ${staffId}? This action cannot be undone.`);
+    
+    if (!isConfirmed) return;
+
+    try {
+      const token = localStorage.getItem("token") || localStorage.getItem("adminToken") || "";
+      
+      // Sending DELETE request to your Spring Boot backend
+      const response = await fetch(`http://localhost:8080/api/users/staff/delete/${staffId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        alert("Staff member successfully removed.");
+        fetchStaff(); // Automatically refresh the list to remove them from the UI
+      } else {
+        const msg = await response.text();
+        alert(`Failed to remove staff: ${msg}`);
+      }
+    } catch (err) {
+      alert("Server connection failed. Could not remove staff member.");
+    }
+  };
+
   return (
     <div className="admin-wrapper">
-      {/* Official Header */}
       <header className="official-header">
         <div className="header-titles">
           <h1>MaathaCare National System</h1>
@@ -135,7 +200,6 @@ const AdminDashboard: React.FC = () => {
       </header>
 
       <div className="dashboard-grid">
-        {/* Left Column: Official Registration Form */}
         <div className="card form-card">
           <div className="card-header">
             <h2>Register Public Health Midwife</h2>
@@ -154,10 +218,36 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="input-group">
+              <label>Assigned District (RDHS)</label>
+              <select 
+                value={selectedDistrictCode} 
+                onChange={e => {
+                  setSelectedDistrictCode(e.target.value);
+                  setSelectedMohCode(''); 
+                }} 
+                required
+              >
+                <option value="" disabled>-- Select District --</option>
+                {DISTRICTS.map(dist => (
+                  <option key={dist.code} value={dist.code}>
+                    {dist.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="input-group">
               <label>Assigned MOH Area</label>
-              <select value={selectedMohCode} onChange={e => setSelectedMohCode(e.target.value)} required>
-                <option value="" disabled>-- Select MOH Area --</option>
-                {MOH_AREAS.map(area => (
+              <select 
+                value={selectedMohCode} 
+                onChange={e => setSelectedMohCode(e.target.value)} 
+                required
+                disabled={!selectedDistrictCode}
+              >
+                <option value="" disabled>
+                  {selectedDistrictCode ? "-- Select MOH Area --" : "-- Select District First --"}
+                </option>
+                {selectedDistrictCode && MOH_AREAS[selectedDistrictCode].map(area => (
                   <option key={area.code} value={area.code}>
                     {area.name} ({area.code})
                   </option>
@@ -167,7 +257,7 @@ const AdminDashboard: React.FC = () => {
 
             <div className="input-group">
               <label>Official Staff ID (Auto-Generated)</label>
-              <input type="text" value={generatedStaffId} readOnly className="readonly-input" placeholder="Select MOH Area first" />
+              <input type="text" value={generatedStaffId} readOnly className="readonly-input" placeholder="Select District & MOH Area first" />
             </div>
 
             <div className="input-group">
@@ -182,7 +272,6 @@ const AdminDashboard: React.FC = () => {
           </form>
         </div>
 
-        {/* Right Column: Active Staff Directory */}
         <div className="card list-card">
           <div className="card-header">
             <h2>Active Staff Directory</h2>
@@ -205,7 +294,13 @@ const AdminDashboard: React.FC = () => {
                       <span className="badge badge-moh">{phm.mohArea}</span>
                     </div>
                   </div>
-                  <button className="btn-danger">Remove</button>
+                  {/* 🌟 NEW: Wired up the onClick event to our handleRemove function */}
+                  <button 
+                    className="btn-danger"
+                    onClick={() => handleRemove(phm.staffId)}
+                  >
+                    Remove
+                  </button>
                 </div>
               ))
             )}
