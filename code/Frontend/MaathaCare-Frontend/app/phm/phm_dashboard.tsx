@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const API_BASE_URL = "http://172.20.10.2:8080";
+const API_BASE_URL = "http://10.224.114.226:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();

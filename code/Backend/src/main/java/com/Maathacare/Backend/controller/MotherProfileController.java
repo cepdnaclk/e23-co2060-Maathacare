@@ -6,6 +6,7 @@ import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.service.MotherProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.Maathacare.Backend.dto.KickCountRequest;
 
 import java.util.List;
 
@@ -29,6 +30,17 @@ public class MotherProfileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PostMapping("/kicks")
+    public ResponseEntity<?> saveKickCount(@RequestBody KickCountRequest request) {
+        try {
+            // This links the kicks to the user (e.g., Sayuri) in your PostgreSQL DB
+            motherProfileService.saveDailyKicks(request);
+            return ResponseEntity.ok("Daily kicks recorded successfully!");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to save kicks: " + e.getMessage());
+        }
+    }
+
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {

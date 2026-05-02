@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 
-const API_BASE_URL = "http://172.20.10.2:8080";
+const API_BASE_URL = "http://10.224.114.226:8080";
 
 export default function MotherDetails() {
   const { motherId } = useLocalSearchParams(); // Get ID from navigation
