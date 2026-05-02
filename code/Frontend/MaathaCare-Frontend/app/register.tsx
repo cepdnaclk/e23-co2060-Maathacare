@@ -60,6 +60,52 @@ const districtMap: Record<string, { label: string; value: string }[]> = {
   ],
 };
 
+// 🌟 UPDATED: Added all official MOH Areas for Kandy District
+const mohAreaMap: Record<string, { label: string; value: string }[]> = {
+  Jaffna: [
+    { label: "Jaffna MC", value: "Jaffna MC" },
+    { label: "Nallur", value: "Nallur" },
+    { label: "Chavakachcheri", value: "Chavakachcheri" },
+    { label: "Kopay", value: "Kopay" },
+    { label: "Uduvil", value: "Uduvil" },
+    { label: "Tellippalai", value: "Tellippalai" },
+    { label: "Sandilipay", value: "Sandilipay" },
+  ],
+  Colombo: [
+    { label: "Colombo MC", value: "Colombo MC" },
+    { label: "Dehiwala", value: "Dehiwala" },
+    { label: "Moratuwa", value: "Moratuwa" },
+    { label: "Kolonnawa", value: "Kolonnawa" },
+  ],
+  Kandy: [
+    { label: "Akurana", value: "Akurana" },
+    { label: "Bambaradeniya", value: "Bambaradeniya" },
+    { label: "Deltota", value: "Deltota" },
+    { label: "Doluwa", value: "Doluwa" },
+    { label: "Galagedara", value: "Galagedara" },
+    { label: "Galaha", value: "Galaha" },
+    { label: "Gampola (Udapalatha)", value: "Gampola (Udapalatha)" },
+    { label: "Ganga Ihala Korale", value: "Ganga Ihala Korale" },
+    { label: "Gangawata Korale", value: "Gangawata Korale" },
+    { label: "Harispattuwa", value: "Harispattuwa" },
+    { label: "Hasalaka", value: "Hasalaka" },
+    { label: "Hatharaliyadda", value: "Hatharaliyadda" },
+    { label: "Kadugannawa", value: "Kadugannawa" },
+    { label: "Kandy MC", value: "Kandy MC" },
+    { label: "Kundasale", value: "Kundasale" },
+    { label: "Manikhinna", value: "Manikhinna" },
+    { label: "Medadumbara", value: "Medadumbara" },
+    { label: "Nawalapitiya (Pasbage)", value: "Nawalapitiya (Pasbage)" },
+    { label: "Panvila", value: "Panvila" },
+    { label: "Poojapitiya", value: "Poojapitiya" },
+    { label: "Thalathuoya", value: "Thalathuoya" },
+    { label: "Udadumbara", value: "Udadumbara" },
+    { label: "Udunuwara", value: "Udunuwara" },
+    { label: "Wattegama (Pathadumbara)", value: "Wattegama (Pathadumbara)" },
+    { label: "Yatinuwara", value: "Yatinuwara" },
+  ],
+};
+
 export default function Register() {
   const router = useRouter();
 
@@ -104,7 +150,11 @@ export default function Register() {
     { label: string; value: string }[]
   >([]);
 
-  const [division, setDivision] = useState("");
+  const [divisionOpen, setDivisionOpen] = useState(false);
+  const [division, setDivision] = useState<string | null>(null);
+  const [divisionItems, setDivisionItems] = useState<
+    { label: string; value: string }[]
+  >([]);
 
   const handleRegister = async () => {
     if (
@@ -153,7 +203,7 @@ export default function Register() {
       };
 
       const response = await axios.post(
-        "http://10.224.114.226:8080/api/users/register",
+        "http://172.20.10.2:8080/api/users/register",
         payload,
       );
 
@@ -165,6 +215,8 @@ export default function Register() {
     } catch (error) {
       const err = error as any;
       setIsLoading(false);
+
+      console.log("BACKEND REJECTION REASON:", err.response?.data);
 
       if (err.response) {
         Alert.alert("Server Rejected", `Error Code: ${err.response.status}`);
@@ -286,7 +338,7 @@ export default function Register() {
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading}
-        zIndex={3000}
+        zIndex={4000}
         zIndexInverse={1000}
         listMode="SCROLLVIEW"
       />
@@ -323,7 +375,7 @@ export default function Register() {
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading}
-        zIndex={2000}
+        zIndex={3000}
         zIndexInverse={2000}
         listMode="SCROLLVIEW"
         onChangeValue={(value) => {
@@ -333,6 +385,8 @@ export default function Register() {
             setDistrictItems([]);
           }
           setDistrict(null);
+          setDivision(null);
+          setDivisionItems([]);
         }}
       />
 
@@ -348,18 +402,34 @@ export default function Register() {
         style={[styles.dropdown, !province && { backgroundColor: "#f0f0f0" }]}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading || !province}
-        zIndex={1000}
+        zIndex={2000}
         zIndexInverse={3000}
         listMode="SCROLLVIEW"
+        onChangeValue={(value) => {
+          if (value) {
+            setDivisionItems(mohAreaMap[value] || []);
+          } else {
+            setDivisionItems([]);
+          }
+          setDivision(null);
+        }}
       />
 
       <Text style={styles.label}>Residential Division (MOH Area)</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="e.g. Walgama North"
+      <DropDownPicker
+        open={divisionOpen}
         value={division}
-        onChangeText={setDivision}
-        editable={!isLoading}
+        items={divisionItems}
+        setOpen={setDivisionOpen}
+        setValue={setDivision}
+        setItems={setDivisionItems}
+        placeholder={district ? "Select MOH Area" : "Select a District first"}
+        style={[styles.dropdown, !district && { backgroundColor: "#f0f0f0" }]}
+        dropDownContainerStyle={styles.dropdownContainer}
+        disabled={isLoading || !district || divisionItems.length === 0}
+        zIndex={1000}
+        zIndexInverse={4000}
+        listMode="SCROLLVIEW"
       />
 
       <TouchableOpacity

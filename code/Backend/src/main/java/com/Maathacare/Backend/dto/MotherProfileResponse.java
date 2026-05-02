@@ -12,6 +12,8 @@ public class MotherProfileResponse {
     private String bloodGroup;
     private String district;
     private String province;
+    private String phmName;
+    private String phmId;
 
     // --- Getters and Setters ---
     // These allow the app to read and write the data
@@ -43,4 +45,20 @@ public class MotherProfileResponse {
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getPhmName() {
+        return phmName;
+    }
+
+    public void setPhmName(String phmName) {
+        this.phmName = phmName;
+    }
+
+    public String getPhmId() {
+        return phmId;
+    }
+
+    public void setPhmId(String phmId) {
+        this.phmId = phmId;
+    }
 }

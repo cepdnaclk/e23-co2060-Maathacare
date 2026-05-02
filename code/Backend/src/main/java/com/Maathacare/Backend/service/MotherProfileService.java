@@ -60,13 +60,16 @@ public class MotherProfileService {
         newProfile.setProvince(request.getProvince());
         newProfile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
 
+        // Inside createMotherProfile method
         if (request.getResidentialDivision() != null) {
-            Optional<PHMProfile> assignedPhm = phmProfileRepository.findByPhmDivision(request.getResidentialDivision());
+            // 🌟 CHANGE THIS: Search by MohArea instead of PhmDivision
+            Optional<PHMProfile> assignedPhm = phmProfileRepository.findByMohArea(request.getResidentialDivision());
+
             if (assignedPhm.isPresent()) {
                 newProfile.setPhmProfile(assignedPhm.get());
             } else {
-                // We no longer throw an exception here. We just log a warning and let the registration finish!
-                System.out.println("Warning: Registered mother without a PHM. No PHM found for division: " + request.getResidentialDivision());
+                // Keeping your warning log so you can track it in the console[cite: 4]
+                System.out.println("Warning: Registered mother without a PHM. No PHM found for area: " + request.getResidentialDivision());
             }
         }
 
@@ -88,6 +91,15 @@ public class MotherProfileService {
         response.setBloodGroup(profile.getBloodGroup());
         response.setDistrict(profile.getDistrict()); // 🟢 Now mapped
         response.setProvince(profile.getProvince()); // 🟢 Now mapped
+
+        // 🌟 Add this right before returning the response
+        if (profile.getPhmProfile() != null) {
+            response.setPhmName(profile.getPhmProfile().getFullName());
+            response.setPhmId(profile.getPhmProfile().getRegistrationNumber());
+        } else {
+            response.setPhmName("Pending");
+            response.setPhmId("Pending");
+        }
 
         return response;
     }
@@ -134,4 +146,5 @@ public class MotherProfileService {
             return response;
         }).collect(Collectors.toList());
     }
+
 }

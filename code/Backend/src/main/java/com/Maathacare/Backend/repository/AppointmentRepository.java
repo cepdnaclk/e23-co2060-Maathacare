@@ -1,14 +1,14 @@
 package com.Maathacare.Backend.repository;
 
 import com.Maathacare.Backend.model.entity.Appointment;
-import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
-import java.util.UUID;
 
-public interface AppointmentRepository extends JpaRepository<Appointment,String> {
-    List<Appointment> findByMother_Id(String motherId);
-    List<Appointment> findByPhm_User_StaffId(String staffId);
-
-    List<Appointment> findAllByMother_Id(String motherId);
+@Repository
+public interface AppointmentRepository extends JpaRepository<Appointment, String> {
+    // Finds all appointments for a specific PHM and orders them by date
+    List<Appointment> findByPhmUserUserIdOrderByAppointmentDateAsc(String phmUserId);
+    List<Appointment> findByMotherUserUserIdOrderByAppointmentDateAsc(String userId);
 }

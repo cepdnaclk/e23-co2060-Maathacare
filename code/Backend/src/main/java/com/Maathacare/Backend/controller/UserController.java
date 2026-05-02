@@ -20,25 +20,17 @@ import com.Maathacare.Backend.dto.StaffResponse;
 import com.Maathacare.Backend.dto.UserRegistrationRequest;
 import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.PHMProfile;
-import com.Maathacare.Backend.dto.UserRegistrationRequest;
-import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.User;
 import com.Maathacare.Backend.model.enums.Role;
 import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
-import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -75,7 +67,7 @@ public class UserController {
             }
 
             User newUser = new User();
-            newUser.setUserId(request.getPhoneNumber());
+            newUser.setUserId(request.getPhoneNumber().trim());
             newUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
             newUser.setRole(Role.MOTHER);
             newUser.setActive(true);
@@ -95,18 +87,18 @@ public class UserController {
             profile.setProvince(request.getProvince());
             profile.setResidentialDivision(request.getResidentialDivision());
 
+            // If the user selected an area, try to find a PHM
             if (request.getResidentialDivision() != null && !request.getResidentialDivision().trim().isEmpty()) {
-                Optional<PHMProfile> assignedPhm = phmProfileRepository.findByPhmDivision(request.getResidentialDivision());
+                Optional<PHMProfile> assignedPhm = phmProfileRepository.findByMohArea(request.getResidentialDivision().trim());
+
                 if (assignedPhm.isPresent()) {
-                    profile.setPhmProfile(assignedPhm.get());
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No PHM assigned to division: " + request.getResidentialDivision());
+                    profile.setPhmProfile(assignedPhm.get()); // Link the PHM if found
                 }
             }
 
             motherProfileRepository.save(profile);
-
             return ResponseEntity.status(HttpStatus.CREATED).body("Mother Account and Profile created!");
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
@@ -118,7 +110,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> requestData) {
         try {
-            String phone = requestData.get("phoneNumber");
+            String phone = requestData.get("phoneNumber").trim();
             String password = requestData.get("password");
             return ResponseEntity.ok(userService.loginUser(phone, password));
         } catch (RuntimeException e) {
@@ -258,6 +250,7 @@ public class UserController {
     // ----------------------------------------------------
     // 🔐 SECURITY ENDPOINTS (PASTE THIS ENTIRE BLOCK HERE)
     // ----------------------------------------------------
+    @CrossOrigin(origins = "*")
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
         try {

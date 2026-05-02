@@ -1,10 +1,20 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import {
+  CreditCard,
+  Droplets,
+  Home,
+  LogOut,
+  MapPin,
+  Phone,
+} from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,8 +22,7 @@ import {
   View,
 } from "react-native";
 
-// 🌍 Use your current active IP
-const API_BASE_URL = "http://10.224.114.226:8080";
+const API_BASE_URL = "http://172.20.10.2:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
@@ -27,59 +36,46 @@ export default function ProfileScreen() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      // 🔑 Pulling keys from the AsyncStorage "Vault"
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
 
-      console.log(
-        "🔍 Checking Profile Storage - ID:",
-        userId,
-        "Token exists:",
-        !!token,
-      );
-
-      // 🛡️ Security Guard
       if (!token || !userId) {
         setLoading(false);
         return;
       }
 
-      // 🛑 Requesting data with the 'Bearer' token as a VIP pass
       const response = await axios.get(
         `${API_BASE_URL}/api/mothers/profile/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-
-      console.log("Backend sent profile data:", response.data);
       setProfile(response.data);
     } catch (error: any) {
       console.error("Profile Fetch Error:", error);
       if (error.response?.status === 403) {
-        Alert.alert(
-          "Security Error",
-          "Your session has expired. Please log in again.",
-        );
+        Alert.alert("Security Error", "Your session has expired.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  // 🟢 LOGOUT FUNCTION
   const handleLogout = async () => {
     try {
       console.log("Logout sequence started...");
-      await AsyncStorage.clear();
+
+      // 🌟 FIX: Remove keys individually to bypass the iOS folder deletion bug!
+      await AsyncStorage.removeItem("userToken");
+      await AsyncStorage.removeItem("userId");
+
+      // If you are saving a role during login, remove it here too:
+      // await AsyncStorage.removeItem('userRole');
+
       console.log("Storage cleared successfully.");
 
-      setTimeout(() => {
-        if (router.canGoBack()) {
-          router.dismissAll();
-        }
-        router.replace("/");
-      }, 50);
+      // Go back to login
+      router.replace("/mother-login");
     } catch (error) {
       console.error("Logout error details:", error);
       Alert.alert("Logout Failed", "Please restart the app.");
@@ -89,85 +85,191 @@ export default function ProfileScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color="#FF69B4" />
+        <ActivityIndicator size="large" color="#db2777" />
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Mother's Profile</Text>
-      <View style={styles.card}>
-        <DetailItem label="Full Name" value={profile?.fullName} />
-        <DetailItem label="NIC Number" value={profile?.nic} />
-        <DetailItem label="Blood Group" value={profile?.bloodGroup} />
-        <DetailItem
-          label="Emergency Contact"
-          value={profile?.emergencyContactNumber}
-        />
-        <DetailItem label="Address" value={profile?.address} />
-        <DetailItem label="District" value={profile?.district} />
-        <DetailItem label="Province" value={profile?.province} />
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        {/* --- CUSTOM IMAGE AVATAR SECTION --- */}
+        <View style={styles.headerSection}>
+          <View style={styles.avatarWrapper}>
+            <View style={styles.avatarCircle}>
+              <Image
+                source={require("../../assets/images/image_d73a98.jpeg")}
+                style={styles.avatar}
+                resizeMode="cover"
+              />
+            </View>
+          </View>
+          <Text style={styles.profileName}>
+            {profile?.fullName || "Mother Name"}
+          </Text>
+          <Text style={styles.profileRole}>Soon-to-be Mommy ✨</Text>
+        </View>
 
+        {/* --- INFORMATION CARDS --- */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Personal Details</Text>
+
+          <DetailRow
+            icon={<CreditCard size={20} color="#db2777" />}
+            label="NIC Number"
+            value={profile?.nic}
+          />
+          <DetailRow
+            icon={<Droplets size={20} color="#db2777" />}
+            label="Blood Group"
+            value={profile?.bloodGroup}
+          />
+          <DetailRow
+            icon={<Phone size={20} color="#db2777" />}
+            label="Emergency Contact"
+            value={profile?.emergencyContactNumber}
+          />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Location Information</Text>
+          <DetailRow
+            icon={<MapPin size={20} color="#db2777" />}
+            label="District & Province"
+            value={`${profile?.district}, ${profile?.province}`}
+          />
+          <DetailRow
+            icon={<Home size={20} color="#db2777" />}
+            label="Full Address"
+            value={profile?.address}
+          />
+        </View>
+
+        {/* --- SIGN OUT --- */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutText}>Log Out</Text>
+          <LogOut size={20} color="#ffffff" style={{ marginRight: 10 }} />
+          <Text style={styles.logoutText}>Sign Out</Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+
+        <View style={{ height: 40 }} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
-// 🎨 Helper component for clean rows
-const DetailItem = ({ label, value }: { label: string; value: string }) => (
-  <View style={styles.itemContainer}>
-    <Text style={styles.label}>{label}</Text>
-    <Text style={styles.value}>{value || "Not provided"}</Text>
+const DetailRow = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: any;
+  label: string;
+  value: string;
+}) => (
+  <View style={styles.rowContainer}>
+    <View style={styles.iconCircle}>{icon}</View>
+    <View style={styles.rowContent}>
+      <Text style={styles.rowLabel}>{label}</Text>
+      <Text style={styles.rowValue}>{value || "Not provided"}</Text>
+    </View>
   </View>
 );
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fdf2f8", padding: 20 },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#db2777",
-    marginBottom: 20,
-    marginTop: 40,
+  safeArea: { flex: 1, backgroundColor: "#fff5f8" },
+  container: { flex: 1, paddingHorizontal: 25 },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff5f8",
   },
+
+  headerSection: { alignItems: "center", marginTop: 40, marginBottom: 30 },
+  avatarWrapper: {
+    shadowColor: "#db2777",
+    shadowOpacity: 0.1,
+    shadowRadius: 15,
+    elevation: 8,
+  },
+  avatarCircle: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: "#db2777",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+    borderWidth: 5,
+    borderColor: "white",
+  },
+  avatar: { width: "100%", height: "100%" },
+
+  profileName: {
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#1f2937",
+    marginTop: 15,
+  },
+  profileRole: {
+    fontSize: 14,
+    color: "#9ca3af",
+    fontWeight: "500",
+    marginTop: 2,
+  },
+
   card: {
     backgroundColor: "white",
-    borderRadius: 15,
-    padding: 20,
-    elevation: 4,
+    borderRadius: 25,
+    padding: 22,
+    marginBottom: 20,
     shadowColor: "#000",
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.03,
     shadowRadius: 10,
-    marginBottom: 40,
+    elevation: 3,
   },
-  itemContainer: {
-    marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-    paddingBottom: 10,
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#db2777",
+    marginBottom: 18,
   },
-  label: {
-    fontSize: 12,
+
+  rowContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  iconCircle: {
+    width: 42,
+    height: 42,
+    backgroundColor: "#fff1f2",
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
+  },
+  rowContent: { flex: 1 },
+  rowLabel: {
+    fontSize: 10,
     color: "#9ca3af",
-    fontWeight: "600",
+    fontWeight: "700",
     textTransform: "uppercase",
   },
-  value: { fontSize: 18, color: "#374151", marginTop: 4 },
+  rowValue: { fontSize: 16, color: "#374151", fontWeight: "600", marginTop: 2 },
+
   logoutButton: {
-    backgroundColor: "#ef4444",
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
+    backgroundColor: "#f43f5e",
+    flexDirection: "row",
+    height: 60,
+    borderRadius: 20,
+    justifyContent: "center",
     alignItems: "center",
+    marginTop: 10,
+    elevation: 5,
+    shadowColor: "#f43f5e",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
   },
-  logoutText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+  logoutText: { color: "white", fontWeight: "bold", fontSize: 17 },
 });
