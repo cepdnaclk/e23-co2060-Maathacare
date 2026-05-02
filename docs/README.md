@@ -51,8 +51,14 @@ MaathaCare is a smart digital healthcare ecosystem designed to modernize materna
 
 ## Solution Architecture
 
-High level diagram + description
+MaathaCare follows a modern **three-tier architecture** to ensure scalability and security. The system connects pregnant mothers and healthcare professionals (midwives/doctors) through a centralized cloud-based backend.
 
+### Key Components:
+* **Frontend:** A responsive web application built using [React.js / Next.js] for healthcare workers and a mobile-friendly interface for mothers.
+* **Backend API:** A RESTful API developed with [Node.js / Python Flask] to handle business logic, authentication, and data processing.
+* **Database:** A [PostgreSQL] database stores encrypted patient records, clinic schedules, and medical history.
+* **Cloud Hosting:** The system is deployed on [GitHub Pages / AWS / Render], ensuring high availability.
+  
 ## Software Designs
 
 Detailed designs with many sub-sections
@@ -63,8 +69,12 @@ Testing done on software : detailed + summarized results
 
 ## Conclusion
 
-What was achieved, future developments, commercialization plans
+MaathaCare successfully digitizes the maternal healthcare journey in Sri Lanka, reducing the risk of missed clinics and improving the tracking of high-risk pregnancies. By replacing manual paperwork with a smart digital ecosystem, we provide healthcare workers with actionable insights to save lives.
 
+### Future Developments
+* **AI Integration:** Predicting pregnancy complications using machine learning.
+* **Multi-language Support:** Adding Sinhala and Tamil voice-guided instructions for better inclusivity.
+* **Offline Mode:** Allowing midwives to sync data in rural areas with poor connectivity.
 ## Links
 
 - [Project Repository](https://github.com/cepdnaclk/{{ page.repository-name }}){:target="_blank"}
