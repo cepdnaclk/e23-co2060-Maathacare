@@ -69,8 +69,13 @@ Testing done on software : detailed + summarized results
 
 ## Conclusion
 
-What was achieved, future developments, commercialization plans
+MaathaCare successfully digitizes the maternal healthcare journey in Sri Lanka, reducing the risk of missed clinics and improving the tracking of high-risk pregnancies. By replacing manual paperwork with a smart digital ecosystem, we provide healthcare workers with actionable insights to save lives.
 
+### Future Developments
+* **AI Integration:** Predicting pregnancy complications using machine learning.
+* **Multi-language Support:** Adding Sinhala and Tamil voice-guided instructions for better inclusivity.
+* **Offline Mode:** Allowing midwives to sync data in rural areas with poor connectivity.
+  
 ## Links
 
 - [Project Repository](https://github.com/cepdnaclk/{{ page.repository-name }}){:target="_blank"}
