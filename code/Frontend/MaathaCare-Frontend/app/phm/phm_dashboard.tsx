@@ -30,12 +30,14 @@ export default function PHMDashboard() {
     "Home" | "Appointment" | "Profile"
   >("Home");
 
+  // --- Search & Assign State ---
   const [searchNic, setSearchNic] = useState("");
+  const [assignModalVisible, setAssignModalVisible] = useState(false);
 
+  // --- Scheduling State ---
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMothers, setSelectedMothers] = useState<any[]>([]);
   const [isSelectingDate, setIsSelectingDate] = useState(false);
-
   const [date, setDate] = useState(new Date());
   const [remarks, setRemarks] = useState("");
   const [showPicker, setShowPicker] = useState(false);
@@ -85,6 +87,7 @@ export default function PHMDashboard() {
       if (response.ok) {
         Alert.alert("Success", "Mother added to your list!");
         setSearchNic("");
+        setAssignModalVisible(false); // Close the new modal
         loadDashboardData();
       } else {
         const errorMsg = await response.text();
@@ -190,22 +193,18 @@ export default function PHMDashboard() {
         </View>
       </View>
 
-      <View style={styles.searchSection}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Enter NIC to link mother..."
-          placeholderTextColor="#94A3B8"
-          value={searchNic}
-          onChangeText={setSearchNic}
-        />
-        <TouchableOpacity style={styles.addBtn} onPress={handleAssignMother}>
-          <Text style={styles.addBtnText}>Add</Text>
-        </TouchableOpacity>
-      </View>
+      {/* 🌟 NEW ELEGANT BUTTON REPLACING THE SEARCH BAR */}
+      <TouchableOpacity
+        style={styles.elegantAddBtn}
+        onPress={() => setAssignModalVisible(true)}
+      >
+        <Text style={styles.elegantAddBtnText}>+ Link New Patient</Text>
+      </TouchableOpacity>
 
       <Text style={styles.sectionTitle}>Maternal Care List</Text>
       <FlatList
         data={patients}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item: any) => item.id.toString()}
         renderItem={({ item }: any) => (
           <View style={styles.patientCard}>
@@ -403,6 +402,52 @@ export default function PHMDashboard() {
         </TouchableOpacity>
       </View>
 
+      {/* 🌟 NEW: Link Patient Modal */}
+      <Modal
+        visible={assignModalVisible}
+        animationType="fade"
+        transparent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Link Patient</Text>
+            <Text style={styles.modalSub}>
+              Enter the mother's 12-digit NIC number to add her to your care
+              list.
+            </Text>
+
+            <TextInput
+              style={styles.modalInput}
+              placeholder="e.g. 199012345678"
+              placeholderTextColor="#94A3B8"
+              value={searchNic}
+              onChangeText={setSearchNic}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                onPress={() => {
+                  setAssignModalVisible(false);
+                  setSearchNic("");
+                }}
+                style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
+              >
+                <Text style={{ color: "#475569", fontWeight: "bold" }}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleAssignMother}
+                style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
+              >
+                <Text style={{ color: "white", fontWeight: "bold" }}>Link</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Scheduling Modal */}
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -594,22 +639,26 @@ const styles = StyleSheet.create({
   },
   statNumber: { fontSize: 20, fontWeight: "bold", color: "#0056b3" },
   statLabel: { fontSize: 11, color: "#64748B", marginTop: 4 },
-  searchSection: { flexDirection: "row", gap: 10, marginBottom: 20 },
-  searchInput: {
-    flex: 1,
-    backgroundColor: "white",
-    padding: 12,
+
+  // 🌟 NEW ELEGANT ADD BUTTON STYLES
+  elegantAddBtn: {
+    backgroundColor: "#EFF6FF",
+    paddingVertical: 14,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-  },
-  addBtn: {
-    backgroundColor: "#0056b3",
-    paddingHorizontal: 20,
-    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: "#BFDBFE",
+    borderStyle: "dashed",
+    alignItems: "center",
     justifyContent: "center",
+    marginBottom: 20,
   },
-  addBtnText: { color: "white", fontWeight: "bold" },
+  elegantAddBtnText: {
+    color: "#1D4ED8",
+    fontWeight: "bold",
+    fontSize: 15,
+    letterSpacing: 0.5,
+  },
+
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
