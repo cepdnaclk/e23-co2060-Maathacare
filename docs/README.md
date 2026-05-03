@@ -22,14 +22,14 @@ A HTML template integrated with the given GitHub repository templates, based on 
 # MaathaCare
 
 ---
-
+![MaathaCare Cover](./data/cover_page.jpg)
 ## Team
 - E/23/211, A.M.G.M.Madubhashinie, [e23211@eng.pdn.ac.lk](mailto:e23211@eng.pdn.ac.lk)
 - E/23/244, M.T.C.Newanma, [e23244@eng.pdn.ac.lk](mailto:e23244@eng.pdn.ac.lk)
 - E/23/360, K.K.S.Semmindi, [e23360@eng.pdn.ac.lk](mailto:e23360@eng.pdn.ac.lk)
 - E/23/427, A.S.Weerasinghe, [e23427@eng.pdn.ac.lk](mailto:e23427@eng.pdn.ac.lk)
 
-![MaathaCare Cover](./data/cover_page.jpg)
+
 <!-- Image (photo/drawing of the final hardware) should be here -->
 
 <!-- This is a sample image, to show how to add images to your page. To learn more options, please refer [this](https://projects.ce.pdn.ac.lk/docs/faq/how-to-add-an-image/) -->
