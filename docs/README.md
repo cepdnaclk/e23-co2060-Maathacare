@@ -3,7 +3,7 @@ layout: home
 permalink: index.html
 
 # Please update this with your repository name and project title
-repository-name: e23-co2060-MaathaCare
+repository-name: e23-co2060-Maathacare
 title: MaathaCare
 ---
 
@@ -48,7 +48,6 @@ A HTML template integrated with the given GitHub repository templates, based on 
 
 MaathaCare is a smart digital healthcare ecosystem designed to modernize maternal support services within Sri Lanka’s public health sector. While the current healthcare framework is fundamentally robust, it is heavily reliant on manual, paper-based record-keeping. MaathaCare bridges this technological gap by digitizing the tracking of clinic schedules, supplement adherence, and high-risk pregnancy indicators, ensuring no mother is left behind due to administrative inefficiencies.
 
-
 ## Solution Architecture
 
 MaathaCare follows a modern **three-tier architecture** to ensure scalability and security. The system connects pregnant mothers and healthcare professionals (midwives/doctors) through a centralized cloud-based backend.
@@ -68,7 +67,6 @@ Detailed designs with many sub-sections
 Testing done on software : detailed + summarized results
 
 ## Conclusion
-
 MaathaCare successfully digitizes the maternal healthcare journey in Sri Lanka, reducing the risk of missed clinics and improving the tracking of high-risk pregnancies. By replacing manual paperwork with a smart digital ecosystem, we provide healthcare workers with actionable insights to save lives.
 
 ### Future Developments
