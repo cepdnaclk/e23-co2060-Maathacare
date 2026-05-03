@@ -59,8 +59,8 @@ MaathaCare follows a modern **three-tier architecture** to ensure scalability an
 * **Cloud Hosting:** The system is deployed on [GitHub Pages / AWS / Render], ensuring high availability.
 
 ## Software Designs
-
 The Software Designs section of MaathaCare outlines the technical framework used to bridge clinical requirements with a modern, full-stack digital solution. The system follows a structured Three-Tier Architecture, utilizing Java with Spring Boot for a robust backend and React Native for a high-performance, cross-platform mobile frontend. Central to the design is the Database Schema (ER Diagram), which carefully organizes entities like mothers, midwives, and medical records in a PostgreSQL database to ensure data integrity and security. This architecture allows for seamless communication between the user’s device and the server, ensuring that sensitive pregnancy data is processed and stored according to engineering best practices.
+
 The backend logic computes weeks and days from the Last Menstrual Period (LMP)—and the secure JWT-based authentication cycle that manages user sessions. The visual aspect of the software is governed by a User Interface (UI) Design philosophy that prioritizes accessibility and comfort, using a glassmorphic aesthetic with soft pink and purple palettes. By documenting these layers, from the high-level system architecture down to specific component interactions, the project demonstrates a disciplined software engineering process tailored for the maternal healthcare sector.
 
 ## Testing
