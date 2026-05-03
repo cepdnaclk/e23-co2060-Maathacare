@@ -20,7 +20,7 @@ If your followed all the given instructions correctly, your repository will be a
 A HTML template integrated with the given GitHub repository templates, based on github.com/cepdnaclk/eYY-project-theme . If you like to remove this default theme and make your own web page, you can remove the file, docs/_config.yml and create the site using HTML. -->
 
 # MaathaCare
-![MaathaCare Cover](./data/cover_page.jpg)
+
 ---
 
 ## Team
@@ -29,7 +29,7 @@ A HTML template integrated with the given GitHub repository templates, based on 
 - E/23/360, K.K.S.Semmindi, [e23360@eng.pdn.ac.lk](mailto:e23360@eng.pdn.ac.lk)
 - E/23/427, A.S.Weerasinghe, [e23427@eng.pdn.ac.lk](mailto:e23427@eng.pdn.ac.lk)
 
-
+![MaathaCare Cover](./data/cover_page.jpg)
 <!-- Image (photo/drawing of the final hardware) should be here -->
 
 <!-- This is a sample image, to show how to add images to your page. To learn more options, please refer [this](https://projects.ce.pdn.ac.lk/docs/faq/how-to-add-an-image/) -->
