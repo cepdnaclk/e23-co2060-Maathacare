@@ -14,7 +14,6 @@ import {
     View,
 } from "react-native";
 
-// --- Data Interface matching your new Spring Boot DTO ---
 interface Appointment {
   id: string;
   date: string;
@@ -139,13 +138,14 @@ export default function UpcomingClinicScreen() {
                     text={nextAppointment.phmName}
                   />
 
-                  {nextAppointment.notes && (
+                  {/* 🌟 FIX: Safely handling empty notes using a ternary operator */}
+                  {nextAppointment.notes ? (
                     <View style={styles.notesBox}>
                       <Text style={styles.notesText}>
                         {nextAppointment.notes}
                       </Text>
                     </View>
-                  )}
+                  ) : null}
                 </LinearGradient>
               </>
             )}
@@ -180,7 +180,6 @@ export default function UpcomingClinicScreen() {
   );
 }
 
-// --- Helper Component for Hero Card Rows ---
 const DetailRow = ({ icon, text }: { icon: any; text: string }) => (
   <View style={styles.detailRow}>
     <View style={styles.iconBox}>{icon}</View>

@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -60,7 +61,6 @@ const districtMap: Record<string, { label: string; value: string }[]> = {
   ],
 };
 
-// 🌟 UPDATED: Added all official MOH Areas for Kandy District
 const mohAreaMap: Record<string, { label: string; value: string }[]> = {
   Jaffna: [
     { label: "Jaffna MC", value: "Jaffna MC" },
@@ -319,9 +319,17 @@ export default function Register() {
           value={dob}
           mode="date"
           display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) setDob(selectedDate);
+          onChange={(event: any, selectedDate?: Date) => {
+            if (Platform.OS === "android") {
+              setShowDatePicker(false);
+            }
+            if (event.type === "dismissed") {
+              setShowDatePicker(false);
+              return;
+            }
+            if (selectedDate) {
+              setDob(selectedDate);
+            }
           }}
         />
       )}
@@ -356,9 +364,17 @@ export default function Register() {
           mode="date"
           display="default"
           maximumDate={new Date()}
-          onChange={(event, selectedDate) => {
-            setShowLmpPicker(false);
-            if (selectedDate) setLmp(selectedDate);
+          onChange={(event: any, selectedDate?: Date) => {
+            if (Platform.OS === "android") {
+              setShowLmpPicker(false);
+            }
+            if (event.type === "dismissed") {
+              setShowLmpPicker(false);
+              return;
+            }
+            if (selectedDate) {
+              setLmp(selectedDate);
+            }
           }}
         />
       )}
