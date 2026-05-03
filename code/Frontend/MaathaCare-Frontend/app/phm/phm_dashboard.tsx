@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import PhmAppointments from "../../components/PhmAppointments"; // Make sure path matches your project
+import PhmAppointments from "../../components/PhmAppointments";
 
 const API_BASE_URL = "http://172.20.10.2:8080";
 
@@ -164,12 +164,14 @@ export default function PHMDashboard() {
         setShowPicker(false);
         return;
       }
-      if (selectedDate) setDate(selectedDate);
-      if (pickerMode === "date") {
+      if (event.type === "set" && selectedDate) {
+        setDate(selectedDate);
+      }
+      if (pickerMode === "date" && event.type === "set") {
         setShowPicker(false);
         setPickerMode("time");
         setTimeout(() => setShowPicker(true), 100);
-      } else {
+      } else if (pickerMode === "time") {
         setShowPicker(false);
       }
     }
@@ -240,7 +242,6 @@ export default function PHMDashboard() {
     </View>
   );
 
-  // 🌟 OFFICIAL PROFILE UI
   const renderProfile = () => (
     <View style={styles.profileContainer}>
       <View style={styles.profileTopCard}>
@@ -402,7 +403,6 @@ export default function PHMDashboard() {
         </TouchableOpacity>
       </View>
 
-      {/* Scheduling Modal */}
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -730,7 +730,6 @@ const styles = StyleSheet.create({
   },
   changePatientText: { color: "#0056b3", fontWeight: "bold", fontSize: 14 },
 
-  // --- OFFICIAL PROFILE STYLES ---
   profileContainer: { flex: 1, padding: 20 },
   profileTopCard: {
     backgroundColor: "white",
