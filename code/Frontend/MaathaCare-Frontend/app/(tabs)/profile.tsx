@@ -22,7 +22,7 @@ import {
   View,
 } from "react-native";
 
-const API_BASE_URL = "http://172.20.10.2:8080";
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
