@@ -15,6 +15,8 @@ import {
 } from "react-native";
 const { width } = Dimensions.get("window");
 
+import { API_BASE_URL } from "../../constants/apiConfig";
+
 export default function HomeTab() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ weeks: 0, days: 0, totalDays: 0 });
@@ -30,7 +32,6 @@ export default function HomeTab() {
         try {
           const userId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
-          const ip = "172.20.10.2"; // Ensure this matches your current IP
 
           if (!token || !userId) {
             setLoading(false);
@@ -38,7 +39,7 @@ export default function HomeTab() {
           }
 
           const response = await axios.get(
-            `http://${ip}:8080/api/mothers/profile/${userId}`,
+            `${API_BASE_URL}/api/mothers/profile/${userId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             },

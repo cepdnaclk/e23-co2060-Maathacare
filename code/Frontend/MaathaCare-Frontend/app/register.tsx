@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 const districtMap: Record<string, { label: string; value: string }[]> = {
   Central: [
@@ -203,7 +204,7 @@ export default function Register() {
       };
 
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/users/register",
+        `${API_BASE_URL}/api/users/register`,
         payload,
       );
 

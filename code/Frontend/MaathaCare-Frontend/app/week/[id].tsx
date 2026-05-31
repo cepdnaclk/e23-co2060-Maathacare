@@ -12,6 +12,8 @@ import {
   View,
 } from "react-native";
 
+import { API_BASE_URL } from "../../constants/apiConfig";
+
 export default function WeekDetails() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -114,7 +116,7 @@ export default function WeekDetails() {
 
   useEffect(() => {
     // 🟢 Ensure this IP matches your laptop's current IPv4
-    const fetchUrl = `http://172.20.10.2:8080/api/weekly-milestones/${id}`;
+    const fetchUrl = `${API_BASE_URL}/api/weekly-milestones/${id}`;
 
     axios
       .get(fetchUrl)

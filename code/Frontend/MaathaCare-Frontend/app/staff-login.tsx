@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 export default function StaffLogin() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function StaffLogin() {
     try {
       // 🚀 INDUSTRIAL FIX: Point to the correct Controller path
       // Ensure the IP matches your current laptop IPv4 (cmd -> ipconfig)
-      const backendUrl = "http://172.20.10.2:8080/api/users/staff/login";
+      const backendUrl = `${API_BASE_URL}/api/users/staff/login`;
 
       console.log(`Sending request to: ${backendUrl} for Staff ID: ${staffId}`);
 

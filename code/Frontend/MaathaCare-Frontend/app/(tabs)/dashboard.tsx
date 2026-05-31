@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export default function Dashboard() {
   useEffect(() => {
     // We use the exact same IP address your friend used!
     axios
-      .get("http://172.20.10.2:8080/api/milestones/1")
+      .get(`${API_BASE_URL}/api/milestones/1`)
       .then((response) => {
         setMilestone(response.data); // Save the Lemon data into our state!
       })

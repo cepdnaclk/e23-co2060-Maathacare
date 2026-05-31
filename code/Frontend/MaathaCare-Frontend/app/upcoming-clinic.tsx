@@ -5,14 +5,15 @@ import { useRouter } from "expo-router";
 import { ArrowLeft, Calendar, Clock, MapPin, User } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 interface Appointment {
   id: string;
@@ -37,7 +38,6 @@ export default function UpcomingClinicScreen() {
       setLoading(true);
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
-      const ip = "172.20.10.2"; // Your backend IP address
 
       if (!token || !userId) {
         setLoading(false);
@@ -45,7 +45,7 @@ export default function UpcomingClinicScreen() {
       }
 
       const response = await axios.get(
-        `http://${ip}:8080/api/appointments/mother/${userId}`,
+        `${API_BASE_URL}/api/appointments/mother/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
