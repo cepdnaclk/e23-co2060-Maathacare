@@ -30,7 +30,7 @@ export default function HomeTab() {
         try {
           const userId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
-          const ip = "172.20.10.2"; // Ensure this matches your current IP
+          const ip = "10.157.201.226"; // Ensure this matches your current IP
 
           if (!token || !userId) {
             setLoading(false);

@@ -280,6 +280,19 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating password: " + e.getMessage());
         }
+
     }
 
+    // ----------------------------------------------------
+    // 📱 PUSH NOTIFICATION ENDPOINTS
+    // ----------------------------------------------------
+    @PutMapping("/{userId}/push-token")
+    public ResponseEntity<?> updatePushToken(@PathVariable String userId, @RequestParam String token) {
+        try {
+            userService.updatePushToken(userId, token);
+            return ResponseEntity.ok("Push token updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving push token: " + e.getMessage());
+        }
+    }
 }

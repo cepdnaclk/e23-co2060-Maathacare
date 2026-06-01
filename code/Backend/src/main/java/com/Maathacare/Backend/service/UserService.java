@@ -50,4 +50,11 @@ public class UserService {
         String token = jwtService.generateToken(user);
         return new AuthResponse(token, user.getRole().name());
     }
+    public void updatePushToken(String userId, String pushToken) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        user.setPushToken(pushToken);
+        userRepository.save(user);
+    }
 }

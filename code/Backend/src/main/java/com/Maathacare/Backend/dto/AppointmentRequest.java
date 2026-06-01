@@ -1,5 +1,5 @@
 package com.Maathacare.Backend.dto;
-
+import java.util.List;
 public class AppointmentRequest {
     private ProfileRef mother;
     private ProfileRef phm;
@@ -7,6 +7,7 @@ public class AppointmentRequest {
     private String status;
     private String remarks;
     private String location;
+    private List<String> supplements;
 
     public static class ProfileRef {
         private String id;
@@ -27,4 +28,12 @@ public class AppointmentRequest {
     public void setRemarks(String remarks) { this.remarks = remarks; }
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    public List<String> getSupplements() {
+        return supplements;
+    }
+
+    public void setSupplements(List<String> supplements) {
+        this.supplements = supplements;
+    }
 }

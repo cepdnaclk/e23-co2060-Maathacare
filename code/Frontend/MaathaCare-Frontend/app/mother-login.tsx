@@ -14,11 +14,11 @@ import {
 export default function App() {
   const router = useRouter();
 
-  // 🟢 FIXED: Auto-login now checks the correct AsyncStorage vault!
+  
   useEffect(() => {
     const checkUserLogin = async () => {
       try {
-        // 🧹 ADD THIS LINE TEMPORARILY TO CLEAR GHOST DATA:
+        
         await AsyncStorage.clear();
         const savedToken = await AsyncStorage.getItem("userToken");
         if (savedToken) {
@@ -46,7 +46,7 @@ export default function App() {
       console.log("Sending request to backend...");
 
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/users/login",
+        "http://10.157.201.226:8080/api/users/login",
         {
           phoneNumber: phoneNumber,
           password: password,
