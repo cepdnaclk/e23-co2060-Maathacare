@@ -4,12 +4,12 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import { ChevronLeft } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function WeekDetails() {
@@ -114,7 +114,7 @@ export default function WeekDetails() {
 
   useEffect(() => {
     // 🟢 Ensure this IP matches your laptop's current IPv4
-    const fetchUrl = `http://172.20.10.2:8080/api/weekly-milestones/${id}`;
+    const fetchUrl = `http://192.168.131.223:8080/api/weekly-milestones/${id}`;
 
     axios
       .get(fetchUrl)

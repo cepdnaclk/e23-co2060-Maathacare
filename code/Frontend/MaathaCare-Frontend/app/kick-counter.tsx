@@ -45,7 +45,7 @@ export default function KickCounterScreen() {
     try {
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
-      const ip = "172.20.10.2"; // Ensure this matches your current IP
+      const ip = "192.168.131.223"; // Ensure this matches your current IP
 
       const response = await axios.post(
         `http://${ip}:8080/api/mothers/kicks`,

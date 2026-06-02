@@ -5,13 +5,13 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { Activity, Bell, Calendar, Footprints } from "lucide-react-native";
 import React, { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Dimensions,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 const { width } = Dimensions.get("window");
 
@@ -30,7 +30,7 @@ export default function HomeTab() {
         try {
           const userId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
-          const ip = "172.20.10.2"; // Ensure this matches your current IP
+          const ip = "192.168.131.223"; // Ensure this matches your current IP
 
           if (!token || !userId) {
             setLoading(false);

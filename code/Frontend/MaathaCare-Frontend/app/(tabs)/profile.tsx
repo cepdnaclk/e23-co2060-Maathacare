@@ -2,27 +2,27 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import {
-  CreditCard,
-  Droplets,
-  Home,
-  LogOut,
-  MapPin,
-  Phone,
+    CreditCard,
+    Droplets,
+    Home,
+    LogOut,
+    MapPin,
+    Phone,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    Image,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
-const API_BASE_URL = "http://172.20.10.2:8080";
+const API_BASE_URL = "http://192.168.131.223:8080";
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);

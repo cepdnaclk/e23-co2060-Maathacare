@@ -38,7 +38,7 @@ export default function UpcomingClinicScreen() {
       setLoading(true);
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
-      const ip = "172.20.10.2"; // Your backend IP address
+      const ip = "192.168.131.223"; // Your backend IP address
 
       if (!token || !userId) {
         setLoading(false);

@@ -3,14 +3,14 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
@@ -203,7 +203,7 @@ export default function Register() {
       };
 
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/users/register",
+        "http://192.168.131.223:8080/api/users/register",
         payload,
       );
 
