@@ -5,15 +5,17 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { Activity, Bell, Calendar, Footprints } from "lucide-react-native";
 import React, { useCallback, useState } from "react";
 import {
-    ActivityIndicator,
-    Dimensions,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 const { width } = Dimensions.get("window");
+
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 export default function HomeTab() {
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,6 @@ export default function HomeTab() {
         try {
           const userId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
-          const ip = "192.168.131.223"; // Ensure this matches your current IP
 
           if (!token || !userId) {
             setLoading(false);
@@ -38,7 +39,7 @@ export default function HomeTab() {
           }
 
           const response = await axios.get(
-            `http://${ip}:8080/api/mothers/profile/${userId}`,
+            `${API_BASE_URL}/api/mothers/profile/${userId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             },

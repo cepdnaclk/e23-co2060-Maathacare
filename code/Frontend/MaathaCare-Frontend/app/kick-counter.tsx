@@ -4,6 +4,8 @@ import { Footprints, RotateCcw, Save } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import { API_BASE_URL } from "../constants/apiConfig";
+
 export default function KickCounterScreen() {
   const [count, setCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
@@ -45,10 +47,9 @@ export default function KickCounterScreen() {
     try {
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
-      const ip = "192.168.131.223"; // Ensure this matches your current IP
 
       const response = await axios.post(
-        `http://${ip}:8080/api/mothers/kicks`,
+        `${API_BASE_URL}/api/mothers/kicks`,
         { userId, kickCount: count, date: new Date().toISOString() },
         { headers: { Authorization: `Bearer ${token}` } },
       );

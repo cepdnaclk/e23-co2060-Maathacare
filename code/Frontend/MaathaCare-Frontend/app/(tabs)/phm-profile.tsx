@@ -1,15 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
-const API_BASE_URL = "http://192.168.131.223:8080";
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 export default function PHMProfileScreen() {
   const [phmInfo, setPhmInfo] = useState<any>(null);

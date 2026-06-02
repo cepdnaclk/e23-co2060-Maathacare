@@ -2,17 +2,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 export default function ChangePasswordScreen() {
   const [oldPassword, setOldPassword] = useState("");
@@ -48,7 +49,7 @@ export default function ChangePasswordScreen() {
 
       // 🔗 Make sure your Spring Boot backend is running on this IP
       const response = await fetch(
-        "http://192.168.131.223:8080/api/users/change-password",
+        `${API_BASE_URL}/api/users/change-password`,
         {
           method: "POST",
           headers: {

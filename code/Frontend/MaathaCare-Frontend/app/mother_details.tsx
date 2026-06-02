@@ -2,14 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
-const API_BASE_URL = "http://192.168.131.223:8080";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 export default function MotherDetails() {
   const { motherId } = useLocalSearchParams(); // Get ID from navigation

@@ -2,17 +2,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 export default function StaffLogin() {
   const router = useRouter();
@@ -38,7 +39,7 @@ export default function StaffLogin() {
     try {
       // 🚀 INDUSTRIAL FIX: Point to the correct Controller path
       // Ensure the IP matches your current laptop IPv4 (cmd -> ipconfig)
-      const backendUrl = "http://192.168.131.223:8080/api/users/staff/login";
+      const backendUrl = `${API_BASE_URL}/api/users/staff/login`;
 
       console.log(`Sending request to: ${backendUrl} for Staff ID: ${staffId}`);
 
