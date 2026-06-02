@@ -5,16 +5,16 @@ import { useRouter } from "expo-router";
 import { ArrowLeft, Calendar, Clock, MapPin, User } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { API_BASE_URL } from "../constants/apiConfig";
 
-// --- Data Interface matching your new Spring Boot DTO ---
 interface Appointment {
   id: string;
   date: string;
@@ -38,7 +38,6 @@ export default function UpcomingClinicScreen() {
       setLoading(true);
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
-      const ip = "172.20.10.2"; // Your backend IP address
 
       if (!token || !userId) {
         setLoading(false);
@@ -46,7 +45,7 @@ export default function UpcomingClinicScreen() {
       }
 
       const response = await axios.get(
-        `http://${ip}:8080/api/appointments/mother/${userId}`,
+        `${API_BASE_URL}/api/appointments/mother/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -139,13 +138,14 @@ export default function UpcomingClinicScreen() {
                     text={nextAppointment.phmName}
                   />
 
-                  {nextAppointment.notes && (
+                  {/* 🌟 FIX: Safely handling empty notes using a ternary operator */}
+                  {nextAppointment.notes ? (
                     <View style={styles.notesBox}>
                       <Text style={styles.notesText}>
                         {nextAppointment.notes}
                       </Text>
                     </View>
-                  )}
+                  ) : null}
                 </LinearGradient>
               </>
             )}
@@ -180,7 +180,6 @@ export default function UpcomingClinicScreen() {
   );
 }
 
-// --- Helper Component for Hero Card Rows ---
 const DetailRow = ({ icon, text }: { icon: any; text: string }) => (
   <View style={styles.detailRow}>
     <View style={styles.iconBox}>{icon}</View>

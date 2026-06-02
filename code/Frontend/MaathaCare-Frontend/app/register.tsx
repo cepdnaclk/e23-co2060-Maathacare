@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +14,7 @@ import {
   View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 const districtMap: Record<string, { label: string; value: string }[]> = {
   Central: [
@@ -60,7 +62,6 @@ const districtMap: Record<string, { label: string; value: string }[]> = {
   ],
 };
 
-// 🌟 UPDATED: Added all official MOH Areas for Kandy District
 const mohAreaMap: Record<string, { label: string; value: string }[]> = {
   Jaffna: [
     { label: "Jaffna MC", value: "Jaffna MC" },
@@ -203,7 +204,7 @@ export default function Register() {
       };
 
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/users/register",
+        `${API_BASE_URL}/api/users/register`,
         payload,
       );
 
@@ -319,9 +320,17 @@ export default function Register() {
           value={dob}
           mode="date"
           display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) setDob(selectedDate);
+          onChange={(event: any, selectedDate?: Date) => {
+            if (Platform.OS === "android") {
+              setShowDatePicker(false);
+            }
+            if (event.type === "dismissed") {
+              setShowDatePicker(false);
+              return;
+            }
+            if (selectedDate) {
+              setDob(selectedDate);
+            }
           }}
         />
       )}
@@ -356,9 +365,17 @@ export default function Register() {
           mode="date"
           display="default"
           maximumDate={new Date()}
-          onChange={(event, selectedDate) => {
-            setShowLmpPicker(false);
-            if (selectedDate) setLmp(selectedDate);
+          onChange={(event: any, selectedDate?: Date) => {
+            if (Platform.OS === "android") {
+              setShowLmpPicker(false);
+            }
+            if (event.type === "dismissed") {
+              setShowLmpPicker(false);
+              return;
+            }
+            if (selectedDate) {
+              setLmp(selectedDate);
+            }
           }}
         />
       )}
