@@ -13,6 +13,20 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import * as Device from 'expo-device'; 
+import * as Notifications from 'expo-notifications';
+import { jwtDecode } from "jwt-decode";
+
+// 🌟 NEW: Tells the OS to show the notification banner even if the app is open!
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true, 
+    shouldShowList: true,   
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 const { width } = Dimensions.get("window");
 
 export default function HomeTab() {
@@ -24,13 +38,66 @@ export default function HomeTab() {
   // 🌟 Added state to hold the Midwife info
   const [phmInfo, setPhmInfo] = useState({ name: "Loading...", id: "" });
 
+  // 🌟 PUSH NOTIFICATION TRIGGER 
+  useFocusEffect(
+    useCallback(() => {
+      const registerAndSyncPushToken = async () => {
+        if (!Device.isDevice) {
+          console.log("Must use physical device for Push Notifications");
+          return;
+        }
+
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+
+        if (existingStatus !== 'granted') {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
+        }
+
+        if (finalStatus !== 'granted') {
+          console.log('Failed to get push token for push notification!');
+          return;
+        }
+
+        try {
+          const tokenData = await Notifications.getExpoPushTokenAsync({
+              projectId: "a06d1659-753c-4fd0-a631-c20c42877558" 
+          });
+          const token = tokenData.data;
+          console.log("🌟 Generated Push Token:", token);
+
+          const userToken = await AsyncStorage.getItem("userToken");
+          if (!userToken) return;
+
+          const decodedToken = jwtDecode<{ userId: string }>(userToken);
+          const realUserId = decodedToken.userId;
+          const ip = "10.157.201.226"; // Ensure this matches your current IP!
+
+          await axios.put(
+              `http://${ip}:8080/api/mothers/${realUserId}/push-token`,
+              { pushToken: token },
+              { headers: { Authorization: `Bearer ${userToken}` } }
+          );
+          console.log("✅ Token synced successfully to backend!");
+
+        } catch (error) {
+          console.error("Error generating or syncing token:", error);
+        }
+      };
+
+      registerAndSyncPushToken();
+    }, [])
+  );
+
+  // 🌟 FETCH DASHBOARD DATA
   useFocusEffect(
     useCallback(() => {
       const fetchPregnancyData = async () => {
         try {
           const userId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
-          const ip = "10.157.201.226"; // Ensure this matches your current IP
+          const ip = "10.157.201.226"; // Ensure this matches your current IP!
 
           if (!token || !userId) {
             setLoading(false);
@@ -41,7 +108,7 @@ export default function HomeTab() {
             `http://${ip}:8080/api/mothers/profile/${userId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
-            },
+            }
           );
 
           const data = response.data;
@@ -74,7 +141,7 @@ export default function HomeTab() {
         }
       };
       fetchPregnancyData();
-    }, []),
+    }, [])
   );
 
   // Calculate progress percentage (Pregnancy is ~280 days)
@@ -121,7 +188,7 @@ export default function HomeTab() {
         </TouchableOpacity>
       </View>
 
-      {/* 🌟 NEW ASSIGNED MIDWIFE BADGE */}
+      {/* 🌟 ASSIGNED MIDWIFE BADGE */}
       <View style={styles.phmCard}>
         <View style={styles.phmIconWrapper}>
           <Text style={{ fontSize: 18 }}>👩‍⚕️</Text>
@@ -288,7 +355,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 3,
   },
-  // 🌟 NEW STYLES FOR PHM BADGE
   phmCard: {
     backgroundColor: "rgba(255,255,255,0.7)",
     borderRadius: 16,

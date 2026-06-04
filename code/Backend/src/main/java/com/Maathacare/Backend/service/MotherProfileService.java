@@ -68,7 +68,7 @@ public class MotherProfileService {
             if (assignedPhm.isPresent()) {
                 newProfile.setPhmProfile(assignedPhm.get());
             } else {
-                // Keeping your warning log so you can track it in the console[cite: 4]
+                // Keeping your warning log so you can track it in the console
                 System.out.println("Warning: Registered mother without a PHM. No PHM found for area: " + request.getResidentialDivision());
             }
         }
@@ -105,7 +105,7 @@ public class MotherProfileService {
     }
 
     public void saveDailyKicks(KickCountRequest request) {
-        // 1. Find the MotherProfile using the userId (e.g., Asani's ID E/23/427)
+        // 1. Find the MotherProfile using the userId
         MotherProfile profile = motherProfileRepository.findByUserUserId(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
 
@@ -147,4 +147,14 @@ public class MotherProfileService {
         }).collect(Collectors.toList());
     }
 
+    // --- NEW METHOD ADDED HERE ---
+    public void updatePushTokenByUserId(String userId, String pushToken) {
+        // Find the mother profile by user ID or throw an error if not found
+        MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Mother profile not found for user ID: " + userId));
+
+        // Set the token and save it back to PostgreSQL
+        profile.setPushToken(pushToken);
+        motherProfileRepository.save(profile);
+    }
 }

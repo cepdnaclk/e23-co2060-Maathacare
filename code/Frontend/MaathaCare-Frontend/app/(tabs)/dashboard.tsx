@@ -16,14 +16,15 @@ import {
 } from "react-native";
 
 // 🌟 NEW: Tells the OS to show the notification banner even if the app is currently open!
+// 🌟 NEW: Tells the OS to show the notification banner even if the app is currently open!
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true, // Replaces shouldShowAlert
+    shouldShowList: true,   // Keeps it in the notification tray
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
 });
-
 export default function Dashboard() {
   const router = useRouter();
 
@@ -74,10 +75,10 @@ export default function Dashboard() {
     }
 
     // 2. Generate Expo Device Token
+    // 2. Generate Expo Device Token
     try {
       const tokenData = await Notifications.getExpoPushTokenAsync({
-          // Optional: Add your Expo Project ID here if you encounter errors generating the token
-          // projectId: "your-project-id" 
+          projectId: "4e306a80-b92e-40ef-a5f0-64280b190a03" // 🟢 Your new project ID
       });
       const token = tokenData.data;
       console.log("Generated Push Token:", token);
@@ -90,9 +91,11 @@ export default function Dashboard() {
       const realUserId = decodedToken.userId;
 
       await axios.put(
-        `http://10.157.201.226:8080/api/users/${realUserId}/push-token?token=${token}`,
-        {},
-        { headers: { Authorization: `Bearer ${userToken}` } }
+          `http://10.157.201.226:8080/api/mothers/${realUserId}/push-token`,
+          {
+            pushToken: token // 🟢 Send the token safely in the body, not the URL
+          },
+          { headers: { Authorization: `Bearer ${userToken}` } }
       );
       console.log("Token synced successfully to backend!");
 
@@ -118,7 +121,7 @@ export default function Dashboard() {
       const realUserId = decodedToken.userId;
 
       const response = await axios.post(
-        "http://192.168.1.4:8080/api/mothers/profile",
+        "http://10.157.201.226:8080/api/mothers/profile",
         {
           userId: realUserId,
           fullName: fullName,

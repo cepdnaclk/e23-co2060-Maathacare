@@ -54,6 +54,9 @@ public class MotherProfile {
     @Column(name = "province", length = 50)
     private String province;
 
+    // --- NEW FIELD ADDED HERE ---
+    @Column(name = "push_token")
+    private String pushToken;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -101,6 +104,10 @@ public class MotherProfile {
     public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) {
         this.lastMenstrualPeriod = lastMenstrualPeriod;
     }
+
+    // --- NEW GETTER AND SETTER ADDED HERE ---
+    public String getPushToken() { return pushToken; }
+    public void setPushToken(String pushToken) { this.pushToken = pushToken; }
 
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }

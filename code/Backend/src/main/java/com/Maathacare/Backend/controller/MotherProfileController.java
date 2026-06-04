@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.Maathacare.Backend.dto.KickCountRequest;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/mothers")
@@ -30,6 +31,7 @@ public class MotherProfileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @PostMapping("/kicks")
     public ResponseEntity<?> saveKickCount(@RequestBody KickCountRequest request) {
         try {
@@ -40,7 +42,6 @@ public class MotherProfileController {
             return ResponseEntity.internalServerError().body("Failed to save kicks: " + e.getMessage());
         }
     }
-
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {
@@ -63,6 +64,22 @@ public class MotherProfileController {
             return ResponseEntity.ok(patients);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // --- NEW PUSH TOKEN UPDATE ENDPOINT ADDED HERE ---
+    @PutMapping("/{userId}/push-token")
+    public ResponseEntity<?> updatePushToken(@PathVariable String userId, @RequestBody Map<String, String> payload) {
+        try {
+            String pushToken = payload.get("pushToken");
+            if (pushToken == null || pushToken.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Push token cannot be empty");
+            }
+
+            motherProfileService.updatePushTokenByUserId(userId, pushToken);
+            return ResponseEntity.ok("Push token updated successfully!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Failed to update push token: " + e.getMessage());
         }
     }
 }
