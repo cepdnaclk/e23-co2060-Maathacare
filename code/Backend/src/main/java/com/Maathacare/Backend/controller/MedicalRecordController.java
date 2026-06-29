@@ -35,15 +35,23 @@ public class MedicalRecordController {
             @RequestParam("phoneNumber") String phoneNumber,
             @RequestParam("uploadedByRole") String uploadedByRole) {
 
+        // 0. Validate input before doing anything
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty.");
+        }
+
         try {
             // 1. Check if mother exists
             Optional<MotherProfile> motherOpt = motherProfileRepository.findByUserPhoneNumber(phoneNumber);
             if (motherOpt.isEmpty()) {
+                System.err.println("DEBUG: Mother not found for phone: " + phoneNumber);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mother profile not found.");
             }
 
             // 2. Upload file to Supabase S3
+            System.out.println("DEBUG: Starting S3 upload for file: " + file.getOriginalFilename());
             String publicUrl = storageService.uploadFile(file);
+            System.out.println("DEBUG: File uploaded to: " + publicUrl);
 
             // 3. Save the link to PostgreSQL database
             MedicalRecord record = new MedicalRecord();
@@ -52,16 +60,17 @@ public class MedicalRecordController {
             record.setFileUrl(publicUrl);
             record.setUploadedByRole(uploadedByRole);
 
-            medicalRecordRepository.save(record);
+            MedicalRecord savedRecord = medicalRecordRepository.save(record);
 
-            return ResponseEntity.ok(record);
+            return ResponseEntity.ok(savedRecord);
 
         } catch (Exception e) {
+            // THIS WILL NOW SHOW THE REAL ERROR IN YOUR TERMINAL
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to upload file: " + e.getMessage());
         }
     }
-
     // Changed endpoint to accept phone number
     @GetMapping("/mother/{phoneNumber}")
     public ResponseEntity<?> getRecordsForMother(@PathVariable String phoneNumber) {
