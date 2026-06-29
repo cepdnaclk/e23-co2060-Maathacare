@@ -20,6 +20,6 @@ public interface MotherProfileRepository extends JpaRepository<MotherProfile, St
     Optional<MotherProfile> findByNic(String nic);
     List<MotherProfile> findByPhmProfile(PHMProfile phmProfile);
     // Finds the mother by looking inside her linked User account for the phone number
-    @Query("SELECT m FROM MotherProfile m WHERE m.user.phoneNumber = :phoneNumber")
+    @Query("SELECT m FROM MotherProfile m WHERE m.user.userId = :phoneNumber")
     Optional<MotherProfile> findByUserPhoneNumber(@Param("phoneNumber") String phoneNumber);
 }
