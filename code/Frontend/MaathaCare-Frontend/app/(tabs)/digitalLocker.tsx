@@ -54,8 +54,18 @@ export default function DigitalLocker() {
   const fetchDocuments = async (id: string) => {
     try {
       setIsLoadingDocs(true);
+      
+      // 1. Grab the token from storage
+      const token = await AsyncStorage.getItem("userToken");
+
+      // 2. Attach the token to the GET request
       const response = await axios.get(
-        `${API_BASE_URL}/api/medical-records/mother/${id}`
+        `${API_BASE_URL}/api/medical-records/mother/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // <--- THIS IS THE MAGIC KEY
+          },
+        }
       );
       setDocuments(response.data);
     } catch (error) {
@@ -66,7 +76,7 @@ export default function DigitalLocker() {
     }
   };
 
-  // 3. Handle picking and uploading a PDF
+// 3. Handle picking and uploading a PDF
   const handleUploadDocument = async () => {
     if (!motherId) {
       Alert.alert("Error", "You must be logged in to upload documents.");
@@ -93,13 +103,17 @@ export default function DigitalLocker() {
         type: file.mimeType || "application/pdf",
       } as any);
       
-      // Use the dynamic ID here!
       formData.append("phoneNumber", motherId);
       formData.append("uploadedByRole", "MOTHER");
+
+      // 🟢 1. GRAB THE TOKEN FROM STORAGE
+      const token = await AsyncStorage.getItem("userToken");
 
       await axios.post(`${API_BASE_URL}/api/medical-records/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          // 🟢 2. ATTACH THE TOKEN TO THE REQUEST
+          "Authorization": `Bearer ${token}` 
         },
       });
 
