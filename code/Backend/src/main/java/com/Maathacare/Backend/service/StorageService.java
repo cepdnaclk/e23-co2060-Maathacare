@@ -32,7 +32,7 @@ public class StorageService {
         this.bucketName = bucketName;
         this.projectRef = endpoint.replace("https://", "").split("\\.")[0];
 
-        // Using ApacheHttpClient to handle connection pooling and SSL more robustly
+        // Standard, reliable builder for Java 17
         this.s3Client = S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
                 .region(Region.of(region))
@@ -42,21 +42,28 @@ public class StorageService {
     }
 
     public String uploadFile(MultipartFile file) throws IOException {
-        String originalFilename = file.getOriginalFilename();
-        String extension = (originalFilename != null && originalFilename.contains("."))
-                ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                : ".pdf";
+        String uniqueFileName = UUID.randomUUID().toString() + (file.getOriginalFilename().contains(".")
+                ? file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."))
+                : ".pdf");
 
-        String uniqueFileName = UUID.randomUUID().toString() + extension;
+        // Construct the direct Supabase REST API URL
+        String uploadUrl = "https://" + projectRef + ".supabase.co/storage/v1/object/" + bucketName + "/" + uniqueFileName;
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(uniqueFileName)
-                .contentType(file.getContentType())
+        // Use Java's native HttpClient to send the file
+        java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+
+        java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                .uri(URI.create(uploadUrl))
+                .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNtd2JsdWNkZXJmbnNnbWd6ZW53Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg1OTM0MzIsImV4cCI6MjA5NDE2OTQzMn0.Ioq4zTPt3iZstMc3Cd5n6HIj8LEWjpMqZn0FsoRM5PM") // IMPORTANT: Use your project's anon key
+                .header("Content-Type", file.getContentType())
+                .POST(java.net.http.HttpRequest.BodyPublishers.ofByteArray(file.getBytes()))
                 .build();
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-
-        return "https://" + projectRef + ".supabase.co/storage/v1/object/public/" + bucketName + "/" + uniqueFileName;
+        try {
+            client.send(request, java.net.http.HttpResponse.BodyHandlers.ofString());
+            return "https://" + projectRef + ".supabase.co/storage/v1/object/public/" + bucketName + "/" + uniqueFileName;
+        } catch (InterruptedException e) {
+            throw new IOException("Upload interrupted", e);
+        }
     }
 }
