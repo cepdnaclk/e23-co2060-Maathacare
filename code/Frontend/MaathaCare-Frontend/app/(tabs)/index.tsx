@@ -72,7 +72,7 @@ export default function HomeTab() {
 
           const decodedToken = jwtDecode<{ userId: string }>(userToken);
           const realUserId = decodedToken.userId;
-          const ip = "10.157.201.226"; // Ensure this matches your current IP!
+          const ip = "10.230.231.226"; // Ensure this matches your current IP!
 
           await axios.put(
               `http://${ip}:8080/api/mothers/${realUserId}/push-token`,
@@ -97,7 +97,7 @@ export default function HomeTab() {
         try {
           const userId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
-          const ip = "10.157.201.226"; // Ensure this matches your current IP!
+          const ip = "192.168.1.16"; // Ensure this matches your current IP!
 
           if (!token || !userId) {
             setLoading(false);

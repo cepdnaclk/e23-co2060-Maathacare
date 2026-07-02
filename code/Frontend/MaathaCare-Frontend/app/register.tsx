@@ -203,7 +203,7 @@ export default function Register() {
       };
 
       const response = await axios.post(
-        "http://10.157.201.226:8080/api/users/register",
+        "http://10.230.231.226:8080/api/users/register",
         payload,
       );
 

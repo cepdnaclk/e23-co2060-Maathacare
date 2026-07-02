@@ -20,9 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 @Service
 public class AppointmentService {
 
@@ -31,14 +28,18 @@ public class AppointmentService {
     private final PHMProfileRepository phmProfileRepository;
     private final SupplementRepository supplementRepository;
 
+    private final ExpoNotificationService expoNotificationService;
+
     public AppointmentService(AppointmentRepository appointmentRepository,
                               MotherProfileRepository motherProfileRepository,
                               PHMProfileRepository phmProfileRepository,
-                              SupplementRepository supplementRepository) {
+                              SupplementRepository supplementRepository,
+                              ExpoNotificationService expoNotificationService) {
         this.appointmentRepository = appointmentRepository;
         this.motherProfileRepository = motherProfileRepository;
         this.phmProfileRepository = phmProfileRepository;
         this.supplementRepository = supplementRepository;
+        this.expoNotificationService = expoNotificationService;
     }
 
     @Transactional // 🌟 Ensures atomic transaction across both appointment and supplement tables
@@ -115,6 +116,7 @@ public class AppointmentService {
     public void deleteAppointment(String appointmentId) {
         appointmentRepository.deleteById(appointmentId);
     }
+
     @Transactional
     public void completeClinicVisit(String appointmentId, ClinicVisitRequest request) {
         // 1. Find the scheduled appointment
@@ -149,6 +151,7 @@ public class AppointmentService {
 
         sendInstantPushNotification(token, title, body);
     }
+
     public List<com.Maathacare.Backend.dto.MotherAppointmentResponse> getAppointmentsForMother(String motherUserId) {
         List<Appointment> appointments = appointmentRepository.findByMotherUserUserIdOrderByAppointmentDateAsc(motherUserId);
 
@@ -172,40 +175,22 @@ public class AppointmentService {
                     return res;
                 }).collect(Collectors.toList());
     }
+
     // Needs import com.Maathacare.Backend.model.entity.Supplement;
     public List<Supplement> getSupplementsForMother(String motherUserId) {
         // Assuming you added a basic findByMotherId method in SupplementRepository
         return supplementRepository.findByMotherIdOrderByAssignedDateDesc(motherUserId);
     }
-    // Stub method for push notifications
-    private void sendInstantPushNotification(String motherId, String ISOStringDate) {
-        System.out.println("Push Alert fired instantly to Mother ID: " + motherId + " for schedule: " + ISOStringDate);
-    }
+
     private void sendInstantPushNotification(String targetPushToken, String title, String body) {
         if (targetPushToken == null || targetPushToken.isEmpty()) {
             System.out.println("⚠️ Skipping notification: No push token registered for this user.");
             return;
         }
 
-        // Build the cross-platform visible banner
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build();
-
-        // Attach the target token and build the payload
-        Message message = Message.builder()
-                .setToken(targetPushToken)
-                .setNotification(notification)
-                .putData("click_action", "FLUTTER_NOTIFICATION_CLICK") // Helps target deep links
-                .build();
-
-        try {
-            // Send asynchronously to prevent blocking the HTTP response thread
-            String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-            System.out.println("🚀 Successfully sent message notification id: " + response);
-        } catch (Exception e) {
-            System.err.println("❌ Failed to deliver Firebase push notification: " + e.getMessage());
-        }
+        // 🌟 3. Hand the message over to the Expo Notification Service
+        expoNotificationService.sendPushNotification(targetPushToken, title, body);
     }
 }
+
+

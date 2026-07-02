@@ -1,5 +1,6 @@
 package com.Maathacare.Backend.security;
 
+import io.jsonwebtoken.ExpiredJwtException; // 🌟 NEW IMPORT ADDED HERE
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,25 +55,42 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         // 4. Extract the token (Remove "Bearer " from the string)
         final String jwt = authHeader.substring(7);
-        final String userPhone = jwtService.extractUsername(jwt);
+        final String userPhone;
 
-        // 5. If the token has a user, and they aren't already authenticated...
-        if (userPhone != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        try {
+            // 🌟 Wrapped in try-catch to prevent crashes on expired tokens
+            userPhone = jwtService.extractUsername(jwt);
 
-            // 6. Verify the token signature is legit
-            if (jwtService.isTokenValid(jwt)) {
-                String role = jwtService.extractRole(jwt);
+            // 5. If the token has a user, and they aren't already authenticated...
+            if (userPhone != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                // 7. Tell Spring Security: "This user is verified, let them in!"
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userPhone,
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
-                );
+                // 6. Verify the token signature is legit
+                if (jwtService.isTokenValid(jwt)) {
+                    String role = jwtService.extractRole(jwt);
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    // 7. Tell Spring Security: "This user is verified, let them in!"
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                            userPhone,
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
+
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+        } catch (ExpiredJwtException e) {
+            // 🌟 If the token is expired, return a 401 response safely instead of throwing a 500 error
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"JWT Token has expired. Please log in again.\"}");
+            return;
+        } catch (Exception e) {
+            // 🌟 Catch any other parsing errors (like a malformed or tampered token)
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Invalid JWT Token.\"}");
+            return;
         }
 
         // 8. Pass the request to the next step

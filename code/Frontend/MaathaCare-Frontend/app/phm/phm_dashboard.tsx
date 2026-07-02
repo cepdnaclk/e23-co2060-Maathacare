@@ -19,7 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import PhmAppointments from "../../components/PhmAppointments";
 
-const API_BASE_URL = "http://10.157.201.226:8080";
+const API_BASE_URL = "http://10.230.231.226:8080";
 
 export default function PHMDashboard() {
   const router = useRouter();

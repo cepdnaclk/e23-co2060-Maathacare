@@ -114,7 +114,7 @@ export default function WeekDetails() {
 
   useEffect(() => {
     // 🟢 Ensure this IP matches your laptop's current IPv4
-    const fetchUrl = `http://10.157.201.226:8080/api/weekly-milestones/${id}`;
+    const fetchUrl = `http://10.230.231.226:8080/api/weekly-milestones/${id}`;
 
     axios
       .get(fetchUrl)

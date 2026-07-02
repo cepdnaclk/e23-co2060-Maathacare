@@ -44,7 +44,7 @@ export default function Dashboard() {
   // Fetch the Weekly Milestone data
   useEffect(() => {
     axios
-      .get("http://10.157.201.226:8080/api/milestones/1")
+      .get("http://10.230.231.226:8080/api/milestones/1")
       .then((response) => {
         setMilestone(response.data);
       })
@@ -91,7 +91,7 @@ export default function Dashboard() {
       const realUserId = decodedToken.userId;
 
       await axios.put(
-          `http://10.157.201.226:8080/api/mothers/${realUserId}/push-token`,
+          `http://10.230.231.226:8080/api/mothers/${realUserId}/push-token`,
           {
             pushToken: token // 🟢 Send the token safely in the body, not the URL
           },
@@ -121,7 +121,7 @@ export default function Dashboard() {
       const realUserId = decodedToken.userId;
 
       const response = await axios.post(
-        "http://10.157.201.226:8080/api/mothers/profile",
+        "http://10.230.231.226:8080/api/mothers/profile",
         {
           userId: realUserId,
           fullName: fullName,
