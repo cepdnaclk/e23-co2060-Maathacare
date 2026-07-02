@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +84,34 @@ public class MedicalRecordController {
             return ResponseEntity.ok(records);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Mother not found");
+        }
+    }
+    @Transactional
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMedicalRecord(@PathVariable String id) {
+        Optional<MedicalRecord> recordOpt = medicalRecordRepository.findById(id);
+
+        if (recordOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Record not found.");
+        }
+
+        try {
+            // 1. Attempt to delete from Supabase
+            try {
+                storageService.deleteFile(recordOpt.get().getFileUrl());
+            } catch (IOException e) {
+                // If the file is not in Supabase (400 or 404), we log it but continue
+                System.err.println("File not found in storage or already deleted, skipping storage cleanup.");
+            }
+
+            // 2. Delete from Database regardless of storage outcome
+            medicalRecordRepository.deleteById(id);
+
+            return ResponseEntity.ok("Record deleted successfully.");
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the actual cause
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting record: " + e.getMessage());
         }
     }
 }

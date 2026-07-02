@@ -16,7 +16,7 @@ public class StorageService {
 
     private final String bucketName;
     private final String projectRef;
-    private final String anonKey; // <--- THIS WAS MISSING
+    private final String anonKey; //
 
     public StorageService(
             @Value("${supabase.s3.endpoint}") String endpoint,
@@ -24,7 +24,7 @@ public class StorageService {
             @Value("${supabase.s3.anon-key}") String anonKey) { // Ensure this is in application.properties
 
         this.bucketName = bucketName;
-        this.anonKey = anonKey; // <--- THIS WAS MISSING
+        this.anonKey = anonKey; //
         this.projectRef = endpoint.replace("https://", "").split("\\.")[0];
     }
 
@@ -60,6 +60,29 @@ public class StorageService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new IOException("Upload interrupted", e);
+        }
+    }
+    public void deleteFile(String fileName) throws IOException {
+        // Extract the filename from the URL (the part after the last '/')
+        String fileKey = fileName.substring(fileName.lastIndexOf("/") + 1);
+        String deleteUrl = "https://" + projectRef + ".supabase.co/storage/v1/object/" + bucketName + "/" + fileKey;
+
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(deleteUrl))
+                .header("Authorization", "Bearer " + anonKey)
+                .header("apikey", anonKey)
+                .DELETE() // Supabase uses DELETE method for removal
+                .build();
+
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new IOException("Failed to delete file from storage: " + response.statusCode());
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Delete operation interrupted", e);
         }
     }
 }
