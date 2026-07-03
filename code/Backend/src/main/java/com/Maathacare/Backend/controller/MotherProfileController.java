@@ -2,6 +2,7 @@ package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.MotherProfileRequest;
 import com.Maathacare.Backend.dto.MotherProfileResponse;
+import com.Maathacare.Backend.model.entity.KickRecord;
 import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.service.MotherProfileService;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,16 @@ public class MotherProfileController {
         }
     }
 
+    @GetMapping("/kicks")
+    public ResponseEntity<?> getKickHistory(@RequestParam String userId) {
+        try {
+            // Pass userId directly as a String now
+            List<KickRecord> history = motherProfileService.getKickHistoryByMotherId(userId);
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Failed to retrieve kick history: " + e.getMessage());
+        }
+    }
 
     @GetMapping("/profile/{userId}")
     public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {

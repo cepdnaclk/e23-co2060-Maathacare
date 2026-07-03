@@ -1,3 +1,2 @@
 // apiConfig.ts
-export const API_BASE_URL =
-  "https://maathacare-backend-production.up.railway.app";
+export const API_BASE_URL = "http://172.20.10.4:8080";
