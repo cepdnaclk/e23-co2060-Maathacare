@@ -1,6 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 // TypeScript interface to resolve the 'any' indexing error
 interface VisitData {
@@ -29,11 +31,52 @@ export default function RecordVisitScreen() {
     </TouchableOpacity>
   );
 
-  const handleSave = () => {
-    // API logic will go here. For now, we simulate success.
-    Alert.alert("Success", "Clinical visit recorded successfully!", [
-      { text: "OK", onPress: () => router.back() }
-    ]);
+  const handleSave = async () => {
+    if (!data.week || !data.weight || !data.bp) {
+        Alert.alert("Missing Data", "Please fill in the Gestational Week, Weight, and BP.");
+        return;
+    }
+
+    try {
+        const token = await AsyncStorage.getItem("userToken");
+        
+        // Prepare the JSON payload matching the backend DTO
+        const payload = {
+        motherId: motherId,
+        gestationalWeek: parseInt(data.week),
+        weight: parseFloat(data.weight),
+        bloodPressure: data.bp,
+        sfh: data.sfh ? parseFloat(data.sfh) : 0.0,
+        fhs: data.fhs,
+        fetalMovements: data.fm,
+        hb: data.hb ? parseFloat(data.hb) : 0.0,
+        urineProtein: data.protein,
+        urineSugar: data.sugar,
+        iron: data.iron,
+        folicAcid: data.folicAcid,
+        calcium: data.calcium
+        };
+
+        const response = await fetch(`${API_BASE_URL}/api/visits/record`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+        Alert.alert("Success", "Clinical visit recorded successfully!", [
+            { text: "OK", onPress: () => router.back() }
+        ]);
+        } else {
+        const errorMsg = await response.text();
+        Alert.alert("Error", errorMsg || "Failed to save record.");
+        }
+    } catch (error) {
+        Alert.alert("Network Error", "Could not connect to the MaathaCare server.");
+    }
   };
 
   return (
