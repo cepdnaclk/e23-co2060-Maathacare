@@ -62,8 +62,11 @@ export default function ViewVisitsScreen() {
                 setVisits((prevVisits) => prevVisits.filter((item) => item.id !== recordId));
                 Alert.alert("Success", "Record deleted successfully.");
               } else {
-                Alert.alert("Error", "Failed to delete the record from the server.");
-              }
+                const errorText = await response.text();
+                console.log("Delete Error Status:", response.status);
+                console.log("Delete Error Message:", errorText);
+                Alert.alert("Server Error", `Status: ${response.status}\nDetails: ${errorText}`);
+              }              
             } catch (error) {
               Alert.alert("Network Error", "Could not connect to the server.");
             }

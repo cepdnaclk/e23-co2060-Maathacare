@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/visits")
-@CrossOrigin(origins = "*")
 public class VisitRecordController {
 
     private final VisitRecordRepository visitRepository;
