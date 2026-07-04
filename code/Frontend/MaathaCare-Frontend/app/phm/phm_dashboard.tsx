@@ -46,6 +46,17 @@ export default function PHMDashboard() {
   );
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // --- NEW: Visit Recording State ---
+  const [visitModalVisible, setVisitModalVisible] = useState(false);
+  const [visitMother, setVisitMother] = useState<any>(null);
+  const [visitData, setVisitData] = useState({
+    gestationalWeek: "",
+    weight: "",
+    bloodPressure: "",
+    sfh: "",
+  });
+  const [isSavingVisit, setIsSavingVisit] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
       loadDashboardData();
@@ -95,6 +106,44 @@ export default function PHMDashboard() {
       }
     } catch (error) {
       console.error("Assignment Error:", error);
+    }
+  };
+
+  // --- NEW: Handle Saving Visit Record ---
+  const handleSaveVisit = async () => {
+    if (!visitData.gestationalWeek || !visitData.weight || !visitData.bloodPressure) {
+      Alert.alert("Required Fields", "Please fill in Week, Weight, and BP.");
+      return;
+    }
+    
+    setIsSavingVisit(true);
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const queryParams = new URLSearchParams({
+        motherId: visitMother.id,
+        gestationalWeek: visitData.gestationalWeek,
+        weight: visitData.weight,
+        bloodPressure: visitData.bloodPressure,
+        sfh: visitData.sfh || "0",
+      }).toString();
+
+      const response = await fetch(`${API_BASE_URL}/api/visits/record?${queryParams}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        Alert.alert("Success", "Clinical data recorded successfully.");
+        setVisitModalVisible(false);
+        setVisitData({ gestationalWeek: "", weight: "", bloodPressure: "", sfh: "" });
+      } else {
+        const errorMsg = await response.text();
+        Alert.alert("Error", errorMsg);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Could not connect to server.");
+    } finally {
+      setIsSavingVisit(false);
     }
   };
 
@@ -193,7 +242,6 @@ export default function PHMDashboard() {
         </View>
       </View>
 
-      {/* 🌟 NEW ELEGANT BUTTON REPLACING THE SEARCH BAR */}
       <TouchableOpacity
         style={styles.elegantAddBtn}
         onPress={() => setAssignModalVisible(true)}
@@ -223,18 +271,33 @@ export default function PHMDashboard() {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.actionCircle}
-              onPress={() => {
-                setSelectedMothers([item]);
-                setIsSelectingDate(true);
-                setDate(new Date());
-                setRemarks("");
-                setModalVisible(true);
-              }}
-            >
-              <Text style={{ fontSize: 14 }}>📅</Text>
-            </TouchableOpacity>
+            {/* NEW: Action Button Row Wrapper */}
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              {/* Record Visit Data Button */}
+              <TouchableOpacity
+                style={styles.actionCircle}
+                onPress={() => {
+                  setVisitMother(item);
+                  setVisitModalVisible(true);
+                }}
+              >
+                <Text style={{ fontSize: 14 }}>📝</Text>
+              </TouchableOpacity>
+
+              {/* Schedule Appointment Button */}
+              <TouchableOpacity
+                style={styles.actionCircle}
+                onPress={() => {
+                  setSelectedMothers([item]);
+                  setIsSelectingDate(true);
+                  setDate(new Date());
+                  setRemarks("");
+                  setModalVisible(true);
+                }}
+              >
+                <Text style={{ fontSize: 14 }}>📅</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
       />
@@ -402,7 +465,82 @@ export default function PHMDashboard() {
         </TouchableOpacity>
       </View>
 
-      {/* 🌟 NEW: Link Patient Modal */}
+      {/* --- NEW: Record Visit Data Modal --- */}
+      <Modal visible={visitModalVisible} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Record Clinical Visit</Text>
+            <Text style={styles.modalSub}>Patient: {visitMother?.fullName}</Text>
+
+            <View style={styles.inputGroupRow}>
+              <View style={{ flex: 1, paddingRight: 5 }}>
+                <Text style={styles.inputLabel}>Gestational Week</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  placeholder="e.g. 24"
+                  keyboardType="numeric"
+                  value={visitData.gestationalWeek}
+                  onChangeText={(text) => setVisitData({...visitData, gestationalWeek: text})}
+                />
+              </View>
+              <View style={{ flex: 1, paddingLeft: 5 }}>
+                <Text style={styles.inputLabel}>Weight (kg)</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  placeholder="e.g. 62.5"
+                  keyboardType="numeric"
+                  value={visitData.weight}
+                  onChangeText={(text) => setVisitData({...visitData, weight: text})}
+                />
+              </View>
+            </View>
+
+            <View style={styles.inputGroupRow}>
+              <View style={{ flex: 1, paddingRight: 5 }}>
+                <Text style={styles.inputLabel}>Blood Pressure</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  placeholder="e.g. 120/80"
+                  value={visitData.bloodPressure}
+                  onChangeText={(text) => setVisitData({...visitData, bloodPressure: text})}
+                />
+              </View>
+              <View style={{ flex: 1, paddingLeft: 5 }}>
+                <Text style={styles.inputLabel}>SFH (cm)</Text>
+                <TextInput
+                  style={styles.modalInput}
+                  placeholder="Optional < 20wks"
+                  keyboardType="numeric"
+                  value={visitData.sfh}
+                  onChangeText={(text) => setVisitData({...visitData, sfh: text})}
+                />
+              </View>
+            </View>
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                onPress={() => setVisitModalVisible(false)}
+                style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
+              >
+                <Text style={{ color: "#475569", fontWeight: "bold" }}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleSaveVisit}
+                style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
+                disabled={isSavingVisit}
+              >
+                {isSavingVisit ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={{ color: "white", fontWeight: "bold" }}>Save Record</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* --- Existing: Link Patient Modal --- */}
       <Modal
         visible={assignModalVisible}
         animationType="fade"
@@ -447,7 +585,7 @@ export default function PHMDashboard() {
         </View>
       </Modal>
 
-      {/* Scheduling Modal */}
+      {/* --- Existing: Scheduling Modal --- */}
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -611,8 +749,15 @@ export default function PHMDashboard() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F8FAFC" },
-  centered: { flex: 1, justifyContent: "center", alignItems: "center" },
+  container: {
+    flex: 1,
+    backgroundColor: "#F8FAFC",
+  },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   slimHeader: {
     backgroundColor: "#0056b3",
     padding: 15,
@@ -626,9 +771,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 1,
   },
-  headerLocationText: { color: "#BBDEFB", fontSize: 11 },
-  contentSection: { flex: 1, padding: 20 },
-  statsRow: { flexDirection: "row", gap: 15, marginBottom: 20 },
+  headerLocationText: {
+    color: "#BBDEFB",
+    fontSize: 11,
+  },
+  contentSection: {
+    flex: 1,
+    padding: 20,
+  },
+  statsRow: {
+    flexDirection: "row",
+    gap: 15,
+    marginBottom: 20,
+  },
   statCard: {
     flex: 1,
     backgroundColor: "white",
@@ -637,10 +792,16 @@ const styles = StyleSheet.create({
     elevation: 2,
     alignItems: "center",
   },
-  statNumber: { fontSize: 20, fontWeight: "bold", color: "#0056b3" },
-  statLabel: { fontSize: 11, color: "#64748B", marginTop: 4 },
-
-  // 🌟 NEW ELEGANT ADD BUTTON STYLES
+  statNumber: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#0056b3",
+  },
+  statLabel: {
+    fontSize: 11,
+    color: "#64748B",
+    marginTop: 4,
+  },
   elegantAddBtn: {
     backgroundColor: "#EFF6FF",
     paddingVertical: 14,
@@ -658,7 +819,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     letterSpacing: 0.5,
   },
-
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
@@ -674,8 +834,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     elevation: 2,
   },
-  patientName: { fontSize: 15, fontWeight: "bold", color: "#334155" },
-  patientDetails: { fontSize: 12, color: "#64748B", marginTop: 2 },
+  patientName: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "#334155",
+  },
+  patientDetails: {
+    fontSize: 12,
+    color: "#64748B",
+    marginTop: 2,
+  },
   actionCircle: {
     width: 34,
     height: 34,
@@ -684,7 +852,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   tabBar: {
     flexDirection: "row",
     height: 75,
@@ -693,11 +860,24 @@ const styles = StyleSheet.create({
     borderColor: "#E2E8F0",
     paddingBottom: 10,
   },
-  tabButton: { flex: 1, justifyContent: "center", alignItems: "center" },
-  tabIcon: { fontSize: 20, color: "#94A3B8" },
-  tabLabel: { fontSize: 10, color: "#94A3B8", marginTop: 4 },
-  tabActiveText: { color: "#0056b3", fontWeight: "bold" },
-
+  tabButton: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tabIcon: {
+    fontSize: 20,
+    color: "#94A3B8",
+  },
+  tabLabel: {
+    fontSize: 10,
+    color: "#94A3B8",
+    marginTop: 4,
+  },
+  tabActiveText: {
+    color: "#0056b3",
+    fontWeight: "bold",
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -716,7 +896,44 @@ const styles = StyleSheet.create({
     color: "#1E293B",
     marginBottom: 5,
   },
-  modalSub: { color: "#64748B", marginBottom: 15 },
+  modalSub: {
+    color: "#64748B",
+    marginBottom: 15,
+  },
+  
+  // --- NEW: Styles for Visit Record Modal ---
+  inputLabel: {
+    fontSize: 12,
+    color: "#475569",
+    fontWeight: "600",
+    marginBottom: 5,
+  },
+  inputGroupRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 15,
+  },
+  modalInput: {
+    backgroundColor: "#F8FAFC",
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    color: "#333",
+    width: "100%",
+  },
+  
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+    marginTop: 10,
+  },
+  modalBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
   dateSelectorButton: {
     backgroundColor: "#EFF6FF",
     padding: 15,
@@ -731,23 +948,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  modalInput: {
-    backgroundColor: "#F8FAFC",
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#E2E8F0",
-    marginBottom: 20,
-    color: "#333",
-  },
-  modalActions: { flexDirection: "row", justifyContent: "flex-end", gap: 10 },
-  modalBtn: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 8 },
   selectAllHeaderRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  selectAllText: { color: "#0056b3", fontWeight: "bold", marginBottom: 15 },
+  selectAllText: {
+    color: "#0056b3",
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
   patientListContainer: {
     maxHeight: 250,
     marginBottom: 15,
@@ -768,18 +978,36 @@ const styles = StyleSheet.create({
     backgroundColor: "#0056b3",
     borderBottomColor: "#004494",
   },
-  motherSelectText: { fontWeight: "bold", color: "#1E293B", fontSize: 15 },
-  motherSelectNic: { fontSize: 12, color: "#64748B", marginTop: 2 },
-  checkIcon: { color: "white", fontSize: 18, fontWeight: "bold" },
+  motherSelectText: {
+    fontWeight: "bold",
+    color: "#1E293B",
+    fontSize: 15,
+  },
+  motherSelectNic: {
+    fontSize: 12,
+    color: "#64748B",
+    marginTop: 2,
+  },
+  checkIcon: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
   selectedMotherRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 15,
   },
-  changePatientText: { color: "#0056b3", fontWeight: "bold", fontSize: 14 },
-
-  profileContainer: { flex: 1, padding: 20 },
+  changePatientText: {
+    color: "#0056b3",
+    fontWeight: "bold",
+    fontSize: 14,
+  },
+  profileContainer: {
+    flex: 1,
+    padding: 20,
+  },
   profileTopCard: {
     backgroundColor: "white",
     borderRadius: 20,
@@ -803,15 +1031,22 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: "#EFF6FF",
   },
-  avatarText: { color: "white", fontSize: 36, fontWeight: "bold" },
+  avatarText: {
+    color: "white",
+    fontSize: 36,
+    fontWeight: "bold",
+  },
   profileMainName: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#1E293B",
     marginBottom: 5,
   },
-  profileMainId: { fontSize: 14, color: "#64748B", fontWeight: "600" },
-
+  profileMainId: {
+    fontSize: 14,
+    color: "#64748B",
+    fontWeight: "600",
+  },
   sectionHeader: {
     fontSize: 12,
     fontWeight: "bold",
@@ -820,7 +1055,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     letterSpacing: 1,
   },
-
   infoCard: {
     backgroundColor: "white",
     borderRadius: 20,
@@ -839,12 +1073,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 18,
   },
-  infoRowLeft: { flexDirection: "row", alignItems: "center" },
-  infoIcon: { fontSize: 16, marginRight: 12 },
-  infoLabel: { color: "#64748B", fontSize: 14, fontWeight: "600" },
-  infoValue: { fontWeight: "bold", fontSize: 15, color: "#1E293B" },
-  divider: { height: 1, backgroundColor: "#F1F5F9", width: "100%" },
-
+  infoRowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  infoIcon: {
+    fontSize: 16,
+    marginRight: 12,
+  },
+  infoLabel: {
+    color: "#64748B",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  infoValue: {
+    fontWeight: "bold",
+    fontSize: 15,
+    color: "#1E293B",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#F1F5F9",
+    width: "100%",
+  },
   changePassBtn: {
     backgroundColor: "white",
     flexDirection: "row",
@@ -860,14 +1111,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#F1F5F9",
   },
-  changePassText: { color: "#0056b3", fontWeight: "bold", fontSize: 15 },
+  changePassText: {
+    color: "#0056b3",
+    fontWeight: "bold",
+    fontSize: 15,
+  },
   chevron: {
     color: "#94A3B8",
     fontSize: 22,
     fontWeight: "bold",
     marginTop: -2,
   },
-
   logoutBtn: {
     backgroundColor: "#FEF2F2",
     padding: 18,
@@ -876,5 +1130,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#FECACA",
   },
-  logoutText: { color: "#DC2626", fontWeight: "bold", fontSize: 15 },
+  logoutText: {
+    color: "#DC2626",
+    fontWeight: "bold",
+    fontSize: 15,
+  },
 });
