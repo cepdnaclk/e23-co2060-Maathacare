@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { API_BASE_URL } from "../constants/apiConfig";
+import LanguageSwitcher from "../components/LanguageSwitcher"; 
+import { useTranslation } from 'react-i18next';
 
 const districtMap: Record<string, { label: string; value: string }[]> = {
   Central: [
@@ -63,20 +65,106 @@ const districtMap: Record<string, { label: string; value: string }[]> = {
 };
 
 const mohAreaMap: Record<string, { label: string; value: string }[]> = {
-  Jaffna: [
-    { label: "Jaffna MC", value: "Jaffna MC" },
-    { label: "Nallur", value: "Nallur" },
-    { label: "Chavakachcheri", value: "Chavakachcheri" },
-    { label: "Kopay", value: "Kopay" },
-    { label: "Uduvil", value: "Uduvil" },
-    { label: "Tellippalai", value: "Tellippalai" },
-    { label: "Sandilipay", value: "Sandilipay" },
-  ],
   Colombo: [
+    { label: "Boralesgamuwa", value: "Boralesgamuwa" },
     { label: "Colombo MC", value: "Colombo MC" },
     { label: "Dehiwala", value: "Dehiwala" },
-    { label: "Moratuwa", value: "Moratuwa" },
+    { label: "Hanwella", value: "Hanwella" },
+    { label: "Homagama", value: "Homagama" },
+    { label: "Kaduwela", value: "Kaduwela" },
     { label: "Kolonnawa", value: "Kolonnawa" },
+    { label: "Maharama", value: "Maharagama" },
+    { label: "Moratuwa", value: "Moratuwa" },
+    { label: "Padukka", value: "Padukka" },
+    { label: "Piliyandala", value: "Piliyandala" },
+    { label: "Ratmalana", value: "Ratmalana" }
+  ],
+  Gampaha: [
+    { label: "Attanagalla", value: "Attanagalla" },
+    { label: "Biyagama", value: "Biyagama" },
+    { label: "Divulapitiya", value: "Divulapitiya" },
+    { label: "Dompe", value: "Dompe" },
+    { label: "Gampaha", value: "Gampaha" },
+    { label: "Ja-Ela", value: "Ja-Ela" },
+    { label: "Katana", value: "Katana" },
+    { label: "Kelaniya", value: "Kelaniya" },
+    { label: "Mahara", value: "Mahara" },
+    { label: "Minuwangoda", value: "Minuwangoda" },
+    { label: "Mirigama", value: "Mirigama" },
+    { label: "Negombo", value: "Negombo" },
+    { label: "Ragama", value: "Ragama" },
+    { label: "Seeduwa", value: "Seeduwa" },
+    { label: "Wattala", value: "Wattala" }
+  ],
+  Kalutara: [
+    { label: "Agalawatta", value: "Agalawatta" },
+    { label: "Bandaragama", value: "Bandaragama" },
+    { label: "Beruwala", value: "Beruwala" },
+    { label: "Bulathsinhala", value: "Bulathsinhala" },
+    { label: "Dodangoda", value: "Dodangoda" },
+    { label: "Horana", value: "Horana" },
+    { label: "Kalutara", value: "Kalutara" },
+    { label: "Madurawala", value: "Madurawala" },
+    { label: "Matugama", value: "Matugama" },
+    { label: "Millaniya", value: "Millaniya" },
+    { label: "Palindanuwara", value: "Palindanuwara" },
+    { label: "Panadura", value: "Panadura" },
+    { label: "Walallawita", value: "Walallawita" }
+  ],
+  Matara: [
+    { label: "Akuressa", value: "Akuressa" },
+    { label: "Athuraliya", value: "Athuraliya" },
+    { label: "Devinuwara", value: "Devinuwara" },
+    { label: "Dickwella", value: "Dickwella" },
+    { label: "Hakmana", value: "Hakmana" },
+    { label: "Kamburupitiya", value: "Kamburupitiya" },
+    { label: "Kirinda Puhulwella", value: "Kirinda Puhulwella" },
+    { label: "Kotapola", value: "Kotapola" },
+    { label: "Malimbada", value: "Malimbada" },
+    { label: "Matara MC", value: "Matara MC" },
+    { label: "Matara PS", value: "Matara PS" },
+    { label: "Morawaka", value: "Morawaka" },
+    { label: "Mulatiyana", value: "Mulatiyana" },
+    { label: "Pasgoda", value: "Pasgoda" },
+    { label: "Pitabeddara", value: "Pitabeddara" },
+    { label: "Thihagoda", value: "Thihagoda" },
+    { label: "Weligama", value: "Weligama" },
+    { label: "Welipitiya", value: "Welipitiya" }
+  ],
+  Galle: [
+    { label: "Akmeemana", value: "Akmeemana" },
+    { label: "Ambalangoda", value: "Ambalangoda" },
+    { label: "Baddegama", value: "Baddegama" },
+    { label: "Balapitiya", value: "Balapitiya" },
+    { label: "Bope Poddala", value: "Bope Poddala" },
+    { label: "Elpitiya", value: "Elpitiya" },
+    { label: "Galle MC", value: "Galle MC" },
+    { label: "Gonapinuwala", value: "Gonapinuwala" },
+    { label: "Habaraduwa", value: "Habaraduwa" },
+    { label: "Hikkaduwa", value: "Hikkaduwa" },
+    { label: "Imaduwa", value: "Imaduwa" },
+    { label: "Karandeniya", value: "Karandeniya" },
+    { label: "Neluwa", value: "Neluwa" },
+    { label: "Niyagama", value: "Niyagama" },
+    { label: "Rathgama", value: "Rathgama" },
+    { label: "Thawalama", value: "Thawalama" },
+    { label: "Udugama", value: "Udugama" },
+    { label: "Welivitiya Divithura", value: "Welivitiya Divithura" },
+    { label: "Yakkalamulla", value: "Yakkalamulla" }
+  ],
+  Hambantota: [
+    { label: "Ambalantota", value: "Ambalantota" },
+    { label: "Angunakolapelessa", value: "Angunakolapelessa" },
+    { label: "Beliatta", value: "Beliatta" },
+    { label: "Hambantota", value: "Hambantota" },
+    { label: "Katuwana", value: "Katuwana" },
+    { label: "Lunugamvehera", value: "Lunugamvehera" },
+    { label: "Okewela", value: "Okewela" },
+    { label: "Sooriyawewa", value: "Sooriyawewa" },
+    { label: "Tangalle", value: "Tangalle" },
+    { label: "Tissamaharama", value: "Tissamaharama" },
+    { label: "Walasmulla", value: "Walasmulla" },
+    { label: "Weeraketiya", value: "Weeraketiya" }
   ],
   Kandy: [
     { label: "Akurana", value: "Akurana" },
@@ -105,10 +193,175 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Wattegama (Pathadumbara)", value: "Wattegama (Pathadumbara)" },
     { label: "Yatinuwara", value: "Yatinuwara" },
   ],
+  Matale: [],
+  "Nuwara Eliya": [
+    { label: "Ambagamuwa", value: "Ambagamuwa" },
+    { label: "Bogawanthalawa", value: "Bogawanthalawa" },
+    { label: "Ginigathhena", value: "Ginigathhena" },
+    { label: "Hanguranketha", value: "Hanguranketha" },
+    { label: "Kotagala", value: "Kotagala" },
+    { label: "Kothmale", value: "Kothmale" },
+    { label: "Lindula", value: "Lindula" },
+    { label: "Maskeliya", value: "Maskeliya" },
+    { label: "Mathurata", value: "Mathurata" },
+    { label: "MC Nuwaraeliya", value: "MC Nuwaraeliya" },
+    { label: "Nawathispane", value: "Nawathispane" },
+    { label: "Nuwaraeliya", value: "Nuwaraeliya" },
+    { label: "Ragala", value: "Ragala" },
+    { label: "Walapane", value: "Walapane" }
+  ],
+  Ampara: [
+    { label: "Akkaraipattu", value: "Akkaraipattu" },
+    { label: "Ampara", value: "Ampara" },
+    { label: "Dehiattakandiya", value: "Dehiattakandiya" },
+    { label: "Mahaoya", value: "Mahaoya" },
+    { label: "Padiyathalawa", value: "Padiyathalawa" },
+    { label: "Uhana", value: "Uhana" }
+  ],
+  Batticaloa: [
+    { label: "Arayampathy", value: "Arayampathy" },
+    { label: "Batticaloa", value: "Batticaloa" },
+    { label: "Chenkaladi", value: "Chenkaladi" },
+    { label: "Eravur", value: "Eravur" },
+    { label: "Kaluwanchikudy", value: "Kaluwanchikudy" },
+    { label: "Kattankudy", value: "Kattankudy" },
+    { label: "Kiran", value: "Kiran" },
+    { label: "Oddamavady", value: "Oddamavady" },
+    { label: "Paddipalai", value: "Paddipalai" },
+    { label: "Valaichenai", value: "Valaichenai" },
+    { label: "Vellavely", value: "Vellavely" }
+  ],
+  Trincomalee: [
+    { label: "Eachchilampatru", value: "Eachchilampatru" },
+    { label: "Gomarankadawela", value: "Gomarankadawela" },
+    { label: "Kanthale", value: "Kanthale" },
+    { label: "Kinniya", value: "Kinniya" },
+    { label: "Kuchchaveli", value: "Kuchchaveli" },
+    { label: "Kurinchakkerny", value: "Kurinchakkerny" }
+  ],
+  Anuradhapura: [
+    { label: "Anuradhapura", value: "Anuradhapura" },
+    { label: "Galenbindunuwewa", value: "Galenbindunuwewa" },
+    { label: "Galnewa", value: "Galnewa" }
+  ],
+  Polonnaruwa: [
+    { label: "Dimbulagala", value: "Dimbulagala" },
+    { label: "Elahera", value: "Elahera" },
+    { label: "Hingurakgoda", value: "Hingurakgoda" },
+    { label: "Lankapura", value: "Lankapura" },
+    { label: "Medirigiriya", value: "Medirigiriya" },
+    { label: "Thamankduwa", value: "Thamankduwa" },
+    { label: "Welikanda", value: "Welikanda" }
+  ],
+  Jaffna: [
+    { label: "Chankanai", value: "Chankanai" },
+    { label: "Chavakachcheri", value: "Chavakachcheri" },
+    { label: "Jaffna MC", value: "Jaffna MC" },
+    { label: "Kopay", value: "Kopay" },
+    { label: "Karainagar", value: "Karainagar" },
+    { label: "Karaveddy", value: "Karaveddy" },
+    { label: "Kayts", value: "Kayts" },
+    { label: "Nallur", value: "Nallur" },
+    { label: "Point Pedro", value: "Point Pedro" },
+    { label: "Sandilipay", value: "Sandilipay" },
+    { label: "Tellippalai", value: "Tellippalai" },
+    { label: "Uduvil", value: "Uduvil" }
+  ],
+  Kilinochchi: [
+    { label: "Kandawalai", value: "Kandawalai" },
+    { label: "Karachchi", value: "Karachchi" },
+    { label: "Palai", value: "Palai" },
+    { label: "Poonakary", value: "Poonakary" }
+  ],
+  Mannar: [
+    { label: "Mannar Town", value: "Mannar Town" },
+    { label: "Musalai", value: "Musalai" },
+    { label: "Nanattan", value: "Nanattan" }
+  ],
+  Mullaitivu: [
+    { label: "Mallavi", value: "Mallavi" },
+    { label: "Mullaitivu", value: "Mullaitivu" }
+  ],
+  Vavuniya: [
+    { label: "Cheddikulam", value: "Cheddikulam" },
+    { label: "Vavuniya", value: "Vavuniya" },
+    { label: "Vavuniya South", value: "Vavuniya South" }
+  ],
+  Kurunegala: [
+    { label: "Alawwa", value: "Alawwa" },
+    { label: "Galgamuwa", value: "Galgamuwa" },
+    { label: "Giribawa", value: "Giribawa" },
+    { label: "Kurunegala", value: "Kurunegala" },
+    { label: "Maho", value: "Maho" },
+    { label: "Narammala", value: "Narammala" },
+    { label: "Polpithigama", value: "Polpithigama" },
+    { label: "Rideegama", value: "Rideegama" },
+    { label: "Udubeddawa", value: "Udubeddawa" }
+  ],
+  Puttalam: [
+    { label: "Anamaduwa", value: "Anamaduwa" },
+    { label: "Arachchikattuwa", value: "Arachchikattuwa" },
+    { label: "Chilaw", value: "Chilaw" },
+    { label: "Dankotuwa", value: "Dankotuwa" },
+    { label: "Karuwalagaswewa", value: "Karuwalagaswewa" },
+    { label: "Madampe", value: "Madampe" },
+    { label: "Marawila", value: "Marawila" },
+    { label: "Mundal", value: "Mundal" },
+    { label: "Nattandiya", value: "Nattandiya" },
+    { label: "Pallama", value: "Pallama" },
+    { label: "Wennappuwa", value: "Wennappuwa" }
+  ],
+  Kegalle: [
+    { label: "Aranayake", value: "Aranayake" },
+    { label: "Kegalle", value: "Kegalle" },
+    { label: "Mawanella", value: "Mawanella" },
+    { label: "Rambukkana", value: "Rambukkana" },
+    { label: "Ruwanwella", value: "Ruwanwella" },
+    { label: "Warakapola", value: "Warakapola" },
+    { label: "Yatiyantota", value: "Yatiyantota" }
+  ],
+  Ratnapura: [
+    { label: "Balangoda", value: "Balangoda" },
+    { label: "Eheliyagoda", value: "Eheliyagoda" },
+    { label: "Embilipitiya", value: "Embilipitiya" },
+    { label: "Ratnapura", value: "Ratnapura" }
+  ],
+  Badulla: [
+    { label: "Badulla", value: "Badulla" },
+    { label: "Bandarawela", value: "Bandarawela" },
+    { label: "Diyatalawa", value: "Diyatalawa" },
+    { label: "Ella", value: "Ella" },
+    { label: "Haldummulla", value: "Haldummulla" },
+    { label: "Hali Ela", value: "Hali Ela" },
+    { label: "Haputale", value: "Haputale" },
+    { label: "Kandaketiya", value: "Kandaketiya" },
+    { label: "Lunugala", value: "Lunugala" },
+    { label: "Mahiyanganaya", value: "Mahiyanganaya" },
+    { label: "Meegahakivula", value: "Meegahakivula" },
+    { label: "Passara", value: "Passara" },
+    { label: "Rideemaliyadda", value: "Rideemaliyadda" },
+    { label: "Soranathota", value: "Soranathota" },
+    { label: "Uva Paranagama", value: "Uva Paranagama" },
+    { label: "Welimada", value: "Welimada" }
+  ],
+  Monaragala: [
+    { label: "Badalkumbura", value: "Badalkumbura" },
+    { label: "Bibile", value: "Bibile" },
+    { label: "Buttala", value: "Buttala" },
+    { label: "Katharagama", value: "Katharagama" },
+    { label: "Madulla", value: "Madulla" },
+    { label: "Medagama", value: "Medagama" },
+    { label: "Monaragala", value: "Monaragala" },
+    { label: "Sevanagala", value: "Sevanagala" },
+    { label: "Siyambalanduwa", value: "Siyambalanduwa" },
+    { label: "Thanamalwila", value: "Thanamalwila" },
+    { label: "Wellawaya", value: "Wellawaya" }
+  ]
 };
 
 export default function Register() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -237,105 +490,89 @@ export default function Register() {
       contentContainerStyle={styles.scrollContainer}
       nestedScrollEnabled={true}
     >
-      <Text style={styles.title}>Create Account</Text>
-      <Text style={styles.subtitle}>Join MaathaCare today</Text>
+      <LanguageSwitcher />
 
-      <Text style={styles.label}>Phone Number</Text>
+      {/* Use t('key') for all text elements */}
+      <Text style={styles.title}>{t('createAccount')}</Text>
+      <Text style={styles.subtitle}>{t('joinToday')}</Text>
+
+      <Text style={styles.label}>{t('phoneNumber')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="e.g. 0771234567"
+        placeholder={t('placeholderPhone')} // Use t() for placeholders
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>Password</Text>
+      <Text style={styles.label}>{t('password')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Create a password"
+        placeholder={t('placeholderPassword')}
         value={password}
         onChangeText={setPassword}
         secureTextEntry={true}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>Confirm Password</Text>
+      <Text style={styles.label}>{t('confirmPassword')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Type password again"
+        placeholder={t('placeholderConfirm')}
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry={true}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>Full Name</Text>
+      <Text style={styles.label}>{t('fullName')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Jane Doe"
+        placeholder={t('placeholderName')}
         value={fullName}
         onChangeText={setFullName}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>NIC Number (12 Characters)</Text>
+      <Text style={styles.label}>{t('nicNumber')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="199012345678"
+        placeholder={t('placeholderNic')}
         value={nic}
         onChangeText={setNic}
         maxLength={12}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>Emergency Contact</Text>
+      <Text style={styles.label}>{t('emergencyContact')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="e.g. 0719876543"
+        placeholder={t('placeholderEmergency')}
         value={emergencyContactNumber}
         onChangeText={setEmergencyContactNumber}
         keyboardType="phone-pad"
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>Home Address</Text>
+      <Text style={styles.label}>{t('homeAddress')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="123 Main St..."
+        placeholder={t('placeholderAddress')}
         value={address}
         onChangeText={setAddress}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>Date of Birth</Text>
+      <Text style={styles.label}>{t('dateOfBirth')}</Text>
       <TouchableOpacity
         style={styles.dateInput}
         onPress={() => !isLoading && setShowDatePicker(true)}
       >
         <Text style={styles.dateText}>{dob.toDateString()}</Text>
       </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={dob}
-          mode="date"
-          display="default"
-          onChange={(event: any, selectedDate?: Date) => {
-            if (Platform.OS === "android") {
-              setShowDatePicker(false);
-            }
-            if (event.type === "dismissed") {
-              setShowDatePicker(false);
-              return;
-            }
-            if (selectedDate) {
-              setDob(selectedDate);
-            }
-          }}
-        />
-      )}
 
-      <Text style={styles.label}>Blood Group</Text>
+      <Text style={styles.label}>{t('bloodGroup')}</Text>
       <DropDownPicker
         open={bloodGroupOpen}
         value={bloodGroup}
@@ -343,44 +580,23 @@ export default function Register() {
         setOpen={setBloodGroupOpen}
         setValue={setBloodGroup}
         setItems={setBloodGroupItems}
-        placeholder="Select Blood Group"
+        placeholder={t('selectBloodGroup')}
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading}
         zIndex={4000}
-        zIndexInverse={1000}
         listMode="SCROLLVIEW"
       />
 
-      <Text style={styles.label}>Last Menstrual Period (LMP) Date</Text>
+      <Text style={styles.label}>{t('lmpDate')}</Text>
       <TouchableOpacity
         style={styles.dateInput}
         onPress={() => !isLoading && setShowLmpPicker(true)}
       >
         <Text style={styles.dateText}>{lmp.toDateString()}</Text>
       </TouchableOpacity>
-      {showLmpPicker && (
-        <DateTimePicker
-          value={lmp}
-          mode="date"
-          display="default"
-          maximumDate={new Date()}
-          onChange={(event: any, selectedDate?: Date) => {
-            if (Platform.OS === "android") {
-              setShowLmpPicker(false);
-            }
-            if (event.type === "dismissed") {
-              setShowLmpPicker(false);
-              return;
-            }
-            if (selectedDate) {
-              setLmp(selectedDate);
-            }
-          }}
-        />
-      )}
 
-      <Text style={styles.label}>Province</Text>
+      <Text style={styles.label}>{t('province')}</Text>
       <DropDownPicker
         open={provinceOpen}
         value={province}
@@ -388,12 +604,11 @@ export default function Register() {
         setOpen={setProvinceOpen}
         setValue={setProvince}
         setItems={setProvinceItems}
-        placeholder="Select Province"
+        placeholder={t('selectProvince')}
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading}
         zIndex={3000}
-        zIndexInverse={2000}
         listMode="SCROLLVIEW"
         onChangeValue={(value) => {
           if (value) {
@@ -407,7 +622,7 @@ export default function Register() {
         }}
       />
 
-      <Text style={styles.label}>District</Text>
+      <Text style={styles.label}>{t('district')}</Text>
       <DropDownPicker
         open={districtOpen}
         value={district}
@@ -415,12 +630,11 @@ export default function Register() {
         setOpen={setDistrictOpen}
         setValue={setDistrict}
         setItems={setDistrictItems}
-        placeholder={province ? "Select District" : "Select a Province first"}
+        placeholder={province ? t('selectDistrict') : t('selectProvinceFirst')}
         style={[styles.dropdown, !province && { backgroundColor: "#f0f0f0" }]}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading || !province}
         zIndex={2000}
-        zIndexInverse={3000}
         listMode="SCROLLVIEW"
         onChangeValue={(value) => {
           if (value) {
@@ -432,7 +646,7 @@ export default function Register() {
         }}
       />
 
-      <Text style={styles.label}>Residential Division (MOH Area)</Text>
+      <Text style={styles.label}>{t('residentialDivision')}</Text>
       <DropDownPicker
         open={divisionOpen}
         value={division}
@@ -440,12 +654,11 @@ export default function Register() {
         setOpen={setDivisionOpen}
         setValue={setDivision}
         setItems={setDivisionItems}
-        placeholder={district ? "Select MOH Area" : "Select a District first"}
+        placeholder={district ? t('selectMohArea') : t('selectDistrictFirst')}
         style={[styles.dropdown, !district && { backgroundColor: "#f0f0f0" }]}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading || !district || divisionItems.length === 0}
         zIndex={1000}
-        zIndexInverse={4000}
         listMode="SCROLLVIEW"
       />
 
@@ -457,14 +670,14 @@ export default function Register() {
         {isLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Sign Up</Text>
+          <Text style={styles.buttonText}>{t('signUp')}</Text>
         )}
       </TouchableOpacity>
 
       <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>Already have an account? </Text>
+        <Text style={styles.loginText}>{t('alreadyHaveAccount')}</Text>
         <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
-          <Text style={styles.loginLink}>Login</Text>
+          <Text style={styles.loginLink}>{t('login')}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

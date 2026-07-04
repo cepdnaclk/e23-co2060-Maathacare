@@ -11,9 +11,12 @@ import {
   View,
 } from "react-native";
 import { API_BASE_URL } from "../constants/apiConfig";
+import LanguageSwitcher from "../components/LanguageSwitcher"; 
+import { useTranslation } from 'react-i18next';
 
 export default function App() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   // 🟢 FIXED: Auto-login now checks the correct AsyncStorage vault!
   useEffect(() => {
@@ -85,36 +88,38 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <LanguageSwitcher /> {/* 🟢 RENDER THE SWITCHER */}
+      
       <Text style={styles.title}>MaathaCare</Text>
       <Text style={styles.subtitle}>Pregnancy Support System</Text>
 
-      <Text style={styles.label}>Phone Number</Text>
+      <Text style={styles.label}>{t('phoneNumber')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Phone Number"
+        placeholder={t('placeholderPhone')}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
         autoCapitalize="none"
       />
 
-      <Text style={styles.label}>Password</Text>
+      <Text style={styles.label}>{t('password')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder={t('placeholderPassword')}
         value={password}
         onChangeText={setPassword}
         secureTextEntry={true}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}>{t('login')}</Text>
       </TouchableOpacity>
 
       <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Don't have an account? </Text>
+        <Text style={styles.registerText}>{t('alreadyHaveAccount')} </Text>
         <TouchableOpacity onPress={() => router.push("/register")}>
-          <Text style={styles.registerLink}>Register</Text>
+          <Text style={styles.registerLink}>{t('signUp')}</Text>
         </TouchableOpacity>
       </View>
     </View>
