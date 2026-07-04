@@ -46,17 +46,6 @@ export default function PHMDashboard() {
   );
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // --- NEW: Visit Recording State ---
-  const [visitModalVisible, setVisitModalVisible] = useState(false);
-  const [visitMother, setVisitMother] = useState<any>(null);
-  const [visitData, setVisitData] = useState({
-    gestationalWeek: "",
-    weight: "",
-    bloodPressure: "",
-    sfh: "",
-  });
-  const [isSavingVisit, setIsSavingVisit] = useState(false);
-
   useFocusEffect(
     useCallback(() => {
       loadDashboardData();
@@ -98,7 +87,7 @@ export default function PHMDashboard() {
       if (response.ok) {
         Alert.alert("Success", "Mother added to your list!");
         setSearchNic("");
-        setAssignModalVisible(false); // Close the new modal
+        setAssignModalVisible(false);
         loadDashboardData();
       } else {
         const errorMsg = await response.text();
@@ -106,44 +95,6 @@ export default function PHMDashboard() {
       }
     } catch (error) {
       console.error("Assignment Error:", error);
-    }
-  };
-
-  // --- NEW: Handle Saving Visit Record ---
-  const handleSaveVisit = async () => {
-    if (!visitData.gestationalWeek || !visitData.weight || !visitData.bloodPressure) {
-      Alert.alert("Required Fields", "Please fill in Week, Weight, and BP.");
-      return;
-    }
-    
-    setIsSavingVisit(true);
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      const queryParams = new URLSearchParams({
-        motherId: visitMother.id,
-        gestationalWeek: visitData.gestationalWeek,
-        weight: visitData.weight,
-        bloodPressure: visitData.bloodPressure,
-        sfh: visitData.sfh || "0",
-      }).toString();
-
-      const response = await fetch(`${API_BASE_URL}/api/visits/record?${queryParams}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (response.ok) {
-        Alert.alert("Success", "Clinical data recorded successfully.");
-        setVisitModalVisible(false);
-        setVisitData({ gestationalWeek: "", weight: "", bloodPressure: "", sfh: "" });
-      } else {
-        const errorMsg = await response.text();
-        Alert.alert("Error", errorMsg);
-      }
-    } catch (error) {
-      Alert.alert("Error", "Could not connect to server.");
-    } finally {
-      setIsSavingVisit(false);
     }
   };
 
@@ -271,14 +222,15 @@ export default function PHMDashboard() {
               </Text>
             </TouchableOpacity>
 
-            {/* NEW: Action Button Row Wrapper */}
             <View style={{ flexDirection: "row", gap: 8 }}>
-              {/* Record Visit Data Button */}
+              {/* Record Visit Data Button routes to new screen */}
               <TouchableOpacity
                 style={styles.actionCircle}
                 onPress={() => {
-                  setVisitMother(item);
-                  setVisitModalVisible(true);
+                  router.push({
+                    pathname: "/phm/record-visit" as any,
+                    params: { motherId: item.id, motherName: item.fullName },
+                  });
                 }}
               >
                 <Text style={{ fontSize: 14 }}>📝</Text>
@@ -464,81 +416,6 @@ export default function PHMDashboard() {
           </Text>
         </TouchableOpacity>
       </View>
-
-      {/* --- NEW: Record Visit Data Modal --- */}
-      <Modal visible={visitModalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Record Clinical Visit</Text>
-            <Text style={styles.modalSub}>Patient: {visitMother?.fullName}</Text>
-
-            <View style={styles.inputGroupRow}>
-              <View style={{ flex: 1, paddingRight: 5 }}>
-                <Text style={styles.inputLabel}>Gestational Week</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  placeholder="e.g. 24"
-                  keyboardType="numeric"
-                  value={visitData.gestationalWeek}
-                  onChangeText={(text) => setVisitData({...visitData, gestationalWeek: text})}
-                />
-              </View>
-              <View style={{ flex: 1, paddingLeft: 5 }}>
-                <Text style={styles.inputLabel}>Weight (kg)</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  placeholder="e.g. 62.5"
-                  keyboardType="numeric"
-                  value={visitData.weight}
-                  onChangeText={(text) => setVisitData({...visitData, weight: text})}
-                />
-              </View>
-            </View>
-
-            <View style={styles.inputGroupRow}>
-              <View style={{ flex: 1, paddingRight: 5 }}>
-                <Text style={styles.inputLabel}>Blood Pressure</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  placeholder="e.g. 120/80"
-                  value={visitData.bloodPressure}
-                  onChangeText={(text) => setVisitData({...visitData, bloodPressure: text})}
-                />
-              </View>
-              <View style={{ flex: 1, paddingLeft: 5 }}>
-                <Text style={styles.inputLabel}>SFH (cm)</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  placeholder="Optional < 20wks"
-                  keyboardType="numeric"
-                  value={visitData.sfh}
-                  onChangeText={(text) => setVisitData({...visitData, sfh: text})}
-                />
-              </View>
-            </View>
-
-            <View style={styles.modalActions}>
-              <TouchableOpacity
-                onPress={() => setVisitModalVisible(false)}
-                style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
-              >
-                <Text style={{ color: "#475569", fontWeight: "bold" }}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={handleSaveVisit}
-                style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
-                disabled={isSavingVisit}
-              >
-                {isSavingVisit ? (
-                  <ActivityIndicator size="small" color="#fff" />
-                ) : (
-                  <Text style={{ color: "white", fontWeight: "bold" }}>Save Record</Text>
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
 
       {/* --- Existing: Link Patient Modal --- */}
       <Modal
@@ -900,19 +777,6 @@ const styles = StyleSheet.create({
     color: "#64748B",
     marginBottom: 15,
   },
-  
-  // --- NEW: Styles for Visit Record Modal ---
-  inputLabel: {
-    fontSize: 12,
-    color: "#475569",
-    fontWeight: "600",
-    marginBottom: 5,
-  },
-  inputGroupRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 15,
-  },
   modalInput: {
     backgroundColor: "#F8FAFC",
     padding: 12,
@@ -922,7 +786,6 @@ const styles = StyleSheet.create({
     color: "#333",
     width: "100%",
   },
-  
   modalActions: {
     flexDirection: "row",
     justifyContent: "flex-end",
