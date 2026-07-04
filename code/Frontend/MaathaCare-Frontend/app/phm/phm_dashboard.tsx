@@ -223,7 +223,21 @@ export default function PHMDashboard() {
             </TouchableOpacity>
 
             <View style={{ flexDirection: "row", gap: 8 }}>
-              {/* Record Visit Data Button routes to new screen */}
+              
+              {/* NEW: View Records Button */}
+              <TouchableOpacity
+                style={styles.actionCircle}
+                onPress={() => {
+                  router.push({
+                    pathname: "/phm/view-visits" as any,
+                    params: { motherId: item.id, motherName: item.fullName },
+                  });
+                }}
+              >
+                <Text style={{ fontSize: 14 }}>📊</Text>
+              </TouchableOpacity>
+
+              {/* Record Visit Data Button */}
               <TouchableOpacity
                 style={styles.actionCircle}
                 onPress={() => {

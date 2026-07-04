@@ -62,7 +62,8 @@ public class SecurityConfig {
                                 "/api/users/staff/register",
                                 "/api/users/staff/all",
                                 "/api/users/admin/setup",
-                                "/api/users/staff/delete/**"
+                                "/api/users/staff/delete/**",
+                                "/api/visits/**"
                         ).permitAll()
                         
 
