@@ -69,6 +69,7 @@ public class SecurityConfig {
                         // Protected endpoints (Accessible to any authenticated user)
                         .requestMatchers("/api/appointments/**").authenticated()
                         .requestMatchers("/api/phm/**").authenticated()
+                        .requestMatchers("/api/medical-records/**").permitAll()
 
                         // Lockdown everything else
                         .anyRequest().authenticated()
