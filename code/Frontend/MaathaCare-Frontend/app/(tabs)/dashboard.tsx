@@ -62,7 +62,7 @@ export default function Dashboard() {
 
       // 3. Send the POST request with the real typed data!
       const response = await axios.post(
-        "http://172.20.10.2:8080/api/mothers/profile",
+        "http://192.168.131.223:8080/api/mothers/profile",
         {
           userId: realUserId,
           fullName: fullName,
