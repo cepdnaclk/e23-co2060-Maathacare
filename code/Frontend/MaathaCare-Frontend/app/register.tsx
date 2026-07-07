@@ -2,10 +2,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,9 +14,8 @@ import {
   View,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import { API_BASE_URL } from "../constants/apiConfig";
-import LanguageSwitcher from "../components/LanguageSwitcher"; 
-import { useTranslation } from 'react-i18next';
 
 const districtMap: Record<string, { label: string; value: string }[]> = {
   Central: [
@@ -77,7 +76,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Moratuwa", value: "Moratuwa" },
     { label: "Padukka", value: "Padukka" },
     { label: "Piliyandala", value: "Piliyandala" },
-    { label: "Ratmalana", value: "Ratmalana" }
+    { label: "Ratmalana", value: "Ratmalana" },
   ],
   Gampaha: [
     { label: "Attanagalla", value: "Attanagalla" },
@@ -94,7 +93,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Negombo", value: "Negombo" },
     { label: "Ragama", value: "Ragama" },
     { label: "Seeduwa", value: "Seeduwa" },
-    { label: "Wattala", value: "Wattala" }
+    { label: "Wattala", value: "Wattala" },
   ],
   Kalutara: [
     { label: "Agalawatta", value: "Agalawatta" },
@@ -109,7 +108,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Millaniya", value: "Millaniya" },
     { label: "Palindanuwara", value: "Palindanuwara" },
     { label: "Panadura", value: "Panadura" },
-    { label: "Walallawita", value: "Walallawita" }
+    { label: "Walallawita", value: "Walallawita" },
   ],
   Matara: [
     { label: "Akuressa", value: "Akuressa" },
@@ -129,7 +128,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Pitabeddara", value: "Pitabeddara" },
     { label: "Thihagoda", value: "Thihagoda" },
     { label: "Weligama", value: "Weligama" },
-    { label: "Welipitiya", value: "Welipitiya" }
+    { label: "Welipitiya", value: "Welipitiya" },
   ],
   Galle: [
     { label: "Akmeemana", value: "Akmeemana" },
@@ -150,7 +149,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Thawalama", value: "Thawalama" },
     { label: "Udugama", value: "Udugama" },
     { label: "Welivitiya Divithura", value: "Welivitiya Divithura" },
-    { label: "Yakkalamulla", value: "Yakkalamulla" }
+    { label: "Yakkalamulla", value: "Yakkalamulla" },
   ],
   Hambantota: [
     { label: "Ambalantota", value: "Ambalantota" },
@@ -164,7 +163,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Tangalle", value: "Tangalle" },
     { label: "Tissamaharama", value: "Tissamaharama" },
     { label: "Walasmulla", value: "Walasmulla" },
-    { label: "Weeraketiya", value: "Weeraketiya" }
+    { label: "Weeraketiya", value: "Weeraketiya" },
   ],
   Kandy: [
     { label: "Akurana", value: "Akurana" },
@@ -208,7 +207,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Nawathispane", value: "Nawathispane" },
     { label: "Nuwaraeliya", value: "Nuwaraeliya" },
     { label: "Ragala", value: "Ragala" },
-    { label: "Walapane", value: "Walapane" }
+    { label: "Walapane", value: "Walapane" },
   ],
   Ampara: [
     { label: "Akkaraipattu", value: "Akkaraipattu" },
@@ -216,7 +215,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Dehiattakandiya", value: "Dehiattakandiya" },
     { label: "Mahaoya", value: "Mahaoya" },
     { label: "Padiyathalawa", value: "Padiyathalawa" },
-    { label: "Uhana", value: "Uhana" }
+    { label: "Uhana", value: "Uhana" },
   ],
   Batticaloa: [
     { label: "Arayampathy", value: "Arayampathy" },
@@ -229,7 +228,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Oddamavady", value: "Oddamavady" },
     { label: "Paddipalai", value: "Paddipalai" },
     { label: "Valaichenai", value: "Valaichenai" },
-    { label: "Vellavely", value: "Vellavely" }
+    { label: "Vellavely", value: "Vellavely" },
   ],
   Trincomalee: [
     { label: "Eachchilampatru", value: "Eachchilampatru" },
@@ -237,12 +236,12 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Kanthale", value: "Kanthale" },
     { label: "Kinniya", value: "Kinniya" },
     { label: "Kuchchaveli", value: "Kuchchaveli" },
-    { label: "Kurinchakkerny", value: "Kurinchakkerny" }
+    { label: "Kurinchakkerny", value: "Kurinchakkerny" },
   ],
   Anuradhapura: [
     { label: "Anuradhapura", value: "Anuradhapura" },
     { label: "Galenbindunuwewa", value: "Galenbindunuwewa" },
-    { label: "Galnewa", value: "Galnewa" }
+    { label: "Galnewa", value: "Galnewa" },
   ],
   Polonnaruwa: [
     { label: "Dimbulagala", value: "Dimbulagala" },
@@ -251,7 +250,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Lankapura", value: "Lankapura" },
     { label: "Medirigiriya", value: "Medirigiriya" },
     { label: "Thamankduwa", value: "Thamankduwa" },
-    { label: "Welikanda", value: "Welikanda" }
+    { label: "Welikanda", value: "Welikanda" },
   ],
   Jaffna: [
     { label: "Chankanai", value: "Chankanai" },
@@ -265,27 +264,27 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Point Pedro", value: "Point Pedro" },
     { label: "Sandilipay", value: "Sandilipay" },
     { label: "Tellippalai", value: "Tellippalai" },
-    { label: "Uduvil", value: "Uduvil" }
+    { label: "Uduvil", value: "Uduvil" },
   ],
   Kilinochchi: [
     { label: "Kandawalai", value: "Kandawalai" },
     { label: "Karachchi", value: "Karachchi" },
     { label: "Palai", value: "Palai" },
-    { label: "Poonakary", value: "Poonakary" }
+    { label: "Poonakary", value: "Poonakary" },
   ],
   Mannar: [
     { label: "Mannar Town", value: "Mannar Town" },
     { label: "Musalai", value: "Musalai" },
-    { label: "Nanattan", value: "Nanattan" }
+    { label: "Nanattan", value: "Nanattan" },
   ],
   Mullaitivu: [
     { label: "Mallavi", value: "Mallavi" },
-    { label: "Mullaitivu", value: "Mullaitivu" }
+    { label: "Mullaitivu", value: "Mullaitivu" },
   ],
   Vavuniya: [
     { label: "Cheddikulam", value: "Cheddikulam" },
     { label: "Vavuniya", value: "Vavuniya" },
-    { label: "Vavuniya South", value: "Vavuniya South" }
+    { label: "Vavuniya South", value: "Vavuniya South" },
   ],
   Kurunegala: [
     { label: "Alawwa", value: "Alawwa" },
@@ -296,7 +295,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Narammala", value: "Narammala" },
     { label: "Polpithigama", value: "Polpithigama" },
     { label: "Rideegama", value: "Rideegama" },
-    { label: "Udubeddawa", value: "Udubeddawa" }
+    { label: "Udubeddawa", value: "Udubeddawa" },
   ],
   Puttalam: [
     { label: "Anamaduwa", value: "Anamaduwa" },
@@ -309,7 +308,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Mundal", value: "Mundal" },
     { label: "Nattandiya", value: "Nattandiya" },
     { label: "Pallama", value: "Pallama" },
-    { label: "Wennappuwa", value: "Wennappuwa" }
+    { label: "Wennappuwa", value: "Wennappuwa" },
   ],
   Kegalle: [
     { label: "Aranayake", value: "Aranayake" },
@@ -318,13 +317,13 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Rambukkana", value: "Rambukkana" },
     { label: "Ruwanwella", value: "Ruwanwella" },
     { label: "Warakapola", value: "Warakapola" },
-    { label: "Yatiyantota", value: "Yatiyantota" }
+    { label: "Yatiyantota", value: "Yatiyantota" },
   ],
   Ratnapura: [
     { label: "Balangoda", value: "Balangoda" },
     { label: "Eheliyagoda", value: "Eheliyagoda" },
     { label: "Embilipitiya", value: "Embilipitiya" },
-    { label: "Ratnapura", value: "Ratnapura" }
+    { label: "Ratnapura", value: "Ratnapura" },
   ],
   Badulla: [
     { label: "Badulla", value: "Badulla" },
@@ -342,7 +341,7 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Rideemaliyadda", value: "Rideemaliyadda" },
     { label: "Soranathota", value: "Soranathota" },
     { label: "Uva Paranagama", value: "Uva Paranagama" },
-    { label: "Welimada", value: "Welimada" }
+    { label: "Welimada", value: "Welimada" },
   ],
   Monaragala: [
     { label: "Badalkumbura", value: "Badalkumbura" },
@@ -355,8 +354,26 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Sevanagala", value: "Sevanagala" },
     { label: "Siyambalanduwa", value: "Siyambalanduwa" },
     { label: "Thanamalwila", value: "Thanamalwila" },
-    { label: "Wellawaya", value: "Wellawaya" }
-  ]
+    { label: "Wellawaya", value: "Wellawaya" },
+  ],
+};
+
+const gnDivisionMap: Record<string, { label: string; value: string }[]> = {
+  "Colombo MC": [
+    { label: "Borella North", value: "Borella North" },
+    { label: "Borella South", value: "Borella South" },
+    { label: "Cinnamon Gardens", value: "Cinnamon Gardens" },
+    { label: "Dematagoda", value: "Dematagoda" },
+  ],
+  Homagama: [
+    { label: "Homagama Town", value: "Homagama Town" },
+    { label: "Pitipana", value: "Pitipana" },
+    { label: "Katuwana", value: "Katuwana" },
+  ],
+  Default: [
+    { label: "GN Division 1", value: "GN 1" },
+    { label: "GN Division 2", value: "GN 2" },
+  ],
 };
 
 export default function Register() {
@@ -410,7 +427,16 @@ export default function Register() {
     { label: string; value: string }[]
   >([]);
 
+  // GN Division State Hooks
+  const [gnDivisionOpen, setGnDivisionOpen] = useState(false);
+  const [gnDivision, setGnDivision] = useState<string | null>(null);
+  const [gnDivisionItems, setGnDivisionItems] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [isFetchingGn, setIsFetchingGn] = useState(false);
+
   const handleRegister = async () => {
+    // Validating that GN Division is also selected
     if (
       !phoneNumber ||
       !password ||
@@ -421,7 +447,8 @@ export default function Register() {
       !bloodGroup ||
       !district ||
       !province ||
-      !division
+      !division ||
+      !gnDivision
     ) {
       Alert.alert("Error", "Please fill in all fields.");
       return;
@@ -452,6 +479,7 @@ export default function Register() {
         district: district,
         province: province,
         residentialDivision: division,
+        gnDivision: gnDivision, // Adding GN Division to the API Request
         dateOfBirth: dob.toISOString().split("T")[0],
         lastMenstrualPeriod: lmp.toISOString().split("T")[0],
       };
@@ -492,79 +520,78 @@ export default function Register() {
     >
       <LanguageSwitcher />
 
-      {/* Use t('key') for all text elements */}
-      <Text style={styles.title}>{t('createAccount')}</Text>
-      <Text style={styles.subtitle}>{t('joinToday')}</Text>
+      <Text style={styles.title}>{t("createAccount")}</Text>
+      <Text style={styles.subtitle}>{t("joinToday")}</Text>
 
-      <Text style={styles.label}>{t('phoneNumber')}</Text>
+      <Text style={styles.label}>{t("phoneNumber")}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('placeholderPhone')} // Use t() for placeholders
+        placeholder={t("placeholderPhone")}
         value={phoneNumber}
         onChangeText={setPhoneNumber}
         keyboardType="phone-pad"
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>{t('password')}</Text>
+      <Text style={styles.label}>{t("password")}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('placeholderPassword')}
+        placeholder={t("placeholderPassword")}
         value={password}
         onChangeText={setPassword}
         secureTextEntry={true}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>{t('confirmPassword')}</Text>
+      <Text style={styles.label}>{t("confirmPassword")}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('placeholderConfirm')}
+        placeholder={t("placeholderConfirm")}
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry={true}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>{t('fullName')}</Text>
+      <Text style={styles.label}>{t("fullName")}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('placeholderName')}
+        placeholder={t("placeholderName")}
         value={fullName}
         onChangeText={setFullName}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>{t('nicNumber')}</Text>
+      <Text style={styles.label}>{t("nicNumber")}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('placeholderNic')}
+        placeholder={t("placeholderNic")}
         value={nic}
         onChangeText={setNic}
         maxLength={12}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>{t('emergencyContact')}</Text>
+      <Text style={styles.label}>{t("emergencyContact")}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('placeholderEmergency')}
+        placeholder={t("placeholderEmergency")}
         value={emergencyContactNumber}
         onChangeText={setEmergencyContactNumber}
         keyboardType="phone-pad"
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>{t('homeAddress')}</Text>
+      <Text style={styles.label}>{t("homeAddress")}</Text>
       <TextInput
         style={styles.input}
-        placeholder={t('placeholderAddress')}
+        placeholder={t("placeholderAddress")}
         value={address}
         onChangeText={setAddress}
         editable={!isLoading}
       />
 
-      <Text style={styles.label}>{t('dateOfBirth')}</Text>
+      <Text style={styles.label}>{t("dateOfBirth")}</Text>
       <TouchableOpacity
         style={styles.dateInput}
         onPress={() => !isLoading && setShowDatePicker(true)}
@@ -572,7 +599,19 @@ export default function Register() {
         <Text style={styles.dateText}>{dob.toDateString()}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.label}>{t('bloodGroup')}</Text>
+      {showDatePicker && (
+        <DateTimePicker
+          value={dob}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowDatePicker(false);
+            if (selectedDate) setDob(selectedDate);
+          }}
+        />
+      )}
+
+      <Text style={styles.label}>{t("bloodGroup")}</Text>
       <DropDownPicker
         open={bloodGroupOpen}
         value={bloodGroup}
@@ -580,7 +619,7 @@ export default function Register() {
         setOpen={setBloodGroupOpen}
         setValue={setBloodGroup}
         setItems={setBloodGroupItems}
-        placeholder={t('selectBloodGroup')}
+        placeholder={t("selectBloodGroup")}
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading}
@@ -588,7 +627,7 @@ export default function Register() {
         listMode="SCROLLVIEW"
       />
 
-      <Text style={styles.label}>{t('lmpDate')}</Text>
+      <Text style={styles.label}>{t("lmpDate")}</Text>
       <TouchableOpacity
         style={styles.dateInput}
         onPress={() => !isLoading && setShowLmpPicker(true)}
@@ -596,7 +635,19 @@ export default function Register() {
         <Text style={styles.dateText}>{lmp.toDateString()}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.label}>{t('province')}</Text>
+      {showLmpPicker && (
+        <DateTimePicker
+          value={lmp}
+          mode="date"
+          display="default"
+          onChange={(event, selectedDate) => {
+            setShowLmpPicker(false);
+            if (selectedDate) setLmp(selectedDate);
+          }}
+        />
+      )}
+
+      <Text style={styles.label}>{t("province")}</Text>
       <DropDownPicker
         open={provinceOpen}
         value={province}
@@ -604,7 +655,7 @@ export default function Register() {
         setOpen={setProvinceOpen}
         setValue={setProvince}
         setItems={setProvinceItems}
-        placeholder={t('selectProvince')}
+        placeholder={t("selectProvince")}
         style={styles.dropdown}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading}
@@ -619,10 +670,12 @@ export default function Register() {
           setDistrict(null);
           setDivision(null);
           setDivisionItems([]);
+          setGnDivision(null);
+          setGnDivisionItems([]);
         }}
       />
 
-      <Text style={styles.label}>{t('district')}</Text>
+      <Text style={styles.label}>{t("district")}</Text>
       <DropDownPicker
         open={districtOpen}
         value={district}
@@ -630,7 +683,7 @@ export default function Register() {
         setOpen={setDistrictOpen}
         setValue={setDistrict}
         setItems={setDistrictItems}
-        placeholder={province ? t('selectDistrict') : t('selectProvinceFirst')}
+        placeholder={province ? t("selectDistrict") : t("selectProvinceFirst")}
         style={[styles.dropdown, !province && { backgroundColor: "#f0f0f0" }]}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading || !province}
@@ -643,10 +696,12 @@ export default function Register() {
             setDivisionItems([]);
           }
           setDivision(null);
+          setGnDivision(null);
+          setGnDivisionItems([]);
         }}
       />
 
-      <Text style={styles.label}>{t('residentialDivision')}</Text>
+      <Text style={styles.label}>{t("residentialDivision")}</Text>
       <DropDownPicker
         open={divisionOpen}
         value={division}
@@ -654,11 +709,73 @@ export default function Register() {
         setOpen={setDivisionOpen}
         setValue={setDivision}
         setItems={setDivisionItems}
-        placeholder={district ? t('selectMohArea') : t('selectDistrictFirst')}
+        placeholder={district ? t("selectMohArea") : t("selectDistrictFirst")}
         style={[styles.dropdown, !district && { backgroundColor: "#f0f0f0" }]}
         dropDownContainerStyle={styles.dropdownContainer}
         disabled={isLoading || !district || divisionItems.length === 0}
         zIndex={1000}
+        listMode="SCROLLVIEW"
+        // 🟢 NEW: Dynamic API Fetching Logic
+        onChangeValue={async (value) => {
+          setGnDivision(null); // Clear previous selection
+
+          if (value) {
+            setIsFetchingGn(true); // Start loading spinner
+            try {
+              // Ask the backend for the specific list
+              const response = await axios.get(
+                `${API_BASE_URL}/api/locations/gn-divisions?mohArea=${value}`,
+              );
+
+              // Format the string array into the {label, value} objects the dropdown needs
+              const formattedItems = response.data.map((gnName: string) => ({
+                label: gnName,
+                value: gnName,
+              }));
+
+              setGnDivisionItems(formattedItems);
+            } catch (error) {
+              console.error(
+                "Failed to fetch GN Divisions from backend:",
+                error,
+              );
+              setGnDivisionItems([]);
+              Alert.alert(
+                "Error",
+                "Could not load GN Divisions for this area. Check server connection.",
+              );
+            } finally {
+              setIsFetchingGn(false); // Stop loading spinner
+            }
+          } else {
+            setGnDivisionItems([]);
+          }
+        }}
+      />
+
+      <Text style={styles.label}>{t("gnDivision") || "GN Division"}</Text>
+      <DropDownPicker
+        open={gnDivisionOpen}
+        value={gnDivision}
+        items={gnDivisionItems}
+        setOpen={setGnDivisionOpen}
+        setValue={setGnDivision}
+        setItems={setGnDivisionItems}
+        // 🟢 NEW: Show 'Loading...' text and spinner when fetching
+        loading={isFetchingGn}
+        placeholder={
+          isFetchingGn
+            ? "Loading divisions..."
+            : division
+              ? t("selectGnDivision") || "Select GN Division"
+              : t("selectMohAreaFirst") || "Select MOH Area first"
+        }
+        style={[styles.dropdown, !division && { backgroundColor: "#f0f0f0" }]}
+        dropDownContainerStyle={styles.dropdownContainer}
+        disabled={
+          isLoading || !division || isFetchingGn || gnDivisionItems.length === 0
+        }
+        zIndex={500}
         listMode="SCROLLVIEW"
       />
 
@@ -670,14 +787,14 @@ export default function Register() {
         {isLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>{t('signUp')}</Text>
+          <Text style={styles.buttonText}>{t("signUp")}</Text>
         )}
       </TouchableOpacity>
 
       <View style={styles.loginContainer}>
-        <Text style={styles.loginText}>{t('alreadyHaveAccount')}</Text>
+        <Text style={styles.loginText}>{t("alreadyHaveAccount")}</Text>
         <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
-          <Text style={styles.loginLink}>{t('login')}</Text>
+          <Text style={styles.loginLink}>{t("login")}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

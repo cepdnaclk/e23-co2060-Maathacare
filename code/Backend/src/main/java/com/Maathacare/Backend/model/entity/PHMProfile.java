@@ -24,6 +24,9 @@ public class PHMProfile {
     @Column(name = "moh_area", length = 100, nullable = false)
     private String mohArea;
 
+    @Column(name = "gn_division", length = 100)
+    private String gnDivision;
+
     @Column(name = "contact_number", length = 15)
     private String contactNumber;
 
@@ -45,6 +48,9 @@ public class PHMProfile {
 
     public String getMohArea() { return mohArea; }
     public void setMohArea(String mohArea) { this.mohArea = mohArea; }
+
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }

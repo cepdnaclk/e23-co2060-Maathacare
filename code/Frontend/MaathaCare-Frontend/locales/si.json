@@ -30,6 +30,8 @@
   "login": "ඇතුල් වන්න",
   "selectDistrict": "දිස්ත්‍රික්කය තෝරන්න",
   "selectMohArea": "MOH ප්‍රදේශය තෝරන්න",
+  "gnDivision": "ග්‍රාම නිලධාරී වසම",
+  "selectGnDivision": "-- ග්‍රාම නිලධාරී වසම තෝරන්න --",
 
   "staffPortal": "කාර්ය මණ්ඩල ද්වාරය",
   "secureAccess": "වෛද්‍ය නිලධාරීන් සඳහා ආරක්ෂිත ප්‍රවේශය",

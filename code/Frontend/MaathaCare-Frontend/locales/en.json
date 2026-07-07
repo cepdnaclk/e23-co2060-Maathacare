@@ -30,7 +30,8 @@
   "login": "Login",
   "selectDistrict": "Select District",
   "selectMohArea": "Select MOH Area",
-
+  "gnDivision": "GN Division",
+  "selectGnDivision": "-- Select GN Division --",
 
   "staffPortal": "Staff Portal",
   "secureAccess": "Secure access for Medical Personnel",

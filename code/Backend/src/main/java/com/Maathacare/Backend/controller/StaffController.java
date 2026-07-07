@@ -52,6 +52,7 @@ public class StaffController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerStaff(@RequestBody StaffRegistrationRequest request) {
+        System.out.println("DEBUG: Registering staff with GN Division: " + request.getGnDivision());
         try {
             if (userRepository.findByUserId(request.getNic()).isPresent() ||
                     userRepository.findByStaffId(request.getStaffId()).isPresent()) {
@@ -70,6 +71,10 @@ public class StaffController {
             phmProfile.setFullName(request.getFullName());
             phmProfile.setMohArea(request.getMohArea());
             phmProfile.setRegistrationNumber(request.getStaffId());
+
+            // 🟢 NEW: Save the GN Division to the PHM Profile
+            phmProfile.setGnDivision(request.getGnDivision());
+
             phmProfileRepository.save(phmProfile);
 
             return ResponseEntity.ok("Staff registered successfully");

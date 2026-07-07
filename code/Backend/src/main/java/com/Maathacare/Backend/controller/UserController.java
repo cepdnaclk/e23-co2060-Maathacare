@@ -1,6 +1,7 @@
 package com.Maathacare.Backend.controller;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.Maathacare.Backend.dto.AuthRequest;
 import com.Maathacare.Backend.dto.AuthResponse;
@@ -27,8 +26,6 @@ import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
-
-import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -84,9 +81,12 @@ public class UserController {
             profile.setProvince(request.getProvince());
             profile.setResidentialDivision(request.getResidentialDivision());
 
-            // If the user selected an area, try to find a PHM
-            if (request.getResidentialDivision() != null && !request.getResidentialDivision().trim().isEmpty()) {
-                Optional<PHMProfile> assignedPhm = phmProfileRepository.findByMohArea(request.getResidentialDivision().trim());
+            // 🟢 NEW: Save the GN Division to the Mother's Profile
+            profile.setGnDivision(request.getGnDivision());
+
+            // 🟢 NEW: Assign PHM based on GN Division instead of MOH Area
+            if (request.getGnDivision() != null && !request.getGnDivision().trim().isEmpty()) {
+                Optional<PHMProfile> assignedPhm = phmProfileRepository.findByGnDivision(request.getGnDivision().trim());
 
                 if (assignedPhm.isPresent()) {
                     profile.setPhmProfile(assignedPhm.get()); // Link the PHM if found
@@ -168,9 +168,14 @@ public class UserController {
         profile.setUser(savedUser);
         profile.setFullName("Test Midwife");
         profile.setRegistrationNumber("PHM-100");
+        profile.setMohArea("Colombo MC");
+
+        // 🟢 NEW: Assign the test PHM to a specific GN Division for testing
+        profile.setGnDivision("Borella North");
+
         phmProfileRepository.save(profile);
 
-        return ResponseEntity.ok("Test Midwife and Profile Created!");
+        return ResponseEntity.ok("Test Midwife and Profile Created! Assigned to GN Division: Borella North");
     }
 
 

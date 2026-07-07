@@ -60,6 +60,11 @@ const AdminDashboard: React.FC = () => {
   const [generatedStaffId, setGeneratedStaffId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // 🟢 NEW: GN Division State
+  const [gnDivision, setGnDivision] = useState('');
+  const [gnDivisionItems, setGnDivisionItems] = useState<{ label: string; value: string }[]>([]);
+  const [isFetchingGn, setIsFetchingGn] = useState(false);
+
   const [distributionStats, setDistributionStats] = useState<AreaStat[]>([]);
 
   useEffect(() => {
@@ -67,6 +72,7 @@ const AdminDashboard: React.FC = () => {
     fetchDistribution(); 
   }, []);
 
+  // Staff ID Generator
   useEffect(() => {
     if (selectedDistrictCode && selectedMohCode) {
       const prefix = `PHM-${selectedDistrictCode}-${selectedMohCode}-`;
@@ -87,6 +93,28 @@ const AdminDashboard: React.FC = () => {
       setGeneratedStaffId('');
     }
   }, [selectedDistrictCode, selectedMohCode, staffList]);
+
+  // 🟢 NEW: Dynamic GN Division Fetcher
+  useEffect(() => {
+    setGnDivision('');
+    setGnDivisionItems([]);
+    
+    if (selectedDistrictCode && selectedMohCode) {
+      const mohFullName = (MOH_AREAS[selectedDistrictCode] || []).find(m => m.code === selectedMohCode)?.name || '';
+      
+      if (mohFullName) {
+        setIsFetchingGn(true);
+        fetch(`http://localhost:8080/api/locations/gn-divisions?mohArea=${mohFullName}`)
+          .then(res => res.json())
+          .then(data => {
+             const formatted = data.map((name: string) => ({ label: name, value: name }));
+             setGnDivisionItems(formatted);
+          })
+          .catch(err => console.error("Failed to fetch GN Divisions:", err))
+          .finally(() => setIsFetchingGn(false));
+      }
+    }
+  }, [selectedDistrictCode, selectedMohCode]);
 
   const fetchStaff = async () => {
     try {
@@ -142,8 +170,6 @@ const AdminDashboard: React.FC = () => {
     return tree;
   }, [distributionStats]);
 
-  // Aggregate the per-MOH stats up to district level, keyed by plain district
-  // name (e.g. "Colombo", "Kandy") for the Sri Lanka map's dots.
   const districtSummaryForMap = useMemo(() => {
     const result: Record<string, DistrictSummary> = {};
 
@@ -174,15 +200,26 @@ const AdminDashboard: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDistrictCode || !selectedMohCode) {
-      alert("Please select both a District and an MOH Area.");
+    if (!selectedDistrictCode || !selectedMohCode || !gnDivision) {
+      alert("Please select a District, MOH Area, and GN Division.");
       return;
     }
 
     setIsLoading(true);
     try {
       const mohFullName = (MOH_AREAS[selectedDistrictCode] || []).find(m => m.code === selectedMohCode)?.name || '';
-      const payload = { fullName, nic, staffId: generatedStaffId, mohArea: mohFullName, password: nic };
+      
+      // 🟢 NEW: Add gnDivision to the payload
+      const payload = { 
+        fullName, 
+        nic, 
+        staffId: generatedStaffId, 
+        mohArea: mohFullName, 
+        gnDivision: gnDivision, 
+        password: nic 
+      };
+      console.log("PAYLOAD BEING SENT:", JSON.stringify(payload));
+      
       const token = localStorage.getItem("adminToken") || "";
 
       const response = await fetch("http://localhost:8080/api/users/staff/register", {
@@ -193,7 +230,7 @@ const AdminDashboard: React.FC = () => {
 
       if (response.ok) {
         alert("Registration Successful!");
-        setFullName(''); setNic(''); setSelectedDistrictCode(''); setSelectedMohCode('');
+        setFullName(''); setNic(''); setSelectedDistrictCode(''); setSelectedMohCode(''); setGnDivision('');
         fetchStaff(); 
         fetchDistribution(); 
       } else {
@@ -307,8 +344,6 @@ const AdminDashboard: React.FC = () => {
           
           <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '2rem', alignItems: 'start' }}>
             
-
-
             <div className="card" style={{ padding: '1.5rem', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
               <h2 style={{ marginTop: 0, marginBottom: '1.5rem', fontSize: '1.25rem', color: '#1e293b', borderBottom: '2px solid #f1f5f9', paddingBottom: '0.5rem' }}>
                 Maternal Caseload Distribution Hierarchy
@@ -411,6 +446,23 @@ const AdminDashboard: React.FC = () => {
                   {selectedDistrictCode && (MOH_AREAS[selectedDistrictCode] || []).map(a => <option key={a.code} value={a.code}>{a.name}</option>)}
                 </select>
               </div>
+              
+              {/* 🟢 NEW: GN Division Dropdown */}
+              <div className="input-group">
+                <label>GN Division</label>
+                <select 
+                  value={gnDivision} 
+                  onChange={e => setGnDivision(e.target.value)} 
+                  required 
+                  disabled={!selectedMohCode || isFetchingGn || gnDivisionItems.length === 0}
+                >
+                  <option value="">
+                    {isFetchingGn ? "Loading divisions..." : selectedMohCode ? "-- Select GN Division --" : "-- Select MOH First --"}
+                  </option>
+                  {gnDivisionItems.map(gn => <option key={gn.value} value={gn.value}>{gn.label}</option>)}
+                </select>
+              </div>
+
               <div className="input-group">
                 <label>Official Staff ID</label>
                 <input type="text" value={generatedStaffId} readOnly className="readonly-input" />
