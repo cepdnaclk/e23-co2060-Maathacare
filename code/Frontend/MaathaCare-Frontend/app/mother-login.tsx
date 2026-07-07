@@ -1,4 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage"; 
+import AsyncStorage from "@react-native-async-storage/async-storage"; // 🟢 MOVED TO TOP!
 import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -10,15 +10,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 export default function App() {
   const router = useRouter();
 
-  
+  // 🟢 FIXED: Auto-login now checks the correct AsyncStorage vault!
   useEffect(() => {
     const checkUserLogin = async () => {
       try {
-        
+        // 🧹 ADD THIS LINE TEMPORARILY TO CLEAR GHOST DATA:
         await AsyncStorage.clear();
         const savedToken = await AsyncStorage.getItem("userToken");
         if (savedToken) {
@@ -45,13 +46,10 @@ export default function App() {
     try {
       console.log("Sending request to backend...");
 
-      const response = await axios.post(
-        "http://10.83.10.226:8080/api/users/login",
-        {
-          phoneNumber: phoneNumber,
-          password: password,
-        },
-      );
+      const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
+        phoneNumber: phoneNumber,
+        password: password,
+      });
 
       const token = response.data.token;
       const role = response.data.role;

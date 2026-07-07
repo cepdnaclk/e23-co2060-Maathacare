@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 
-const API_BASE_URL = "http://10.83.10.226:8080";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 interface Props {
   phmUserId: string;
@@ -144,7 +144,7 @@ export default function PhmAppointments({
   const submitCompletedVisit = async () => {
     try {
       const token = await AsyncStorage.getItem("userToken");
-      
+
       const payload = {
         remarks: remarks,
         supplements: supplements
@@ -154,9 +154,9 @@ export default function PhmAppointments({
         `${API_BASE_URL}/api/appointments/${selectedAppointment.id}/complete`,
         {
           method: "PUT",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` 
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(payload)
         }
@@ -166,7 +166,7 @@ export default function PhmAppointments({
         setCompleteModalVisible(false);
         setActionModalVisible(false);
         loadAppointments();
-        
+
         // Reset form
         setRemarks("");
         setSupplements([]);
@@ -353,7 +353,7 @@ export default function PhmAppointments({
           <View style={styles.formContent}>
             <Text style={styles.modalTitle}>Clinical Notes</Text>
             <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={false}>
-              
+
               <Text style={styles.inputLabel}>Remarks / Advice</Text>
               <TextInput
                 style={styles.textInputMulti}
@@ -395,7 +395,7 @@ export default function PhmAppointments({
             <TouchableOpacity style={[styles.actionBtn, { backgroundColor: "#0056b3", marginTop: 15 }]} onPress={submitCompletedVisit}>
               <Text style={{ color: "white", fontWeight: "bold" }}>💾 Save Visit</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity style={styles.closeBtn} onPress={() => setCompleteModalVisible(false)}>
               <Text style={styles.closeBtnText}>Cancel</Text>
             </TouchableOpacity>
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
   emptyText: { textAlign: "center", marginTop: 50, color: "#94A3B8", fontSize: 15 },
   lockedContainer: { backgroundColor: "#F8FAFC", padding: 15, borderRadius: 12, width: "100%", marginBottom: 10, borderWidth: 1, borderColor: "#E2E8F0" },
   lockedText: { textAlign: "center", color: "#64748B", fontSize: 13, fontWeight: "600" },
-  
+
   // 🌟 NEW STYLES FOR THE FORM MODAL
   formContent: { backgroundColor: "white", borderRadius: 25, padding: 25, width: "90%", maxHeight: "80%", alignItems: "center" },
   inputLabel: { fontSize: 14, fontWeight: "bold", color: "#1E293B", marginTop: 10, marginBottom: 5 },

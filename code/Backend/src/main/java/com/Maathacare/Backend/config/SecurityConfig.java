@@ -62,13 +62,15 @@ public class SecurityConfig {
                                 "/api/users/staff/register",
                                 "/api/users/staff/all",
                                 "/api/users/admin/setup",
-                                "/api/users/staff/delete/**"
+                                "/api/users/staff/delete/**",
+                                "/api/visits/**"
                         ).permitAll()
                         
 
                         // Protected endpoints (Accessible to any authenticated user)
                         .requestMatchers("/api/appointments/**").authenticated()
                         .requestMatchers("/api/phm/**").authenticated()
+                        .requestMatchers("/api/medical-records/**").permitAll()
 
                         // Lockdown everything else
                         .anyRequest().authenticated()
@@ -85,7 +87,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("*")); // Allow all IP addresses
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // OPTIONS is crucial for Axios!
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

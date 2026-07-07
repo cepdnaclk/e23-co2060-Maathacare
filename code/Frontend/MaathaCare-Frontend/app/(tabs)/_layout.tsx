@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
+import { View } from 'react-native';
 
 export default function TabLayout() {
   return (
@@ -47,6 +48,19 @@ export default function TabLayout() {
           title: "Profile",
           tabBarIcon: ({ color }) => (
             <Ionicons name="person-outline" size={24} color={color} />
+          ),
+        }}
+      />
+
+      {/* 4. DOCUMENTS (Visible after login) */}
+      <Tabs.Screen
+        name="digitalLocker"
+        options={{
+          title: 'Documents', 
+          tabBarIcon: ({ color, focused }) => (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="document-text" size={20} color={color} />
+            </View>
           ),
         }}
       />

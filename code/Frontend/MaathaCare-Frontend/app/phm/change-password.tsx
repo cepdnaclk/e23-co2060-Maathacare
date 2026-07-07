@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 export default function ChangePasswordScreen() {
   const [oldPassword, setOldPassword] = useState("");
@@ -48,7 +49,7 @@ export default function ChangePasswordScreen() {
 
       // 🔗 Make sure your Spring Boot backend is running on this IP
       const response = await fetch(
-        "http://10.83.10.226:8080/api/users/change-password",
+        `${API_BASE_URL}/api/users/change-password`,
         {
           method: "POST",
           headers: {

@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { API_BASE_URL } from "../constants/apiConfig";
 
 interface Appointment {
   id: string;
@@ -37,7 +38,7 @@ export default function UpcomingClinicScreen() {
       setLoading(true);
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
-      const ip = "10.83.10.226"; // Ensure this is still your correct IP!
+
 
       if (!token || !userId) {
         setLoading(false);
@@ -45,7 +46,7 @@ export default function UpcomingClinicScreen() {
       }
 
       const response = await axios.get(
-        `http://${ip}:8080/api/appointments/mother/${userId}`,
+        `${API_BASE_URL}/api/appointments/mother/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -126,6 +127,7 @@ export default function UpcomingClinicScreen() {
                     text={nextAppointment.phmName}
                   />
 
+                  {/* 🌟 FIX: Safely handling empty notes using a ternary operator */}
                   {nextAppointment.notes ? (
                     <View style={styles.notesBox}>
                       <Text style={styles.notesText}>{nextAppointment.notes}</Text>

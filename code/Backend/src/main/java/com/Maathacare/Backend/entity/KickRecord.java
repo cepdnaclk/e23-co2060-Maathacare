@@ -18,4 +18,36 @@ public class KickRecord {
 
     private int count;
     private LocalDateTime timestamp;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public MotherProfile getMotherProfile() {
+        return motherProfile;
+    }
+
+    public void setMotherProfile(MotherProfile motherProfile) {
+        this.motherProfile = motherProfile;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 }

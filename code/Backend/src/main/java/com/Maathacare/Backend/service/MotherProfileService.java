@@ -114,8 +114,8 @@ public class MotherProfileService {
         record.setMotherProfile(profile);
         record.setCount(request.getKickCount());
 
-        // 3. Parse the ISO date sent from React Native
-        record.setTimestamp(LocalDateTime.parse(request.getDate(), DateTimeFormatter.ISO_DATE_TIME));
+        // 3. FIX: Ignore the frontend ISO string and use the actual current local time
+        record.setTimestamp(LocalDateTime.now());
 
         // 4. Save to PostgreSQL on port 5432
         kickRepository.save(record);
@@ -157,4 +157,12 @@ public class MotherProfileService {
         profile.setPushToken(pushToken);
         motherProfileRepository.save(profile);
     }
+    // Use String userId to match your app's login tracking
+    public List<KickRecord> getKickHistoryByMotherId(String userId) {
+        // Find the profile using the login User ID just like saveDailyKicks does
+        MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Mother profile not found"));
+
+        // Fetch her records sorted by time
+        return kickRepository.findByMotherProfileIdOrderByTimestampAsc(profile.getId());    }
 }

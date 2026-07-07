@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 
-const API_BASE_URL = "http://10.83.10.226:8080";
+import { API_BASE_URL } from "../../constants/apiConfig";
 
 export default function PHMProfileScreen() {
   const [phmInfo, setPhmInfo] = useState<any>(null);
