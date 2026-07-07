@@ -38,6 +38,15 @@ public class Appointment {
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
 
+    @Column(name = "reminder_3_days_sent")
+    private boolean reminder3DaysSent = false;
+
+    @Column(name = "reminder_1_day_sent")
+    private boolean reminder1DaySent = false;
+
+    @Column(name = "reminder_3_hours_sent")
+    private boolean reminder3HoursSent = false;
+
     // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -55,4 +64,10 @@ public class Appointment {
     public void setLocation(String location) { this.location = location; }
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public boolean isReminder3DaysSent() { return reminder3DaysSent; }
+    public void setReminder3DaysSent(boolean reminder3DaysSent) { this.reminder3DaysSent = reminder3DaysSent; }
+    public boolean isReminder1DaySent() { return reminder1DaySent; }
+    public void setReminder1DaySent(boolean reminder1DaySent) { this.reminder1DaySent = reminder1DaySent; }
+    public boolean isReminder3HoursSent() { return reminder3HoursSent; }
+    public void setReminder3HoursSent(boolean reminder3HoursSent) { this.reminder3HoursSent = reminder3HoursSent; }
 }

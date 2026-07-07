@@ -6,3 +6,6 @@ Gemfile.lock
 Gemfile
 
 # Add your own files to be ignored from git in here
+# Dependency directories
+**/node_modules/
+**/.idea/

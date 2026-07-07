@@ -48,7 +48,7 @@ export default function ChangePasswordScreen() {
 
       // 🔗 Make sure your Spring Boot backend is running on this IP
       const response = await fetch(
-        "http://192.168.1.16:8080/api/users/change-password",
+        "http://10.83.10.226:8080/api/users/change-password",
         {
           method: "POST",
           headers: {
