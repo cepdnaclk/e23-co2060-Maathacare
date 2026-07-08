@@ -174,7 +174,10 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Galaha", value: "Galaha" },
     { label: "Gampola (Udapalatha)", value: "Gampola (Udapalatha)" },
     { label: "Ganga Ihala Korale", value: "Ganga Ihala Korale" },
-    { label: "Gangawata Korale", value: "Gangawata Korale" },
+    {
+      label: "Gangawata Korale",
+      value: "Kandy Four Gravets & Gangawata Korale",
+    },
     { label: "Harispattuwa", value: "Harispattuwa" },
     { label: "Hasalaka", value: "Hasalaka" },
     { label: "Hatharaliyadda", value: "Hatharaliyadda" },
@@ -183,13 +186,13 @@ const mohAreaMap: Record<string, { label: string; value: string }[]> = {
     { label: "Kundasale", value: "Kundasale" },
     { label: "Manikhinna", value: "Manikhinna" },
     { label: "Medadumbara", value: "Medadumbara" },
-    { label: "Nawalapitiya (Pasbage)", value: "Nawalapitiya (Pasbage)" },
+    { label: "Pasbage Korale", value: "Pasbage Korale" },
     { label: "Panvila", value: "Panvila" },
+    { label: "Pathadumbara", value: "Pathadumbara" },
     { label: "Poojapitiya", value: "Poojapitiya" },
     { label: "Thalathuoya", value: "Thalathuoya" },
     { label: "Udadumbara", value: "Udadumbara" },
     { label: "Udunuwara", value: "Udunuwara" },
-    { label: "Wattegama (Pathadumbara)", value: "Wattegama (Pathadumbara)" },
     { label: "Yatinuwara", value: "Yatinuwara" },
   ],
   Matale: [],
@@ -715,7 +718,7 @@ export default function Register() {
         disabled={isLoading || !district || divisionItems.length === 0}
         zIndex={1000}
         listMode="SCROLLVIEW"
-        // 🟢 NEW: Dynamic API Fetching Logic
+        // 🟢 FIXED: Added encodeURIComponent to prevent spaces breaking the API
         onChangeValue={async (value) => {
           setGnDivision(null); // Clear previous selection
 
@@ -724,7 +727,7 @@ export default function Register() {
             try {
               // Ask the backend for the specific list
               const response = await axios.get(
-                `${API_BASE_URL}/api/locations/gn-divisions?mohArea=${value}`,
+                `${API_BASE_URL}/api/locations/gn-divisions?mohArea=${encodeURIComponent(value)}`,
               );
 
               // Format the string array into the {label, value} objects the dropdown needs
@@ -761,7 +764,6 @@ export default function Register() {
         setOpen={setGnDivisionOpen}
         setValue={setGnDivision}
         setItems={setGnDivisionItems}
-        // 🟢 NEW: Show 'Loading...' text and spinner when fetching
         loading={isFetchingGn}
         placeholder={
           isFetchingGn

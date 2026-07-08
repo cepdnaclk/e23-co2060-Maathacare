@@ -223,7 +223,6 @@ export default function PHMDashboard() {
             </TouchableOpacity>
 
             <View style={{ flexDirection: "row", gap: 8 }}>
-              
               {/* NEW: View Records Button */}
               <TouchableOpacity
                 style={styles.actionCircle}
