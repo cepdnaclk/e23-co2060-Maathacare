@@ -27,6 +27,7 @@ public class UserRegistrationRequest {
     private String district;
     private String province;
     private String residentialDivision;
+    private String gnDivision;
 
     // --- Existing Getters and Setters ---
     public String getPhoneNumber() {
@@ -133,4 +134,7 @@ public class UserRegistrationRequest {
     public void setResidentialDivision(String residentialDivision) {
         this.residentialDivision = residentialDivision;
     }
+
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 }

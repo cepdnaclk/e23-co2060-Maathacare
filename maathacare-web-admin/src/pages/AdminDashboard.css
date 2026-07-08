@@ -3,18 +3,20 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #eef2f6;
   min-height: 100vh;
+  width: 100%; 
 }
 
 /* Official Header */
 .official-header {
-  background-color: #0f172a; /* Deep Navy Blue */
+  background-color: #0f172a;
   color: white;
   padding: 1.5rem 3rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 4px solid #3b82f6; /* Trust Blue accent */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-bottom: 4px solid #3b82f6;
+  width: 100%; 
+  box-sizing: border-box; 
 }
 
 .header-titles h1 {
@@ -33,13 +35,15 @@
 }
 
 /* Grid Layout */
+
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
+  grid-template-columns: 1fr 2fr; /* Optional: giving more space to the directory */
   gap: 2rem;
   padding: 2.5rem 3rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%; /* Force full width */
+  max-width: 100%; /* Remove the 95% limit */
+  box-sizing: border-box; /* Ensures padding doesn't push the width out */
 }
 
 /* Official Cards */

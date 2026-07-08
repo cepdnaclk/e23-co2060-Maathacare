@@ -11,5 +11,6 @@ public interface PHMProfileRepository extends JpaRepository<PHMProfile,String> {
     Optional<PHMProfile> findByUserUserId(String userId);
     Optional<PHMProfile> findByUserStaffId(String staffId);
     Optional<PHMProfile> findByMohArea(String mohArea);
+    Optional<PHMProfile> findByGnDivision(String gnDivision);
 }
 

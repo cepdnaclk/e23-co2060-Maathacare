@@ -45,6 +45,9 @@ public class MotherProfile {
     @Column(name = "last_menstrual_period")
     private LocalDate lastMenstrualPeriod;
 
+    @Column(name = "gn_division", length = 100)
+    private String gnDivision;
+
     @Column(name = "residential_division")
     private String residentialDivision;
 
@@ -62,6 +65,7 @@ public class MotherProfile {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
+
 
 
     public String getId() { return id; }
@@ -107,6 +111,9 @@ public class MotherProfile {
 
     public ZonedDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 
     public String getResidentialDivision() { return residentialDivision; }
     public void setResidentialDivision(String residentialDivision) { this.residentialDivision = residentialDivision; }
