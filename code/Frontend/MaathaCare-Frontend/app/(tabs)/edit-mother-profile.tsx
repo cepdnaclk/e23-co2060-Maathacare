@@ -3,17 +3,17 @@ import axios from "axios";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { API_BASE_URL } from "../../constants/apiConfig";
@@ -25,6 +25,8 @@ export default function EditMotherProfileScreen() {
   // Initialize state with the existing profile data passed from the dashboard
   const [formData, setFormData] = useState({
     fullName: params.fullName || "",
+    emergencyContactName: params.emergencyContactName || "",               
+    emergencyContactRelationship: params.emergencyContactRelationship || "",
     emergencyContactNumber: params.emergencyContactNumber || "",
     address: params.address || "",
     district: params.district || "",
@@ -77,12 +79,37 @@ export default function EditMotherProfileScreen() {
               onChangeText={(text) => setFormData({...formData, fullName: text})} 
             />
 
-            <Text style={styles.inputLabel}>Emergency Contact</Text>
+            <Text style={styles.inputLabel}>Emergency Contact Name</Text>
+            <TextInput 
+              style={styles.input} 
+              value={formData.emergencyContactName as string} 
+              onChangeText={(text) => setFormData({...formData, emergencyContactName: text})} 
+              placeholder="e.g. Kamal Perera"
+              placeholderTextColor="#9CA3AF"
+            />
+
+            <Text style={styles.inputLabel}>Relationship to Mother</Text>
+            <TextInput 
+              style={styles.input} 
+              value={formData.emergencyContactRelationship as string} 
+              onChangeText={(text) => setFormData({...formData, emergencyContactRelationship: text})} 
+              placeholder="e.g. Husband, Mother, Sister"
+              placeholderTextColor="#9CA3AF"
+            />
+
+            <Text style={styles.inputLabel}>Emergency Contact Number</Text>
             <TextInput 
               style={styles.input} 
               keyboardType="phone-pad"
+              maxLength={10} // Restricts to 10 digits
               value={formData.emergencyContactNumber as string} 
-              onChangeText={(text) => setFormData({...formData, emergencyContactNumber: text})} 
+              onChangeText={(text) => {
+                // Instantly removes letters/symbols
+                const numericText = text.replace(/[^0-9]/g, ''); 
+                setFormData({...formData, emergencyContactNumber: numericText});
+              }} 
+              placeholder="e.g. 0712345678"
+              placeholderTextColor="#9CA3AF"
             />
 
             <Text style={styles.inputLabel}>Full Address</Text>

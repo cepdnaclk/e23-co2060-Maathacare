@@ -57,6 +57,12 @@ public class MotherProfile {
     @Column(name = "province", length = 50)
     private String province;
 
+    @Column(name = "emergency_contact_name", length = 100)
+    private String emergencyContactName;
+
+    @Column(name = "emergency_contact_relationship", length = 50)
+    private String emergencyContactRelationship;
+
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -123,4 +129,10 @@ public class MotherProfile {
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getEmergencyContactName() { return emergencyContactName; }
+    public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
+
+    public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
+    public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
 }

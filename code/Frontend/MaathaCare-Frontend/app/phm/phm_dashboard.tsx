@@ -8,12 +8,13 @@ import {
   FlatList,
   Modal,
   Platform,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -270,7 +271,8 @@ export default function PHMDashboard() {
   );
 
   const renderProfile = () => (
-    <View style={styles.profileContainer}>
+    <ScrollView style={styles.profileContainer} showsVerticalScrollIndicator={false}>
+      
       <View style={styles.profileTopCard}>
         <View style={styles.avatarCircle}>
           <Text style={styles.avatarText}>
@@ -307,7 +309,26 @@ export default function PHMDashboard() {
       </View>
 
       <Text style={styles.sectionHeader}>SECURITY & SETTINGS</Text>
+      
+      {/* --- Edit Profile Button --- */}
+      <TouchableOpacity
+        style={styles.changePassBtn}
+        onPress={() => router.push({
+          pathname: "/phm/edit-phm-profile",
+          params: {
+            userId: phmInfo?.user?.userId, 
+            fullName: phmInfo?.fullName,
+            contactNumber: phmInfo?.contactNumber || phmInfo?.phoneNumber,
+            mohArea: phmInfo?.mohArea,
+            gnDivision: phmInfo?.gnDivision
+          }
+        })}
+      >
+        <Text style={styles.changePassText}>✏️ Edit Profile</Text>
+        <Text style={styles.chevron}>›</Text>
+      </TouchableOpacity>
 
+      {/* --- Change Password Button --- */}
       <TouchableOpacity
         style={styles.changePassBtn}
         onPress={() => router.push("/phm/change-password" as any)}
@@ -316,6 +337,7 @@ export default function PHMDashboard() {
         <Text style={styles.chevron}>›</Text>
       </TouchableOpacity>
 
+      {/* --- Sign Out Button --- */}
       <TouchableOpacity
         style={styles.logoutBtn}
         onPress={async () => {
@@ -325,9 +347,12 @@ export default function PHMDashboard() {
       >
         <Text style={styles.logoutText}>Log Out</Text>
       </TouchableOpacity>
-    </View>
+      
+      <View style={{ height: 40 }} />
+    </ScrollView>
   );
 
+  
   if (loading)
     return (
       <View style={styles.centered}>
@@ -430,7 +455,7 @@ export default function PHMDashboard() {
         </TouchableOpacity>
       </View>
 
-      {/* --- Existing: Link Patient Modal --- */}
+      {/* --- Link Patient Modal --- */}
       <Modal
         visible={assignModalVisible}
         animationType="fade"
@@ -475,7 +500,7 @@ export default function PHMDashboard() {
         </View>
       </Modal>
 
-      {/* --- Existing: Scheduling Modal --- */}
+      {/* --- Scheduling Modal --- */}
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>

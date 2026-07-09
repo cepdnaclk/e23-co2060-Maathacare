@@ -77,6 +77,15 @@ public class PHMProfileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<?> updatePHMProfile(@PathVariable String userId, @RequestBody PHMProfileRequest request) {
+        try {
+            PHMProfile updatedProfile = phmProfileService.updatePhmProfile(userId, request);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Failed to update PHM profile: " + e.getMessage());
+        }
+    }
 
 
 }
