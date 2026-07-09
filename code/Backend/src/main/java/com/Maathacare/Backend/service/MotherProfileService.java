@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import com.Maathacare.Backend.model.entity.PHMProfile;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.List;
@@ -74,6 +75,47 @@ public class MotherProfileService {
         }
 
         return motherProfileRepository.save(newProfile);
+    }
+
+    @Transactional
+    public MotherProfileResponse updateMotherProfile(String userId, MotherProfileRequest request) {
+        // Find the profile using your specific repository method naming convention
+        MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Mother profile not found for user ID: " + userId));
+
+        // Update allowable fields safely
+        if (request.getFullName() != null) profile.setFullName(request.getFullName());
+        if (request.getEmergencyContactNumber() != null) profile.setEmergencyContactNumber(request.getEmergencyContactNumber());
+        if (request.getAddress() != null) profile.setAddress(request.getAddress());
+        if (request.getChronicDiseaseStatus() != null) profile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
+        if (request.getResidentialDivision() != null) profile.setResidentialDivision(request.getResidentialDivision());
+        if (request.getDistrict() != null) profile.setDistrict(request.getDistrict());
+        if (request.getProvince() != null) profile.setProvince(request.getProvince());
+
+        // Save to database
+        MotherProfile savedProfile = motherProfileRepository.save(profile);
+
+        // Map the saved entity back to your DTO response
+        MotherProfileResponse response = new MotherProfileResponse();
+        response.setFullName(savedProfile.getFullName());
+        response.setNic(savedProfile.getNic());
+        response.setDateOfBirth(savedProfile.getDateOfBirth());
+        response.setAddress(savedProfile.getAddress());
+        response.setEmergencyContactNumber(savedProfile.getEmergencyContactNumber());
+        response.setLastMenstrualPeriod(savedProfile.getLastMenstrualPeriod());
+        response.setBloodGroup(savedProfile.getBloodGroup());
+        response.setDistrict(savedProfile.getDistrict());
+        response.setProvince(savedProfile.getProvince());
+
+        if (savedProfile.getPhmProfile() != null) {
+            response.setPhmName(savedProfile.getPhmProfile().getFullName());
+            response.setPhmId(savedProfile.getPhmProfile().getRegistrationNumber());
+        } else {
+            response.setPhmName("Pending");
+            response.setPhmId("Pending");
+        }
+
+        return response;
     }
 
     // 🟢 UPDATED: Returns a DTO instead of raw Entity to fix "Not provided" error

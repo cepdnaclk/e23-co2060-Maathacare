@@ -76,4 +76,14 @@ public class MotherProfileController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<?> updateMotherProfile(@PathVariable String userId, @RequestBody MotherProfileRequest request) {
+        try {
+            MotherProfileResponse updatedProfile = motherProfileService.updateMotherProfile(userId, request);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Failed to update profile: " + e.getMessage());
+        }
+    }
 }
