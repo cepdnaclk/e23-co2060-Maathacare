@@ -39,5 +39,22 @@
   "placeholderStaffId": "e.g. PHM-100",
   "staffplaceholderPassword": "••••••••",
   "loginToDashboard": "Login to Dashboard",
-  "backToGateway": "← Back to Gateway"
+  "backToGateway": "← Back to Gateway",
+
+  "profileSettings": "Profile Settings",
+  "myInformation": "My Information",
+  "preferences": "Preferences",
+  "assignedMothers": "Assigned Mothers",
+  "editProfile": "Edit Profile",
+  "notifications": "Notifications",
+  "language": "Language",
+  "logout": "Sign Out",
+  "personalDetails": "Personal Details",
+  "professionalDetails": "Professional Details",
+  "emailAddress": "Email Address",
+  "mohArea": "MOH Area",
+  "phmId": "Official PHM ID",
+  "profileOverview": "Profile Overview",
+  "systemPreferences": "System Preferences",
+  "secureLogout": "Secure Logout"
 }

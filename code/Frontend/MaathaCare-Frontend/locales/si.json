@@ -39,5 +39,22 @@
   "placeholderStaffId": "උදා. PHM-100",
   "staffplaceholderPassword": "••••••••",
   "loginToDashboard": "ඇතුල් වන්න",
-  "backToGateway": "← මුල් පිටුවට යන්න"
+  "backToGateway": "← මුල් පිටුවට යන්න",
+
+  "profileSettings": "පැතිකඩ සැකසුම්",
+  "myInformation": "මගේ තොරතුරු",
+  "preferences": "අභිරුචි",
+  "assignedMothers": "පවරා ඇති මව්වරුන්",
+  "editProfile": "පැතිකඩ සංස්කරණය කරන්න",
+  "notifications": "දැනුම්දීම්",
+  "language": "භාෂාව",
+  "logout": "පිටවන්න",
+  "personalDetails": "පෞද්ගලික තොරතුරු",
+  "professionalDetails": "වෘත්තීය තොරතුරු",
+  "emailAddress": "විද්‍යුත් තැපැල් ලිපිනය",
+  "mohArea": "MOH ප්‍රදේශය",
+  "phmId": "නිල PHM හැඳුනුම් අංකය",
+  "profileOverview": "පැතිකඩ දළ විශ්ලේෂණය",
+  "systemPreferences": "පද්ධති අභිරුචි",
+  "secureLogout": "පිටවන්න"
 }
