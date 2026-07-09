@@ -14,11 +14,11 @@ public class Appointment {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mother_profile_id", nullable = false)
+    @JoinColumn(name = "mother_profile_id", nullable = true)
     private MotherProfile mother;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "phm_profile_id", nullable = false)
+    @JoinColumn(name = "phm_profile_id", nullable = true)
     private PHMProfile phm;
 
     @Column(name = "appointment_date", nullable = false)
