@@ -17,6 +17,8 @@ public class MotherProfileRequest {
     private String residentialDivision;
     private String district;
     private String province;
+    private String emergencyContactName;
+    private String emergencyContactRelationship;
 
 
     public String getUserId() { return userId; }
@@ -101,4 +103,10 @@ public class MotherProfileRequest {
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getEmergencyContactName() { return emergencyContactName; }
+    public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
+
+    public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
+    public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
 }

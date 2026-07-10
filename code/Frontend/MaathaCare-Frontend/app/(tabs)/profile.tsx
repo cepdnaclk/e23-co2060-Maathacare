@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import {
   CreditCard,
   Droplets,
+  Edit2,
   Home,
   LogOut,
   MapPin,
@@ -145,6 +146,24 @@ export default function ProfileScreen() {
           />
         </View>
 
+        {/* --- EDIT PROFILE --- */}
+        <TouchableOpacity 
+          style={styles.editButton} 
+          onPress={() => router.push({
+            pathname: "/edit-mother-profile",
+            params: {
+              fullName: profile?.fullName,
+              emergencyContactNumber: profile?.emergencyContactNumber,
+              address: profile?.address,
+              district: profile?.district,
+              province: profile?.province
+            }
+          })}
+        >
+          <Edit2 size={20} color="#ffffff" style={{ marginRight: 10 }} />
+          <Text style={styles.editText}>Edit Profile</Text>
+        </TouchableOpacity>
+
         {/* --- SIGN OUT --- */}
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <LogOut size={20} color="#ffffff" style={{ marginRight: 10 }} />
@@ -272,4 +291,19 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   logoutText: { color: "white", fontWeight: "bold", fontSize: 17 },
+
+  editButton: {
+    backgroundColor: "#db2777",
+    flexDirection: "row",
+    height: 60,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+    elevation: 5,
+    shadowColor: "#db2777",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+  },
+  editText: { color: "white", fontWeight: "bold", fontSize: 17 },
 });

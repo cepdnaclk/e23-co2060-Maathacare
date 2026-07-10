@@ -39,5 +39,22 @@
   "placeholderStaffId": "உதா. PHM-100",
   "staffplaceholderPassword": "••••••••",
   "loginToDashboard": "உள்நுழைய",
-  "backToGateway": "← பின் செல்லவும்"
+  "backToGateway": "← பின் செல்லவும்",
+
+  "profileSettings": "சுயவிவர அமைப்புகள்",
+  "myInformation": "எனது தகவல்",
+  "preferences": "முன்னுரிமைகள்",
+  "assignedMothers": "ஒதுக்கப்பட்ட தாய்மார்கள்",
+  "editProfile": "சுயவிவரத்தைத் திருத்தவும்",
+  "notifications": "அறிவிப்புகள்",
+  "language": "மொழி",
+  "logout": "வெளியேறு",
+  "personalDetails": "தனிப்பட்ட விவரங்கள்",
+  "professionalDetails": "தொழில்முறை விவரங்கள்",
+  "emailAddress": "மின்னஞ்சல் முகவரி",
+  "mohArea": "MOH பகுதி",
+  "phmId": "அதிகாரப்பூர்வ PHM அடையாள எண்",
+  "profileOverview": "சுயவிவர மேலோட்டம்",
+  "systemPreferences": "கணினி விருப்பத்தேர்வுகள்",
+  "secureLogout": "வெளியேறு"
 }

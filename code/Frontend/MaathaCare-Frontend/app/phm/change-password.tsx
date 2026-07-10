@@ -1,10 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { ChevronLeft, Key, Lock, ShieldCheck } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -12,18 +10,16 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import { API_BASE_URL } from "../../constants/apiConfig";
 
-const Colors = {
-  primary: "#0F766E",
-  primaryLight: "#CCFBF1", // Add this line
-  secondary: "#334155",
-  background: "#F8FAFC",
+// --- Consistent Premium Palette ---
+const COLORS = {
+  primary: "#0062FF",
+  bg: "#F5F8FE",
   surface: "#FFFFFF",
   border: "#E2E8F0",
-  text: "#1E293B",
+  text: "#0F172A",
   textMuted: "#64748B",
 };
 
@@ -35,57 +31,7 @@ export default function ChangePasswordScreen() {
   const router = useRouter();
 
   const handleUpdatePassword = async () => {
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      Alert.alert("Missing Fields", "Please fill in all password fields.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "Your new passwords do not match!");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      Alert.alert(
-        "Weak Password",
-        "New password must be at least 6 characters.",
-      );
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const staffId = (await AsyncStorage.getItem("userId")) || "";
-      const token = await AsyncStorage.getItem("userToken");
-      const url = `${API_BASE_URL}/api/users/staff/${staffId}/change-password`;
-
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ oldPassword, newPassword }),
-      });
-
-      if (response.ok) {
-        Alert.alert(
-          "Security Updated",
-          "Your password has been changed successfully.",
-          [{ text: "OK", onPress: () => router.back() }],
-        );
-      } else {
-        Alert.alert(
-          "Error",
-          "Failed to change password. Please check your old password.",
-        );
-      }
-    } catch (error) {
-      Alert.alert("Network Error", "Unable to connect to the server.");
-    } finally {
-      setIsLoading(false);
-    }
+    // ... (Keep your existing logic here)
   };
 
   return (
@@ -93,90 +39,54 @@ export default function ChangePasswordScreen() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
+      {/* Sleek Custom Header */}
       <View style={styles.topNav}>
         <TouchableOpacity style={styles.navBack} onPress={() => router.back()}>
-          <ChevronLeft color="#0F172A" size={28} />
+          <ChevronLeft color={COLORS.text} size={24} />
         </TouchableOpacity>
-        <Text style={styles.navTitle}>Security Settings</Text>
-        <View style={{ width: 28 }} />
+        <Text style={styles.navTitle}>Security</Text>
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* Premium Icon Header */}
         <View style={styles.iconHeader}>
           <View style={styles.iconCircle}>
-            <ShieldCheck color={Colors.primary} size={48} />
+            <ShieldCheck color={COLORS.primary} size={32} />
           </View>
           <Text style={styles.headerTitle}>Update Password</Text>
           <Text style={styles.subText}>
-            Ensure your account remains secure by using a strong password.
+            Secure your account with a strong, new credential.
           </Text>
         </View>
 
+        {/* Card Input Area */}
         <View style={styles.formCard}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Current Password</Text>
-            <View style={styles.inputWrapper}>
-              <Lock
-                color={Colors.textMuted}
-                size={20}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Enter current password"
-                placeholderTextColor={Colors.textMuted}
-                secureTextEntry
-                value={oldPassword}
-                onChangeText={setOldPassword}
-              />
-            </View>
-          </View>
-
+          <InputField
+            label="Current Password"
+            icon={Lock}
+            value={oldPassword}
+            onChange={setOldPassword}
+          />
           <View style={styles.divider} />
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>New Password</Text>
-            <View style={styles.inputWrapper}>
-              <Key
-                color={Colors.textMuted}
-                size={20}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="At least 6 characters"
-                placeholderTextColor={Colors.textMuted}
-                secureTextEntry
-                value={newPassword}
-                onChangeText={setNewPassword}
-              />
-            </View>
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Confirm New Password</Text>
-            <View style={styles.inputWrapper}>
-              <Key
-                color={Colors.textMuted}
-                size={20}
-                style={styles.inputIcon}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Type new password again"
-                placeholderTextColor={Colors.textMuted}
-                secureTextEntry
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
-            </View>
-          </View>
+          <InputField
+            label="New Password"
+            icon={Key}
+            value={newPassword}
+            onChange={setNewPassword}
+          />
+          <InputField
+            label="Confirm New Password"
+            icon={Key}
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+          />
 
           <TouchableOpacity
-            style={[styles.saveButton, isLoading && { opacity: 0.7 }]}
+            style={styles.saveButton}
             onPress={handleUpdatePassword}
             disabled={isLoading}
           >
@@ -192,6 +102,22 @@ export default function ChangePasswordScreen() {
   );
 }
 
+// Reusable Input Component to keep code clean
+const InputField = ({ label, icon: Icon, ...props }: any) => (
+  <View style={styles.inputGroup}>
+    <Text style={styles.label}>{label}</Text>
+    <View style={styles.inputWrapper}>
+      <Icon color={COLORS.textMuted} size={20} style={{ marginRight: 12 }} />
+      <TextInput
+        style={styles.input}
+        placeholder={`Enter ${label.toLowerCase()}`}
+        secureTextEntry
+        {...props}
+      />
+    </View>
+  </View>
+);
+
 const styles = StyleSheet.create({
   topNav: {
     flexDirection: "row",
@@ -200,85 +126,75 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 15,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    backgroundColor: COLORS.surface,
   },
-  navBack: { padding: 4 },
-  navTitle: { fontSize: 18, fontWeight: "700", color: Colors.text },
-
-  container: { flex: 1, backgroundColor: Colors.background },
-  scrollContent: { padding: 24, paddingTop: 30 },
-
-  iconHeader: { alignItems: "center", marginBottom: 40 },
+  navBack: { width: 40, height: 40, justifyContent: "center" },
+  navTitle: { fontSize: 18, fontWeight: "800", color: COLORS.text },
+  container: { flex: 1, backgroundColor: COLORS.bg },
+  scrollContent: { padding: 24 },
+  iconHeader: { alignItems: "center", marginBottom: 32 },
   iconCircle: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    backgroundColor: Colors.primaryLight,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#E0E7FF",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: Colors.text,
+    fontSize: 22,
+    fontWeight: "900",
+    color: COLORS.text,
     marginBottom: 8,
   },
   subText: {
-    fontSize: 15,
-    color: Colors.textMuted,
+    fontSize: 14,
+    color: COLORS.textMuted,
     textAlign: "center",
-    lineHeight: 22,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
   },
-
   formCard: {
-    backgroundColor: Colors.surface,
+    backgroundColor: COLORS.surface,
     padding: 24,
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    shadowColor: "#94A3B8",
-    shadowOffset: { width: 0, height: 4 },
+    borderRadius: 32,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
+    shadowRadius: 20,
+    elevation: 5,
   },
-
   inputGroup: { marginBottom: 20 },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
-    color: Colors.text,
+    color: COLORS.textMuted,
     marginBottom: 8,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.background,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    backgroundColor: "#F1F5F9",
     borderRadius: 16,
     paddingHorizontal: 16,
   },
-  inputIcon: { marginRight: 12 },
-  input: { flex: 1, height: 56, fontSize: 16, color: Colors.text },
-
-  divider: { height: 1, backgroundColor: Colors.border, marginVertical: 24 },
-
-  saveButton: {
-    backgroundColor: Colors.primary,
-    padding: 18,
-    borderRadius: 16,
-    alignItems: "center",
-    marginTop: 10,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+  input: {
+    flex: 1,
+    height: 56,
+    fontSize: 15,
+    color: COLORS.text,
+    fontWeight: "600",
   },
-  saveButtonText: { color: "#fff", fontSize: 16, fontWeight: "700" },
+  divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 12 },
+  saveButton: {
+    backgroundColor: COLORS.primary,
+    padding: 18,
+    borderRadius: 20,
+    alignItems: "center",
+    marginTop: 20,
+    elevation: 3,
+  },
+  saveButtonText: { color: "#fff", fontSize: 16, fontWeight: "800" },
 });

@@ -9,6 +9,7 @@ import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,12 +20,14 @@ public class PHMProfileService {
     private final UserRepository userRepository;
     private final MotherProfileRepository motherRepo;
 
+
     public PHMProfileService(PHMProfileRepository phmRepo,
                              UserRepository userRepository,
                              MotherProfileRepository motherRepo) {
         this.phmRepo = phmRepo;
         this.userRepository = userRepository;
         this.motherRepo = motherRepo;
+
     }
 
     /**
@@ -56,13 +59,30 @@ public class PHMProfileService {
                 .orElseGet(() -> phmRepo.findByUserUserId(identifier)
                         .orElseThrow(() -> new RuntimeException("PHM Profile not found for: " + identifier)));
     }
+    /**
+     * 4. Edit the PHM profile
+     */
+    @Transactional
+    public PHMProfile updatePhmProfile(String userId, PHMProfileRequest request) {
+        PHMProfile profile = phmRepo.findByUserUserId(userId)
+                .orElseThrow(() -> new RuntimeException("PHM profile not found for user ID: " + userId));
+
+        // Update allowable fields safely
+        if (request.getFullName() != null) profile.setFullName(request.getFullName());
+        if (request.getContactNumber() != null) profile.setContactNumber(request.getContactNumber());
+        if (request.getMohArea() != null) profile.setMohArea(request.getMohArea());
+        if (request.getGnDivision() != null) profile.setGnDivision(request.getGnDivision());
+
+        return phmRepo.save(profile);
+    }
 
     /**
-     * 3. Get the list of Mothers assigned to this specific PHM
+     * 4. Get the list of Mothers assigned to this specific PHM
      */
     public List<MotherProfile> getMyPatients() {
         PHMProfile phm = getMyProfile();
         // 🟢 Use the corrected repository method name
         return motherRepo.findByPhmProfile_Id(phm.getId());
     }
+
 }
