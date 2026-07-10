@@ -1,8 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FileSystem from "expo-file-system";
+import { useFocusEffect } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-// import { supabase } from '../../constants/supabase'; // 🌟 UNCOMMENT WHEN SUPABASE IS READY
 
 import {
   Bell,
@@ -15,7 +14,7 @@ import {
   Settings,
   User,
 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -103,27 +102,32 @@ export default function PHMProfileScreen() {
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = await AsyncStorage.getItem("userToken");
-        if (!token) return;
-        const res = await fetch(`${API_BASE_URL}/api/phm/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setPhmInfo(data);
-          if (data.profilePictureUrl) setProfileImage(data.profilePictureUrl);
-        }
-      } catch (error) {
-        Alert.alert("Error", "Could not load profile.");
-      } finally {
-        setLoading(false);
+  const fetchProfile = React.useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      if (!token) return;
+      const res = await fetch(`${API_BASE_URL}/api/phm/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPhmInfo(data);
+        if (data.profilePictureUrl) setProfileImage(data.profilePictureUrl);
       }
-    };
-    fetchProfile();
+    } catch (error) {
+      Alert.alert("Error", "Could not load profile.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  // Refetch every time this screen comes into focus (e.g. returning
+  // from Edit Profile after a save) so the latest data is always shown.
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfile();
+    }, [fetchProfile]),
+  );
 
   const toggleSection = (section: string) =>
     setExpandedSection(expandedSection === section ? null : section);
@@ -147,157 +151,38 @@ export default function PHMProfileScreen() {
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const imageUri = result.assets[0].uri;
-      setProfileImage(imageUri);
+      setProfileImage(imageUri); // Update UI Instantly
 
       try {
-        const base64 = await FileSystem.readAsStringAsync(imageUri, {
-          encoding: "base64",
-        });
-        const ext = imageUri.substring(imageUri.lastIndexOf(".") + 1);
-        const fileName = `phm_${phmInfo?.id || "profile"}_${Date.now()}.${ext}`;
-
-        // 🌟 UNCOMMENT THIS BLOCK WHEN SUPABASE IS IMPORTED 🌟
-        /*
-        const { error } = await supabase.storage
-          .from('avatars') 
-          .upload(fileName, decode(base64), { contentType: `image/${ext}` });
-
-        if (error) throw error;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(fileName);
-
         const token = await AsyncStorage.getItem("userToken");
-        await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
-          method: 'PUT', 
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ profilePictureUrl: publicUrl }),
-        });
-        */
 
-        Alert.alert("Success", "Profile picture updated successfully!");
+        // Form Data approach for direct server upload (Standard React Native fix)
+        const formData = new FormData();
+        formData.append("file", {
+          uri: imageUri,
+          name: "profile.jpg",
+          type: "image/jpeg",
+        } as any);
+
+        await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
       } catch (err) {
-        console.error("Upload error:", err);
-        Alert.alert(
-          "Upload Failed",
-          "Could not save the profile picture to the server.",
-        );
+        console.log("Upload background sync error:", err);
       }
     }
   };
 
-  const SettingsModal = () => (
-    <Modal
-      visible={settingsModalVisible}
-      animationType="fade"
-      transparent={true}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{t("profileSettings")}</Text>
-          <TouchableOpacity
-            style={styles.settingsOptionBtn}
-            onPress={() => {
-              setSettingsModalVisible(false);
-              router.push("/phm/change-password" as any);
-            }}
-          >
-            <View style={styles.iconBox}>
-              <Key color={THEME.primary} size={18} />
-            </View>
-            <Text style={styles.settingsOptionText}>Change Password</Text>
-            <ChevronRight color={THEME.textMuted} size={18} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.modalBtn,
-              { backgroundColor: THEME.iconBg, marginTop: 16 },
-            ]}
-            onPress={() => setSettingsModalVisible(false)}
-          >
-            <Text
-              style={{
-                color: THEME.textHeader,
-                fontWeight: "600",
-                textAlign: "center",
-              }}
-            >
-              Close
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
-
-  const LanguageModal = () => {
-    const languageOptions = [
-      { label: "English", code: "en" },
-      { label: "සිංහල", code: "si" },
-      { label: "தமிழ்", code: "ta" },
-    ];
-    return (
-      <Modal visible={langModalVisible} animationType="fade" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Language</Text>
-            {languageOptions.map((lang) => (
-              <TouchableOpacity
-                key={lang.code}
-                style={styles.langOptionBtn}
-                onPress={() => {
-                  i18n.changeLanguage(lang.code);
-                  setSelectedLang(lang.label);
-                  setLangModalVisible(false);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.langOptionText,
-                    selectedLang === lang.label && {
-                      color: THEME.primary,
-                      fontWeight: "700",
-                    },
-                  ]}
-                >
-                  {lang.label}
-                </Text>
-                {selectedLang === lang.label && (
-                  <Text
-                    style={{
-                      color: THEME.primary,
-                      fontWeight: "bold",
-                      fontSize: 18,
-                    }}
-                  >
-                    ✓
-                  </Text>
-                )}
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              style={[
-                styles.modalBtn,
-                { backgroundColor: THEME.iconBg, marginTop: 16 },
-              ]}
-              onPress={() => setLangModalVisible(false)}
-            >
-              <Text
-                style={{
-                  color: THEME.textHeader,
-                  fontWeight: "600",
-                  textAlign: "center",
-                }}
-              >
-                Cancel
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    );
-  };
+  const languageOptions = [
+    { label: "English", code: "en" },
+    { label: "සිංහල", code: "si" },
+    { label: "தமிழ்", code: "ta" },
+  ];
 
   if (loading)
     return (
@@ -345,8 +230,22 @@ export default function PHMProfileScreen() {
           </View>
           <Text style={styles.name}>{phmInfo?.fullName || "Sahana"}</Text>
           <Text style={styles.role}>Public Health Midwife</Text>
-          <TouchableOpacity style={styles.editProfileBtn}>
-            <Text style={styles.editProfileText}>{t("editProfile")}</Text>
+          <TouchableOpacity
+            style={styles.editProfileBtn}
+            onPress={() =>
+              router.push({
+                pathname: "/phm/edit-phm-profile",
+                params: {
+                  userId: phmInfo?.user?.userId,
+                  fullName: phmInfo?.fullName,
+                  nic: phmInfo?.user?.userId,
+                  contactNumber: phmInfo?.contactNumber,
+                  email: phmInfo?.email,
+                },
+              })
+            }
+          >
+            <Text style={styles.editProfileText}>✏️ {t("editProfile")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -365,9 +264,15 @@ export default function PHMProfileScreen() {
               </Text>
             </View>
             <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>NIC</Text>
+              <Text style={styles.detailValue}>
+                {phmInfo?.user?.userId || "N/A"}
+              </Text>
+            </View>
+            <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>{t("phoneNumber")}</Text>
               <Text style={styles.detailValue}>
-                {phmInfo?.phoneNumber || "Not Set"}
+                {phmInfo?.contactNumber || "Not Set"}
               </Text>
             </View>
             <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
@@ -464,8 +369,108 @@ export default function PHMProfileScreen() {
         </TouchableOpacity>
       </ScrollView>
 
-      <SettingsModal />
-      <LanguageModal />
+      {/* 🌟 INLINED SETTINGS MODAL */}
+      <Modal
+        visible={settingsModalVisible}
+        animationType="fade"
+        transparent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{t("profileSettings")}</Text>
+            <TouchableOpacity
+              style={styles.settingsOptionBtn}
+              onPress={() => {
+                setSettingsModalVisible(false);
+                router.push("/phm/change-password" as any);
+              }}
+            >
+              <View style={styles.iconBox}>
+                <Key color={THEME.primary} size={18} />
+              </View>
+              <Text style={styles.settingsOptionText}>Change Password</Text>
+              <ChevronRight color={THEME.textMuted} size={18} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.modalBtn,
+                { backgroundColor: THEME.iconBg, marginTop: 16 },
+              ]}
+              onPress={() => setSettingsModalVisible(false)}
+            >
+              <Text
+                style={{
+                  color: THEME.textHeader,
+                  fontWeight: "600",
+                  textAlign: "center",
+                }}
+              >
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 🌟 INLINED LANGUAGE MODAL */}
+      <Modal visible={langModalVisible} animationType="fade" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Language</Text>
+            {languageOptions.map((lang) => (
+              <TouchableOpacity
+                key={lang.code}
+                style={styles.langOptionBtn}
+                onPress={() => {
+                  i18n.changeLanguage(lang.code);
+                  setSelectedLang(lang.label);
+                  setLangModalVisible(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.langOptionText,
+                    selectedLang === lang.label && {
+                      color: THEME.primary,
+                      fontWeight: "700",
+                    },
+                  ]}
+                >
+                  {lang.label}
+                </Text>
+                {selectedLang === lang.label && (
+                  <Text
+                    style={{
+                      color: THEME.primary,
+                      fontWeight: "bold",
+                      fontSize: 18,
+                    }}
+                  >
+                    ✓
+                  </Text>
+                )}
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              style={[
+                styles.modalBtn,
+                { backgroundColor: THEME.iconBg, marginTop: 16 },
+              ]}
+              onPress={() => setLangModalVisible(false)}
+            >
+              <Text
+                style={{
+                  color: THEME.textHeader,
+                  fontWeight: "600",
+                  textAlign: "center",
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

@@ -1,9 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useRouter } from "expo-router";
-// import { supabase } from '../../constants/supabase'; // 🌟 UNCOMMENT WHEN SUPABASE IS READY
 
 import {
   Bell,
@@ -130,7 +128,6 @@ export default function PHMDashboard() {
   );
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  // Profile Image State
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useFocusEffect(
@@ -190,39 +187,25 @@ export default function PHMDashboard() {
       setProfileImage(imageUri);
 
       try {
-        const base64 = await FileSystem.readAsStringAsync(imageUri, {
-          encoding: "base64",
-        });
-        const ext = imageUri.substring(imageUri.lastIndexOf(".") + 1);
-        const fileName = `phm_${phmInfo?.id || "profile"}_${Date.now()}.${ext}`;
-
-        // 🌟 UNCOMMENT THIS BLOCK WHEN SUPABASE IS IMPORTED 🌟
-        /*
-        const { error } = await supabase.storage
-          .from('avatars') 
-          .upload(fileName, decode(base64), { contentType: `image/${ext}` });
-
-        if (error) throw error;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(fileName);
-
         const token = await AsyncStorage.getItem("userToken");
-        await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
-          method: 'PUT', 
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ profilePictureUrl: publicUrl }),
-        });
-        */
 
-        Alert.alert("Success", "Profile picture updated successfully!");
+        const formData = new FormData();
+        formData.append("file", {
+          uri: imageUri,
+          name: "profile.jpg",
+          type: "image/jpeg",
+        } as any);
+
+        await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
       } catch (err) {
-        console.error("Upload error:", err);
-        Alert.alert(
-          "Upload Failed",
-          "Could not save the profile picture to the server.",
-        );
+        console.log("Background upload err:", err);
       }
     }
   };
@@ -233,7 +216,10 @@ export default function PHMDashboard() {
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/phm/assign-mother/${searchNic}`,
-        { method: "PUT", headers: { Authorization: `Bearer ${token}` } },
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+        },
       );
       if (response.ok) {
         Alert.alert("Success", "Patient successfully linked.");
@@ -332,118 +318,6 @@ export default function PHMDashboard() {
     return Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
   };
 
-  const SettingsModal = () => (
-    <Modal
-      visible={settingsModalVisible}
-      animationType="fade"
-      transparent={true}
-    >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>{t("profileSettings")}</Text>
-          <TouchableOpacity
-            style={styles.settingsOptionBtn}
-            onPress={() => {
-              setSettingsModalVisible(false);
-              router.push("/phm/change-password" as any);
-            }}
-          >
-            <View style={styles.iconBox}>
-              <Key color={THEME.primary} size={18} />
-            </View>
-            <Text style={styles.settingsOptionText}>Change Password</Text>
-            <ChevronRight color={THEME.textMuted} size={18} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.modalBtn,
-              { backgroundColor: THEME.iconBg, marginTop: 16 },
-            ]}
-            onPress={() => setSettingsModalVisible(false)}
-          >
-            <Text
-              style={{
-                color: THEME.textHeader,
-                fontWeight: "600",
-                textAlign: "center",
-              }}
-            >
-              Close
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
-  );
-
-  const LanguageModal = () => {
-    const languageOptions = [
-      { label: "English", code: "en" },
-      { label: "සිංහල", code: "si" },
-      { label: "தமிழ்", code: "ta" },
-    ];
-    return (
-      <Modal visible={langModalVisible} animationType="fade" transparent={true}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Language</Text>
-            {languageOptions.map((lang) => (
-              <TouchableOpacity
-                key={lang.code}
-                style={styles.langOptionBtn}
-                onPress={() => {
-                  i18n.changeLanguage(lang.code);
-                  setSelectedLang(lang.label);
-                  setLangModalVisible(false);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.langOptionText,
-                    selectedLang === lang.label && {
-                      color: THEME.primary,
-                      fontWeight: "700",
-                    },
-                  ]}
-                >
-                  {lang.label}
-                </Text>
-                {selectedLang === lang.label && (
-                  <Text
-                    style={{
-                      color: THEME.primary,
-                      fontWeight: "bold",
-                      fontSize: 18,
-                    }}
-                  >
-                    ✓
-                  </Text>
-                )}
-              </TouchableOpacity>
-            ))}
-            <TouchableOpacity
-              style={[
-                styles.modalBtn,
-                { backgroundColor: THEME.iconBg, marginTop: 16 },
-              ]}
-              onPress={() => setLangModalVisible(false)}
-            >
-              <Text
-                style={{
-                  color: THEME.textHeader,
-                  fontWeight: "600",
-                  textAlign: "center",
-                }}
-              >
-                Cancel
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
   const renderHome = () => (
     <View style={styles.homeWrapper}>
       <View style={styles.homeHeaderContainer}>
@@ -481,7 +355,6 @@ export default function PHMDashboard() {
           </View>
         </View>
       </View>
-
       <View style={styles.whiteBodyContainer}>
         <View style={styles.singleActionContainer}>
           <TouchableOpacity
@@ -536,6 +409,7 @@ export default function PHMDashboard() {
           <TouchableOpacity
             style={styles.cameraBadge}
             onPress={handlePickImage}
+            activeOpacity={0.7}
           >
             <Camera color={THEME.textMuted} size={14} />
           </TouchableOpacity>
@@ -543,14 +417,13 @@ export default function PHMDashboard() {
         <Text style={styles.name}>{phmInfo?.fullName || "Sahana"}</Text>
         <Text style={styles.role}>Public Health Midwife</Text>
 
-        {/* 🌟 FRIEND'S EDIT PROFILE ROUTE INTEGRATED HERE */}
         <TouchableOpacity
           style={styles.editProfileBtn}
           onPress={() =>
             router.push({
               pathname: "/phm/edit-phm-profile",
               params: {
-                userId: phmInfo?.user?.userId,
+                userId: phmInfo?.id || phmInfo?.userId,
                 fullName: phmInfo?.fullName,
                 contactNumber: phmInfo?.contactNumber || phmInfo?.phoneNumber,
                 mohArea: phmInfo?.mohArea,
@@ -578,7 +451,7 @@ export default function PHMDashboard() {
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>{t("phoneNumber")}</Text>
             <Text style={styles.detailValue}>
-              {phmInfo?.phoneNumber || "Not Set"}
+              {phmInfo?.contactNumber || "Not Set"}
             </Text>
           </View>
           <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
@@ -669,6 +542,12 @@ export default function PHMDashboard() {
       </TouchableOpacity>
     </ScrollView>
   );
+
+  const languageOptions = [
+    { label: "English", code: "en" },
+    { label: "සිංහල", code: "si" },
+    { label: "தமிழ்", code: "ta" },
+  ];
 
   if (loading)
     return (
@@ -783,7 +662,6 @@ export default function PHMDashboard() {
           />
         </View>
 
-        {/* --- Link Patient Modal --- */}
         <Modal
           visible={assignModalVisible}
           animationType="fade"
@@ -796,7 +674,6 @@ export default function PHMDashboard() {
                 Enter the mother's 12-digit NIC number to add her to your care
                 list.
               </Text>
-
               <TextInput
                 style={styles.modalInput}
                 placeholder="e.g. 199012345678"
@@ -804,7 +681,6 @@ export default function PHMDashboard() {
                 value={searchNic}
                 onChangeText={setSearchNic}
               />
-
               <View style={styles.modalActions}>
                 <TouchableOpacity
                   onPress={() => {
@@ -830,12 +706,10 @@ export default function PHMDashboard() {
           </View>
         </Modal>
 
-        {/* --- Scheduling Modal --- */}
         <Modal visible={modalVisible} animationType="fade" transparent={true}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>New Appointment</Text>
-
               {!isSelectingDate ? (
                 <View>
                   <View style={styles.selectAllHeaderRow}>
@@ -851,7 +725,6 @@ export default function PHMDashboard() {
                       </Text>
                     </TouchableOpacity>
                   </View>
-
                   <View style={styles.patientListContainer}>
                     <FlatList
                       data={patients}
@@ -894,7 +767,6 @@ export default function PHMDashboard() {
                       }}
                     />
                   </View>
-
                   <View style={styles.modalActions}>
                     <TouchableOpacity
                       onPress={() => setModalVisible(false)}
@@ -933,7 +805,6 @@ export default function PHMDashboard() {
                       <Text style={styles.changePatientText}>Edit List</Text>
                     </TouchableOpacity>
                   </View>
-
                   <TouchableOpacity
                     onPress={() => {
                       setPickerMode(
@@ -943,11 +814,10 @@ export default function PHMDashboard() {
                     }}
                     style={styles.dateSelectorButton}
                   >
-                    <Text style={styles.dateSelectorText}>
-                      {`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} at ${String(date.getHours() % 12 || 12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")} ${date.getHours() >= 12 ? "PM" : "AM"}`}
-                    </Text>
+                    <Text
+                      style={styles.dateSelectorText}
+                    >{`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} at ${String(date.getHours() % 12 || 12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")} ${date.getHours() >= 12 ? "PM" : "AM"}`}</Text>
                   </TouchableOpacity>
-
                   {showPicker && (
                     <DateTimePicker
                       value={date}
@@ -959,7 +829,6 @@ export default function PHMDashboard() {
                       textColor="#000000"
                     />
                   )}
-
                   <TextInput
                     style={styles.modalInput}
                     placeholder="Reason (e.g. Routine Clinic)"
@@ -967,7 +836,6 @@ export default function PHMDashboard() {
                     value={remarks}
                     onChangeText={setRemarks}
                   />
-
                   <View style={styles.modalActions}>
                     <TouchableOpacity
                       onPress={() => setIsSelectingDate(false)}
@@ -1024,6 +892,7 @@ export default function PHMDashboard() {
           </View>
         )}
       </View>
+
       <View style={styles.modernTabBar}>
         <TouchableOpacity
           onPress={() => setActiveTab("Home")}
@@ -1076,6 +945,109 @@ export default function PHMDashboard() {
           </View>
         </TouchableOpacity>
       </View>
+
+      {/* 🌟 INLINED SETTINGS MODAL */}
+      <Modal
+        visible={settingsModalVisible}
+        animationType="fade"
+        transparent={true}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{t("profileSettings")}</Text>
+            <TouchableOpacity
+              style={styles.settingsOptionBtn}
+              onPress={() => {
+                setSettingsModalVisible(false);
+                router.push("/phm/change-password" as any);
+              }}
+            >
+              <View style={styles.iconBox}>
+                <Key color={THEME.primary} size={18} />
+              </View>
+              <Text style={styles.settingsOptionText}>Change Password</Text>
+              <ChevronRight color={THEME.textMuted} size={18} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.modalBtn,
+                { backgroundColor: THEME.iconBg, marginTop: 16 },
+              ]}
+              onPress={() => setSettingsModalVisible(false)}
+            >
+              <Text
+                style={{
+                  color: THEME.textHeader,
+                  fontWeight: "600",
+                  textAlign: "center",
+                }}
+              >
+                Close
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* 🌟 INLINED LANGUAGE MODAL */}
+      <Modal visible={langModalVisible} animationType="fade" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select Language</Text>
+            {languageOptions.map((lang) => (
+              <TouchableOpacity
+                key={lang.code}
+                style={styles.langOptionBtn}
+                onPress={() => {
+                  i18n.changeLanguage(lang.code);
+                  setSelectedLang(lang.label);
+                  setLangModalVisible(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.langOptionText,
+                    selectedLang === lang.label && {
+                      color: THEME.primary,
+                      fontWeight: "700",
+                    },
+                  ]}
+                >
+                  {lang.label}
+                </Text>
+                {selectedLang === lang.label && (
+                  <Text
+                    style={{
+                      color: THEME.primary,
+                      fontWeight: "bold",
+                      fontSize: 18,
+                    }}
+                  >
+                    ✓
+                  </Text>
+                )}
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              style={[
+                styles.modalBtn,
+                { backgroundColor: THEME.iconBg, marginTop: 16 },
+              ]}
+              onPress={() => setLangModalVisible(false)}
+            >
+              <Text
+                style={{
+                  color: THEME.textHeader,
+                  fontWeight: "600",
+                  textAlign: "center",
+                }}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -1096,7 +1068,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
   },
   homeWrapper: { flex: 1, backgroundColor: THEME.bg },
-
   homeHeaderContainer: {
     paddingTop: Platform.OS === "ios" ? 60 : 40,
     paddingHorizontal: 24,
@@ -1129,7 +1100,6 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-
   summaryCard: {
     backgroundColor: THEME.primary,
     borderRadius: 20,
@@ -1217,7 +1187,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   scrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
   topHeaderRow: {
     flexDirection: "row",
@@ -1290,7 +1259,6 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   editProfileText: { color: "white", fontSize: 14, fontWeight: "700" },
-
   sectionTitle: {
     fontSize: 13,
     fontWeight: "700",
@@ -1377,25 +1345,6 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   logoutText: { color: THEME.dangerText, fontWeight: "700", fontSize: 15 },
-
-  modernTabBar: {
-    flexDirection: "row",
-    height: Platform.OS === "ios" ? 85 : 70,
-    backgroundColor: THEME.surface,
-    borderTopWidth: 1,
-    borderTopColor: THEME.border,
-    paddingHorizontal: 20,
-    paddingBottom: Platform.OS === "ios" ? 20 : 0,
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  tabButton: { justifyContent: "center", alignItems: "center", padding: 10 },
-  tabIconWrapper: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  tabActiveBg: { backgroundColor: THEME.primaryLight },
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(15, 23, 42, 0.5)",
@@ -1534,7 +1483,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   singleActionContainer: { paddingTop: 20, marginBottom: 15 },
-
   modernHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -1635,4 +1583,22 @@ const styles = StyleSheet.create({
   },
   footerActionText: { fontSize: 14 },
   actionDivider: { width: 1, backgroundColor: THEME.border },
+  modernTabBar: {
+    flexDirection: "row",
+    height: Platform.OS === "ios" ? 85 : 70,
+    backgroundColor: THEME.surface,
+    borderTopWidth: 1,
+    borderTopColor: THEME.border,
+    paddingHorizontal: 20,
+    paddingBottom: Platform.OS === "ios" ? 20 : 0,
+    alignItems: "center",
+    justifyContent: "space-around",
+  },
+  tabButton: { justifyContent: "center", alignItems: "center", padding: 10 },
+  tabIconWrapper: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  tabActiveBg: { backgroundColor: THEME.primaryLight },
 });
