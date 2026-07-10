@@ -1,7 +1,11 @@
 package com.Maathacare.Backend.model.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "supplements")
@@ -21,6 +25,9 @@ public class Supplement {
 
     @Column(name = "instructions", length = 255)
     private String instructions;
+
+    @Column(name = "dosage", length = 100)
+    private String dosage;
 
 
     // Getters and Setters
@@ -44,4 +51,11 @@ public class Supplement {
         this.instructions = instructions;
     }
 
+    public String getDosage() {
+        return dosage;
+    }
+
+    public void setDosage(String dosage) {
+        this.dosage = dosage;
+    }
 }

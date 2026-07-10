@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import PhmAppointments from "../../components/PhmAppointments";
+import PhmAppointments from "../../components/phmAppointments/PhmAppointments";
 
 import { API_BASE_URL } from "../../constants/apiConfig";
 

@@ -1,74 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AIDiffSettings">
+    <option name="showAIDiff" value="false" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f0a63649-bb37-4e29-b4d1-51d28a96d0e7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/.env" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/MedicalRecordController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/VisitRecordController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/VisitRecordRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/MedicalRecord.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/VisitRecord.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/MedicalRecordRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/VisitRecordRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/StorageService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/digitalLocker.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm/record-visit.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm/view-visits.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/constants/apiConfig.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/e23-co2060-Maathacare.iml" beforeDir="false" />
+    <list default="true" id="b49cef77-4569-4145-8cfe-db880e7efb99" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/e23-co2060-Maathacare.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/IntelliLang.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/BackendApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/BackendApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/MotherProfileController.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/MotherProfileController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/KickCountRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/KickCountRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/entity/KickRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/entity/KickRecord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/KickRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/KickRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/MotherProfileRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/repository/MotherProfileRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/MotherProfileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/MotherProfileService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/AppointmentRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/AppointmentRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/ClinicVisitRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/dto/ClinicVisitRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/Appointment.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/Appointment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/Supplement.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/model/entity/Supplement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/AppointmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/AppointmentService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/phm-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/phm-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/kick-counter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/kick-counter.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/mother-login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/mother-login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/mother_details.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/mother_details.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm/change-password.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm/change-password.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/digitalLocker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/digitalLocker.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm/phm_dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/phm/phm_dashboard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/staff-login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/upcoming-clinic.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/upcoming-clinic.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/week/[id].tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/week/[id].tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/components/PhmAppointments.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/components/PhmAppointments.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/components/PhmAppointments.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/constants/apiConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/constants/apiConfig.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@expo/dom-webview/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/@expo/dom-webview/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@expo/dom-webview/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/@expo/dom-webview/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@expo/dom-webview/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/@expo/dom-webview/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@expo/log-box/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/@expo/log-box/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@expo/log-box/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/@expo/log-box/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@expo/log-box/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/@expo/log-box/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/@react-native/gradle-plugin/.gradle/nb-cache/subprojects.ser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/@react-native/gradle-plugin/.gradle/nb-cache/subprojects.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-asset/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-asset/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-asset/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-asset/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-asset/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-asset/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-constants/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-constants/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-constants/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-constants/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-constants/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-constants/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-client/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-client/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-client/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-client/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-client/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-client/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/nb-cache/expo-dev-launcher-gradle-plugin-1616692480/project-info.ser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/nb-cache/expo-dev-launcher-gradle-plugin-1616692480/project-info.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/nb-cache/subprojects.ser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-launcher/expo-dev-launcher-gradle-plugin/.gradle/nb-cache/subprojects.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-menu-interface/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-menu-interface/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-menu-interface/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-menu-interface/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-menu-interface/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-menu-interface/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-menu/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-menu/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-menu/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-menu/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-dev-menu/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-dev-menu/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-file-system/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-file-system/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-file-system/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-file-system/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-file-system/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-file-system/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-font/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-font/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-font/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-font/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-font/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-font/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-image/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-image/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-image/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-image/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-image/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-image/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-json-utils/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-json-utils/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-json-utils/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-json-utils/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-json-utils/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-json-utils/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-keep-awake/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-keep-awake/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-keep-awake/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-keep-awake/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-keep-awake/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-keep-awake/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-linking/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-linking/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-linking/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-linking/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-linking/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-linking/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-manifests/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-manifests/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-manifests/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-manifests/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-manifests/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-manifests/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-autolinking/android/expo-gradle-plugin/.gradle/nb-cache/subprojects.ser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-autolinking/android/expo-gradle-plugin/.gradle/nb-cache/subprojects.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/android/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/android/build/reports/problems/problems-report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/nb-cache/expo-module-gradle-plugin-508939937/project-info.ser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/nb-cache/expo-module-gradle-plugin-508939937/project-info.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/nb-cache/subprojects.ser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-modules-core/expo-module-gradle-plugin/.gradle/nb-cache/subprojects.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-router/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-router/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-router/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-router/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-router/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-router/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-updates-interface/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-updates-interface/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-updates-interface/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-updates-interface/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo-updates-interface/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo-updates-interface/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/expo/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/expo/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native-safe-area-context/android/.gradle/nb-cache/subprojects.ser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native-safe-area-context/android/.gradle/nb-cache/subprojects.ser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native-screens/android/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native-screens/android/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native-screens/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native-screens/android/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native-screens/android/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native-screens/android/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native/.gradle/9.3.0/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native/.gradle/9.3.0/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/react-native/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/react-native/build/reports/problems/problems-report.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExternalProjectsManager">
-    <system id="GRADLE">
-      <state>
-        <projects_view>
-          <tree_state>
-            <expand />
-            <select />
-          </tree_state>
-        </projects_view>
-      </state>
-    </system>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="384" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -84,11 +133,70 @@
     <commands />
     <urls />
   </component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="3Dct4ysw5vNRn96UgQHf6YAgTfT" />
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.4639750581260207" />
+      <entry key="MS500" value="2.0899884510599254" />
+      <entry key="S2" value="2.6567384589756746" />
+      <entry key="S5" value="2.8490274847957378" />
+      <entry key="S10" value="2.922011642052765" />
+      <entry key="S30" value="2.973425300897244" />
+      <entry key="S60" value="2.986638870609358" />
+      <entry key="M2" value="2.9933008792101328" />
+      <entry key="M5" value="2.997315883918275" />
+      <entry key="M10" value="2.998657196136325" />
+      <entry key="M15" value="2.9991046315971657" />
+      <entry key="M30" value="2.9995522328628836" />
+      <entry key="H1" value="2.999776095693359" />
+      <entry key="H2" value="2.9998880426616386" />
+      <entry key="H4" value="2.9999440200344942" />
+      <entry key="D1" value="2.9999906698256984" />
+      <entry key="W1" value="2.9999986671135472" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.9653809682173075" />
+      <entry key="MS500" value="1.6459036716795143" />
+      <entry key="S2" value="2.4568593435975585" />
+      <entry key="S5" value="2.7564967773283997" />
+      <entry key="S10" value="2.873325456883416" />
+      <entry key="S30" value="2.9566245118601326" />
+      <entry key="S60" value="2.978164726702432" />
+      <entry key="M2" value="2.989045197449143" />
+      <entry key="M5" value="2.995609122600148" />
+      <entry key="M10" value="2.9978030655122185" />
+      <entry key="M15" value="2.9985350443839365" />
+      <entry key="M30" value="2.9992673558230982" />
+      <entry key="H1" value="2.999633636308685" />
+      <entry key="H2" value="2.9998168077522958" />
+      <entry key="H4" value="2.9999084012754693" />
+      <entry key="D1" value="2.999984733184692" />
+      <entry key="W1" value="2.9999978190175387" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 6
+}]]></component>
+  <component name="ProjectId" id="3G9z20mApggwvRThbDXrVkRvwAt" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -102,27 +210,26 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.BackendApplication.executor": "Run",
-    "git-widget-placeholder": "Merging basic-notification-system",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "basic-notification-system",
+    "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/chemi/Desktop/SEM 3/CO2060/app2/e23-co2060-Maathacare",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2026.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external"
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "D:\\sem 4\\e23-co2060-Maathacare\\code\\Frontend\\MaathaCare-Frontend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="Backend" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="Backend" />
-      <option name="filePath" />
-      <method v="2" />
-    </configuration>
     <configuration name="BackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="Backend" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.Maathacare.Backend.BackendApplication" />
@@ -134,18 +241,23 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+        <option value="bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.24374.151" />
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.24374.151" />
       </set>
     </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="f0a63649-bb37-4e29-b4d1-51d28a96d0e7" name="Changes" comment="" />
-      <created>1778593002829</created>
+      <changelist id="b49cef77-4569-4145-8cfe-db880e7efb99" name="Changes" comment="" />
+      <created>1783398364326</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1778593002829</updated>
+      <updated>1783398364326</updated>
+      <workItem from="1783398371536" duration="29822000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>

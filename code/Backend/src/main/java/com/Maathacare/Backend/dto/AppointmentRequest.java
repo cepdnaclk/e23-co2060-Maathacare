@@ -3,7 +3,7 @@ import java.util.List;
 public class AppointmentRequest {
     private ProfileRef mother;
     private ProfileRef phm;
-    private String appointmentDate; // ISO String from React Native
+    private String appointmentDate;
     private String status;
     private String remarks;
     private String location;

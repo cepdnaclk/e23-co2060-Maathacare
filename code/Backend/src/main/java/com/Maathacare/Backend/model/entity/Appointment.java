@@ -1,10 +1,22 @@
 package com.Maathacare.Backend.model.entity;
 
-import com.Maathacare.Backend.model.enums.AppointmentStatus;
-import jakarta.persistence.*;
+import java.time.ZonedDateTime;
+
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.ZonedDateTime;
+import com.Maathacare.Backend.model.enums.AppointmentStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "appointments")
@@ -30,6 +42,14 @@ public class Appointment {
 
     @Column(columnDefinition = "TEXT")
     private String remarks;
+
+    @Column(columnDefinition = "TEXT")
+    private String additionalNotes;
+
+    private String nextDate;
+
+    private String nextTime;
+
 
     @Column(length = 100)
     private String location; // e.g., "Home Visit" or "Clinic"
@@ -70,4 +90,28 @@ public class Appointment {
     public void setReminder1DaySent(boolean reminder1DaySent) { this.reminder1DaySent = reminder1DaySent; }
     public boolean isReminder3HoursSent() { return reminder3HoursSent; }
     public void setReminder3HoursSent(boolean reminder3HoursSent) { this.reminder3HoursSent = reminder3HoursSent; }
+
+    public String getAdditionalNotes() {
+        return additionalNotes;
+    }
+
+    public void setAdditionalNotes(String additionalNotes) {
+        this.additionalNotes = additionalNotes;
+    }
+
+    public String getNextDate() {
+        return nextDate;
+    }
+
+    public void setNextDate(String nextDate) {
+        this.nextDate = nextDate;
+    }
+
+    public String getNextTime() {
+        return nextTime;
+    }
+
+    public void setNextTime(String nextTime) {
+        this.nextTime = nextTime;
+    }
 }

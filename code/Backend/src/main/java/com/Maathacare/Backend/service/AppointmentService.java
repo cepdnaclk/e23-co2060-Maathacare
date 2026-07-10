@@ -1,7 +1,18 @@
 package com.Maathacare.Backend.service;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.Maathacare.Backend.dto.AppointmentRequest;
 import com.Maathacare.Backend.dto.AppointmentResponse;
+import com.Maathacare.Backend.dto.ClinicVisitRequest;
 import com.Maathacare.Backend.model.entity.Appointment;
 import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.PHMProfile;
@@ -11,15 +22,6 @@ import com.Maathacare.Backend.repository.AppointmentRepository;
 import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.SupplementRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.Maathacare.Backend.dto.ClinicVisitRequest;
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 @Service
 public class AppointmentService {
 
@@ -119,24 +121,26 @@ public class AppointmentService {
 
     @Transactional
     public void completeClinicVisit(String appointmentId, ClinicVisitRequest request) {
-        // 1. Find the scheduled appointment
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
-        // 2. Add the personalized remarks and complete the visit
         appointment.setRemarks(request.getRemarks());
+        appointment.setAdditionalNotes(request.getAdditionalNotes());
+        appointment.setNextDate(request.getNextDate());
+        appointment.setNextTime(request.getNextTime());
         appointment.setStatus(AppointmentStatus.COMPLETED);
+
         appointmentRepository.save(appointment);
 
-        // 3. Loop through the detailed supplements and save them
         if (request.getSupplements() != null && !request.getSupplements().isEmpty()) {
             for (ClinicVisitRequest.SupplementDetail suppDetail : request.getSupplements()) {
                 Supplement supplement = new Supplement();
+
                 supplement.setId(UUID.randomUUID().toString());
                 supplement.setMotherId(appointment.getMother().getUser().getUserId());
 
-                // Map the personalized data from the DTO
                 supplement.setSupplementName(suppDetail.getName());
+                supplement.setDosage(suppDetail.getDosage());
                 supplement.setInstructions(suppDetail.getInstructions());
                 supplement.setAssignedDate(LocalDate.now());
 
@@ -144,7 +148,6 @@ public class AppointmentService {
             }
         }
 
-        // 🌟 NEW: Trigger push notification so mother knows her instructions are ready
         String token = appointment.getMother().getPushToken();
         String title = "Medical Plan Updated 💊";
         String body = "Your PHM has updated your supplement instructions. Tap to view your prescription chart.";
