@@ -16,7 +16,7 @@ import {
   LogOut,
   MapPin,
   Settings,
-  User
+  User,
 } from "lucide-react-native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,7 +32,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
