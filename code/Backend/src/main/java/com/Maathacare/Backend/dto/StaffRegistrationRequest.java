@@ -6,6 +6,7 @@ public class StaffRegistrationRequest {
     private String password;
     private String fullName;
     private String mohArea;
+    private String gnDivision;
 
     public String getNic() {
         return nic;
@@ -46,4 +47,7 @@ public class StaffRegistrationRequest {
     public void setMohArea(String mohArea) {
         this.mohArea = mohArea;
     }
+
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 }

@@ -11,9 +11,9 @@ import com.Maathacare.Backend.dto.KickCountRequest;
 import com.Maathacare.Backend.model.entity.KickRecord;
 import com.Maathacare.Backend.repository.KickRepository;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import com.Maathacare.Backend.model.entity.PHMProfile;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.List;
@@ -34,6 +34,7 @@ public class MotherProfileService {
         this.kickRepository = kickRepository;
     }
 
+    // 📁 FIXED: Matches main's new registration transaction system
     public MotherProfile createMotherProfile(MotherProfileRequest request) {
         Optional<User> userOptional = userRepository.findByUserId(request.getUserId());
         if (userOptional.isEmpty()) {
@@ -60,23 +61,54 @@ public class MotherProfileService {
         newProfile.setProvince(request.getProvince());
         newProfile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
 
-        // Inside createMotherProfile method
-        if (request.getResidentialDivision() != null) {
-            // 🌟 CHANGE THIS: Search by MohArea instead of PhmDivision
-            Optional<PHMProfile> assignedPhm = phmProfileRepository.findByMohArea(request.getResidentialDivision());
-
-            if (assignedPhm.isPresent()) {
-                newProfile.setPhmProfile(assignedPhm.get());
-            } else {
-                // Keeping your warning log so you can track it in the console
-                System.out.println("Warning: Registered mother without a PHM. No PHM found for area: " + request.getResidentialDivision());
-            }
-        }
+        // Note: The PHM assignment logic has been moved to the UserController
+        // to handle registration and profile creation in a single transaction.
 
         return motherProfileRepository.save(newProfile);
     }
 
-    // 🟢 UPDATED: Returns a DTO instead of raw Entity to fix "Not provided" error
+    // 🔒 KEEPS YOUR DIGITAL LOCKER CHANGES: Safe and intact!
+    @Transactional
+    public MotherProfileResponse updateMotherProfile(String userId, MotherProfileRequest request) {
+        MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Mother profile not found for user ID: " + userId));
+
+        if (request.getFullName() != null) profile.setFullName(request.getFullName());
+        if (request.getEmergencyContactNumber() != null) profile.setEmergencyContactNumber(request.getEmergencyContactNumber());
+        if (request.getAddress() != null) profile.setAddress(request.getAddress());
+        if (request.getChronicDiseaseStatus() != null) profile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
+        if (request.getResidentialDivision() != null) profile.setResidentialDivision(request.getResidentialDivision());
+        if (request.getDistrict() != null) profile.setDistrict(request.getDistrict());
+        if (request.getProvince() != null) profile.setProvince(request.getProvince());
+        if (request.getEmergencyContactName() != null) profile.setEmergencyContactName(request.getEmergencyContactName());
+        if (request.getEmergencyContactRelationship() != null) profile.setEmergencyContactRelationship(request.getEmergencyContactRelationship());
+
+        MotherProfile savedProfile = motherProfileRepository.save(profile);
+
+        MotherProfileResponse response = new MotherProfileResponse();
+        response.setFullName(savedProfile.getFullName());
+        response.setNic(savedProfile.getNic());
+        response.setDateOfBirth(savedProfile.getDateOfBirth());
+        response.setAddress(savedProfile.getAddress());
+        response.setEmergencyContactNumber(savedProfile.getEmergencyContactNumber());
+        response.setLastMenstrualPeriod(savedProfile.getLastMenstrualPeriod());
+        response.setBloodGroup(savedProfile.getBloodGroup());
+        response.setDistrict(savedProfile.getDistrict());
+        response.setProvince(savedProfile.getProvince());
+        response.setEmergencyContactName(savedProfile.getEmergencyContactName());
+        response.setEmergencyContactRelationship(savedProfile.getEmergencyContactRelationship());
+
+        if (savedProfile.getPhmProfile() != null) {
+            response.setPhmName(savedProfile.getPhmProfile().getFullName());
+            response.setPhmId(savedProfile.getPhmProfile().getRegistrationNumber());
+        } else {
+            response.setPhmName("Pending");
+            response.setPhmId("Pending");
+        }
+
+        return response;
+    }
+
     public MotherProfileResponse getProfileByUserId(String userId) {
         MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("No profile found for this user!"));
@@ -89,10 +121,11 @@ public class MotherProfileService {
         response.setEmergencyContactNumber(profile.getEmergencyContactNumber());
         response.setLastMenstrualPeriod(profile.getLastMenstrualPeriod());
         response.setBloodGroup(profile.getBloodGroup());
-        response.setDistrict(profile.getDistrict()); // 🟢 Now mapped
-        response.setProvince(profile.getProvince()); // 🟢 Now mapped
+        response.setDistrict(profile.getDistrict());
+        response.setProvince(profile.getProvince());
+        response.setEmergencyContactName(profile.getEmergencyContactName());
+        response.setEmergencyContactRelationship(profile.getEmergencyContactRelationship());
 
-        // 🌟 Add this right before returning the response
         if (profile.getPhmProfile() != null) {
             response.setPhmName(profile.getPhmProfile().getFullName());
             response.setPhmId(profile.getPhmProfile().getRegistrationNumber());
@@ -109,15 +142,10 @@ public class MotherProfileService {
         MotherProfile profile = motherProfileRepository.findByUserUserId(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
 
-        // 2. Create a new entity to store in the DB
         KickRecord record = new KickRecord();
         record.setMotherProfile(profile);
         record.setCount(request.getKickCount());
-
-        // 3. FIX: Ignore the frontend ISO string and use the actual current local time
         record.setTimestamp(LocalDateTime.now());
-
-        // 4. Save to PostgreSQL on port 5432
         kickRepository.save(record);
     }
 
@@ -128,10 +156,8 @@ public class MotherProfileService {
             throw new RuntimeException("PHM Profile not found for this user!");
         }
 
-        // Find all mothers linked to this specific PHM
         List<MotherProfile> patients = motherProfileRepository.findByPhmProfile(phmOptional.get());
 
-        // Convert the database entities into nice, clean DTOs for the mobile app
         return patients.stream().map(profile -> {
             MotherProfileResponse response = new MotherProfileResponse();
             response.setFullName(profile.getFullName());
@@ -159,10 +185,9 @@ public class MotherProfileService {
     }
     // Use String userId to match your app's login tracking
     public List<KickRecord> getKickHistoryByMotherId(String userId) {
-        // Find the profile using the login User ID just like saveDailyKicks does
         MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Mother profile not found"));
 
-        // Fetch her records sorted by time
-        return kickRepository.findByMotherProfileIdOrderByTimestampAsc(profile.getId());    }
+        return kickRepository.findByMotherProfileIdOrderByTimestampAsc(profile.getId());
+    }
 }

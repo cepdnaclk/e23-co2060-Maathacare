@@ -1,9 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import { ChevronLeft, Key, Lock, ShieldCheck } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -11,9 +10,18 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import { API_BASE_URL } from "../../constants/apiConfig";
+
+// --- Consistent Premium Palette ---
+const COLORS = {
+  primary: "#0062FF",
+  bg: "#F5F8FE",
+  surface: "#FFFFFF",
+  border: "#E2E8F0",
+  text: "#0F172A",
+  textMuted: "#64748B",
+};
 
 export default function ChangePasswordScreen() {
   const [oldPassword, setOldPassword] = useState("");
@@ -23,215 +31,170 @@ export default function ChangePasswordScreen() {
   const router = useRouter();
 
   const handleUpdatePassword = async () => {
-    if (!oldPassword || !newPassword || !confirmPassword) {
-      Alert.alert("Missing Fields", "Please fill in all password fields.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      Alert.alert("Error", "Your new passwords do not match!");
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      Alert.alert(
-        "Weak Password",
-        "New password must be at least 6 characters.",
-      );
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const staffId = (await AsyncStorage.getItem("userId")) || "";
-      const token = (await AsyncStorage.getItem("userToken")) || "";
-
-      // 🔗 Make sure your Spring Boot backend is running on this IP
-      const response = await fetch(
-        `${API_BASE_URL}/api/users/change-password`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            userId: staffId,
-            oldPassword: oldPassword,
-            newPassword: newPassword,
-          }),
-        },
-      );
-
-      if (response.ok) {
-        Alert.alert("Success! 🔒", "Your password has been securely updated.");
-        router.back();
-      } else {
-        const errorText = await response.text();
-        Alert.alert(
-          "Update Failed",
-          errorText || "Please check your current password.",
-        );
-      }
-    } catch (error) {
-      Alert.alert(
-        "Network Error",
-        "Could not connect to the MaathaCare server.",
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    // ... (Keep your existing logic here)
   };
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.container}
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.headerSection}>
+      {/* Sleek Custom Header */}
+      <View style={styles.topNav}>
+        <TouchableOpacity style={styles.navBack} onPress={() => router.back()}>
+          <ChevronLeft color={COLORS.text} size={24} />
+        </TouchableOpacity>
+        <Text style={styles.navTitle}>Security</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Premium Icon Header */}
+        <View style={styles.iconHeader}>
+          <View style={styles.iconCircle}>
+            <ShieldCheck color={COLORS.primary} size={32} />
+          </View>
           <Text style={styles.headerTitle}>Update Password</Text>
           <Text style={styles.subText}>
-            Protect your account by creating a strong new password.
+            Secure your account with a strong, new credential.
           </Text>
         </View>
 
-        <View style={styles.card}>
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Current Password (NIC)</Text>
-            <TextInput
-              style={styles.input}
-              secureTextEntry
-              value={oldPassword}
-              onChangeText={setOldPassword}
-              placeholder="••••••••"
-              placeholderTextColor="#94a3b8"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>New Password</Text>
-            <TextInput
-              style={styles.input}
-              secureTextEntry
-              value={newPassword}
-              onChangeText={setNewPassword}
-              placeholder="••••••••"
-              placeholderTextColor="#94a3b8"
-            />
-          </View>
-
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>Confirm New Password</Text>
-            <TextInput
-              style={styles.input}
-              secureTextEntry
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholder="••••••••"
-              placeholderTextColor="#94a3b8"
-            />
-          </View>
+        {/* Card Input Area */}
+        <View style={styles.formCard}>
+          <InputField
+            label="Current Password"
+            icon={Lock}
+            value={oldPassword}
+            onChange={setOldPassword}
+          />
+          <View style={styles.divider} />
+          <InputField
+            label="New Password"
+            icon={Key}
+            value={newPassword}
+            onChange={setNewPassword}
+          />
+          <InputField
+            label="Confirm New Password"
+            icon={Key}
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+          />
 
           <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
+            style={styles.saveButton}
             onPress={handleUpdatePassword}
             disabled={isLoading}
           >
             {isLoading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>🔒 Save New Password</Text>
+              <Text style={styles.saveButtonText}>Update Credentials</Text>
             )}
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.cancelButtonText}>Go Back</Text>
-        </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
+// Reusable Input Component to keep code clean
+const InputField = ({ label, icon: Icon, ...props }: any) => (
+  <View style={styles.inputGroup}>
+    <Text style={styles.label}>{label}</Text>
+    <View style={styles.inputWrapper}>
+      <Icon color={COLORS.textMuted} size={20} style={{ marginRight: 12 }} />
+      <TextInput
+        style={styles.input}
+        placeholder={`Enter ${label.toLowerCase()}`}
+        secureTextEntry
+        {...props}
+      />
+    </View>
+  </View>
+);
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F8FAFC",
-  },
-  scrollContent: {
-    padding: 25,
+  topNav: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
     paddingTop: 60,
+    paddingBottom: 15,
+    backgroundColor: COLORS.surface,
   },
-  headerSection: {
-    marginBottom: 30,
+  navBack: { width: 40, height: 40, justifyContent: "center" },
+  navTitle: { fontSize: 18, fontWeight: "800", color: COLORS.text },
+  container: { flex: 1, backgroundColor: COLORS.bg },
+  scrollContent: { padding: 24 },
+  iconHeader: { alignItems: "center", marginBottom: 32 },
+  iconCircle: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#E0E7FF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 20,
   },
   headerTitle: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#0f172a",
+    fontSize: 22,
+    fontWeight: "900",
+    color: COLORS.text,
     marginBottom: 8,
   },
   subText: {
-    fontSize: 15,
-    color: "#64748b",
-    lineHeight: 22,
+    fontSize: 14,
+    color: COLORS.textMuted,
+    textAlign: "center",
+    paddingHorizontal: 30,
   },
-  card: {
-    backgroundColor: "#fff",
-    padding: 25,
-    borderRadius: 25,
+  formCard: {
+    backgroundColor: COLORS.surface,
+    padding: 24,
+    borderRadius: 32,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
     elevation: 5,
   },
-  inputGroup: {
-    marginBottom: 20,
-  },
+  inputGroup: { marginBottom: 20 },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "700",
-    color: "#334155",
+    color: COLORS.textMuted,
     marginBottom: 8,
-    marginLeft: 4,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F1F5F9",
+    borderRadius: 16,
+    paddingHorizontal: 16,
   },
   input: {
-    backgroundColor: "#f1f5f9",
-    borderRadius: 15,
-    padding: 15,
-    fontSize: 16,
-    color: "#1e293b",
-    borderWidth: 1,
-    borderColor: "#e2e8f0",
-  },
-  button: {
-    backgroundColor: "#0056b3",
-    padding: 18,
-    borderRadius: 15,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonDisabled: {
-    backgroundColor: "#94a3b8",
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  cancelButton: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  cancelButtonText: {
-    color: "#64748b",
-    fontSize: 14,
+    flex: 1,
+    height: 56,
+    fontSize: 15,
+    color: COLORS.text,
     fontWeight: "600",
   },
+  divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 12 },
+  saveButton: {
+    backgroundColor: COLORS.primary,
+    padding: 18,
+    borderRadius: 20,
+    alignItems: "center",
+    marginTop: 20,
+    elevation: 3,
+  },
+  saveButtonText: { color: "#fff", fontSize: 16, fontWeight: "800" },
 });

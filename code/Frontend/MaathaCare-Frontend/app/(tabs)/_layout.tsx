@@ -23,6 +23,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index" 
         options={{
+          tabBarShowLabel: false,
           title: "Home",
           tabBarIcon: ({ color }) => (
             <Ionicons name="home" size={24} color={color} />
@@ -34,6 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
+          tabBarShowLabel: false,
           title: "Explore",
           tabBarIcon: ({ color }) => (
             <Ionicons name="search-outline" size={24} color={color} />
@@ -41,22 +43,12 @@ export default function TabLayout() {
         }}
       />
 
-      {/* 3. PROFILE (Visible after login) */}
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-outline" size={24} color={color} />
-          ),
-        }}
-      />
-
-      {/* 4. DOCUMENTS (Visible after login) */}
+        {/* 3. DOCUMENTS (Visible after login) */}
       <Tabs.Screen
         name="digitalLocker"
         options={{
-          title: 'Documents', 
+          tabBarShowLabel: false,
+          title: 'Documents',
           tabBarIcon: ({ color, focused }) => (
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Ionicons name="document-text" size={20} color={color} />
@@ -65,9 +57,25 @@ export default function TabLayout() {
         }}
       />
 
+      {/* 4. PROFILE (Visible after login) */}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarShowLabel: false,
+          title: "Profile",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person-outline" size={24} color={color} />
+          ),
+        }}
+      />
+
+
+
       {/* HIDE THE REST */}
       <Tabs.Screen name="dashboard" options={{ href: null }} />
       <Tabs.Screen name="phm-profile" options={{ href: null }} />
+      <Tabs.Screen name="register" options={{ href: null }} />
+      <Tabs.Screen name="edit-mother-profile" options={{ href: null }} />
       <Tabs.Screen name="notification" options={{ href: null }} />
     </Tabs>
   );
