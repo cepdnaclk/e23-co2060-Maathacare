@@ -39,6 +39,7 @@ public class MotherProfileController {
     @PostMapping("/kicks")
     public ResponseEntity<?> saveKickCount(@RequestBody KickCountRequest request) {
         try {
+            // This links the kicks to the user (e.g., Sayuri) in your PostgreSQL DB
             motherProfileService.saveDailyKicks(request);
             return ResponseEntity.ok("Daily kicks recorded successfully!");
         } catch (Exception e) {
@@ -49,6 +50,7 @@ public class MotherProfileController {
     @GetMapping("/kicks")
     public ResponseEntity<?> getKickHistory(@RequestParam String userId) {
         try {
+            // Pass userId directly as a String now
             List<KickRecord> history = motherProfileService.getKickHistoryByMotherId(userId);
             return ResponseEntity.ok(history);
         } catch (Exception e) {
@@ -59,7 +61,11 @@ public class MotherProfileController {
     @GetMapping("/profile/{userId}")
     public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {
         try {
+            // 🟢 WE CHANGED THIS LINE: It now correctly catches the 'MotherProfileResponse'
+            // directly from the service, matching the new upgraded logic!
             MotherProfileResponse response = motherProfileService.getProfileByUserId(userId);
+
+            // And sends it straight back to React Native
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Profile not found: " + e.getMessage());
@@ -120,6 +126,16 @@ public class MotherProfileController {
         } catch (Exception e) {
             System.out.println("ERROR: Failed to retrieve symptoms: " + e.getMessage());
             return ResponseEntity.internalServerError().body("Error fetching history: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<?> updateMotherProfile(@PathVariable String userId, @RequestBody MotherProfileRequest request) {
+        try {
+            MotherProfileResponse updatedProfile = motherProfileService.updateMotherProfile(userId, request);
+            return ResponseEntity.ok(updatedProfile);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Failed to update profile: " + e.getMessage());
         }
     }
 }

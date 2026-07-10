@@ -14,6 +14,8 @@ public class MotherProfileResponse {
     private String province;
     private String phmName;
     private String phmId;
+    private String emergencyContactName;
+    private String emergencyContactRelationship;
 
     // --- Getters and Setters ---
     // These allow the app to read and write the data
@@ -61,4 +63,10 @@ public class MotherProfileResponse {
     public void setPhmId(String phmId) {
         this.phmId = phmId;
     }
+
+    public String getEmergencyContactName() { return emergencyContactName; }
+    public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
+
+    public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
+    public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
 }

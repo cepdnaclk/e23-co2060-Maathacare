@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as FileSystem from "expo-file-system";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -24,6 +25,7 @@ import {
   ActivityIndicator,
   Alert,
   Dimensions,
+  FlatList,
   Image,
   Modal,
   Platform,
@@ -31,6 +33,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -224,30 +227,110 @@ export default function PHMDashboard() {
     }
   };
 
-  // ... (All modal logic stays exactly the same)
   const handleAssignMother = async () => {
-    /* ... existing ... */
+    if (!searchNic) return;
+    const token = await AsyncStorage.getItem("userToken");
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/phm/assign-mother/${searchNic}`,
+        { method: "PUT", headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (response.ok) {
+        Alert.alert("Success", "Patient successfully linked.");
+        setSearchNic("");
+        setAssignModalVisible(false);
+        loadDashboardData();
+      } else {
+        const errorMsg = await response.text();
+        Alert.alert("Error", errorMsg);
+      }
+    } catch (error) {
+      console.error("Assignment Error:", error);
+    }
   };
+
   const toggleMotherSelection = (mother: any) => {
-    /* ... existing ... */
+    if (selectedMothers.some((m) => m.id === mother.id)) {
+      setSelectedMothers(selectedMothers.filter((m) => m.id !== mother.id));
+    } else {
+      setSelectedMothers([...selectedMothers, mother]);
+    }
   };
+
   const toggleSelectAll = () => {
-    /* ... existing ... */
+    if (selectedMothers.length === patients.length) {
+      setSelectedMothers([]);
+    } else {
+      setSelectedMothers([...patients]);
+    }
   };
+
   const handleSaveAppointment = async () => {
-    /* ... existing ... */
+    if (selectedMothers.length === 0) return;
+    const token = await AsyncStorage.getItem("userToken");
+    try {
+      const promises = selectedMothers.map((mother) => {
+        const payload = {
+          mother: { id: mother.id },
+          phm: { id: phmInfo.id },
+          appointmentDate: date.toISOString(),
+          status: "SCHEDULED",
+          remarks: remarks || "Routine Checkup",
+          location: phmInfo.mohArea || "Health Center",
+        };
+        return fetch(`${API_BASE_URL}/api/appointments/schedule`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+      });
+      const results = await Promise.all(promises);
+      if (results.every((res) => res.ok)) {
+        Alert.alert(
+          "Success",
+          `Scheduled appointments for ${selectedMothers.length} patients!`,
+        );
+        setModalVisible(false);
+        setRemarks("");
+        setSelectedMothers([]);
+        setIsSelectingDate(false);
+        setShowPicker(false);
+        setRefreshTrigger((prev) => prev + 1);
+      } else {
+        Alert.alert("Partial Error", "Some appointments failed to save.");
+      }
+    } catch (error) {
+      Alert.alert("Network Error", "Could not connect to server.");
+    }
   };
+
   const onChangeDate = (event: any, selectedDate?: Date) => {
-    /* ... existing ... */
+    if (Platform.OS === "ios") {
+      if (selectedDate) setDate(selectedDate);
+    } else {
+      if (event.type === "dismissed") {
+        setShowPicker(false);
+        return;
+      }
+      if (event.type === "set" && selectedDate) setDate(selectedDate);
+      if (pickerMode === "date" && event.type === "set") {
+        setShowPicker(false);
+        setPickerMode("time");
+        setTimeout(() => setShowPicker(true), 100);
+      } else if (pickerMode === "time") {
+        setShowPicker(false);
+      }
+    }
   };
+
   const calculatePregnancyWeek = (lmp: string) => {
     if (!lmp) return "N/A";
     const diffInMs = new Date().getTime() - new Date(lmp).getTime();
     return Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
   };
-
-  const AssignPatientModal = () => /* ... existing ... */ <View />;
-  const SchedulingModal = () => /* ... existing ... */ <View />;
 
   const SettingsModal = () => (
     <Modal
@@ -424,161 +507,167 @@ export default function PHMDashboard() {
   );
 
   const renderProfile = () => (
-    <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        <View style={styles.topHeaderRow}>
-          <View style={{ width: 24 }} />
-          <Text style={styles.headerTitle}>{t("profileOverview")}</Text>
-          <TouchableOpacity onPress={() => setSettingsModalVisible(true)}>
-            <Settings color={THEME.textHeader} size={24} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.profileSection}>
-          <View style={styles.avatarWrapper}>
-            <View style={styles.avatarInner}>
-              {profileImage ? (
-                <Image
-                  source={{ uri: profileImage }}
-                  style={styles.profileImage}
-                />
-              ) : (
-                <Text style={styles.avatarText}>
-                  {phmInfo?.fullName?.charAt(0) || "S"}
-                </Text>
-              )}
-            </View>
-            <TouchableOpacity
-              style={styles.cameraBadge}
-              onPress={handlePickImage}
-            >
-              <Camera color={THEME.textMuted} size={14} />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.name}>{phmInfo?.fullName || "Sahana"}</Text>
-          <Text style={styles.role}>Public Health Midwife</Text>
-          <TouchableOpacity style={styles.editProfileBtn}>
-            <Text style={styles.editProfileText}>{t("editProfile")}</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.sectionTitle}>{t("myInformation")}</Text>
-        <View style={styles.listCard}>
-          <ExpandableListItem
-            icon={User}
-            title={t("personalDetails")}
-            isExpanded={expandedSection === "personal"}
-            onPress={() => toggleSection("personal")}
-          >
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>{t("fullName")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.fullName || "N/A"}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>{t("phoneNumber")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.phoneNumber || "Not Set"}
-              </Text>
-            </View>
-            <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
-              <Text style={styles.detailLabel}>{t("emailAddress")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.email || "No Email"}
-              </Text>
-            </View>
-          </ExpandableListItem>
-          <View style={styles.listDivider} />
-          <ExpandableListItem
-            icon={Briefcase}
-            title={t("professionalDetails")}
-            isExpanded={expandedSection === "professional"}
-            onPress={() => toggleSection("professional")}
-          >
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>{t("province")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.province || "Central Province"}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>{t("district")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.district || "Kandy"}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>{t("mohArea")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.mohArea || "N/A"}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>{t("gnDivision")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.gnDivision || "N/A"}
-              </Text>
-            </View>
-            <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
-              <Text style={styles.detailLabel}>{t("phmId")}</Text>
-              <Text style={styles.detailValue}>
-                {phmInfo?.staffId || phmInfo?.registrationNumber || "Pending"}
-              </Text>
-            </View>
-          </ExpandableListItem>
-        </View>
-
-        <Text style={styles.sectionTitle}>{t("systemPreferences")}</Text>
-        <View style={styles.listCard}>
-          <TouchableOpacity style={styles.listItem}>
-            <View style={styles.listItemLeft}>
-              <View style={styles.iconBox}>
-                <Bell color={THEME.primary} size={18} />
-              </View>
-              <Text style={styles.listItemTitle}>{t("notifications")}</Text>
-            </View>
-            <View style={styles.listItemRight}>
-              <ChevronRight color={THEME.textMuted} size={18} />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.listDivider} />
-          <TouchableOpacity
-            style={styles.listItem}
-            onPress={() => setLangModalVisible(true)}
-          >
-            <View style={styles.listItemLeft}>
-              <View style={styles.iconBox}>
-                <Globe color={THEME.primary} size={18} />
-              </View>
-              <Text style={styles.listItemTitle}>{t("language")}</Text>
-            </View>
-            <View style={styles.listItemRight}>
-              <Text style={styles.listItemValue}>{selectedLang}</Text>
-              <ChevronRight color={THEME.textMuted} size={18} />
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          style={styles.logoutBtn}
-          onPress={async () => {
-            await AsyncStorage.clear();
-            router.replace("/");
-          }}
-        >
-          <LogOut
-            color={THEME.dangerText}
-            size={18}
-            style={{ marginRight: 8 }}
-          />
-          <Text style={styles.logoutText}>{t("secureLogout")}</Text>
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <View style={styles.topHeaderRow}>
+        <View style={{ width: 24 }} />
+        <Text style={styles.headerTitle}>{t("profileOverview")}</Text>
+        <TouchableOpacity onPress={() => setSettingsModalVisible(true)}>
+          <Settings color={THEME.textHeader} size={24} />
         </TouchableOpacity>
-      </ScrollView>
-    </View>
+      </View>
+
+      <View style={styles.profileSection}>
+        <View style={styles.avatarWrapper}>
+          <View style={styles.avatarInner}>
+            {profileImage ? (
+              <Image
+                source={{ uri: profileImage }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <Text style={styles.avatarText}>
+                {phmInfo?.fullName?.charAt(0) || "S"}
+              </Text>
+            )}
+          </View>
+          <TouchableOpacity
+            style={styles.cameraBadge}
+            onPress={handlePickImage}
+          >
+            <Camera color={THEME.textMuted} size={14} />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.name}>{phmInfo?.fullName || "Sahana"}</Text>
+        <Text style={styles.role}>Public Health Midwife</Text>
+
+        {/* 🌟 FRIEND'S EDIT PROFILE ROUTE INTEGRATED HERE */}
+        <TouchableOpacity
+          style={styles.editProfileBtn}
+          onPress={() =>
+            router.push({
+              pathname: "/phm/edit-phm-profile",
+              params: {
+                userId: phmInfo?.user?.userId,
+                fullName: phmInfo?.fullName,
+                contactNumber: phmInfo?.contactNumber || phmInfo?.phoneNumber,
+                mohArea: phmInfo?.mohArea,
+                gnDivision: phmInfo?.gnDivision,
+              },
+            })
+          }
+        >
+          <Text style={styles.editProfileText}>✏️ {t("editProfile")}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.sectionTitle}>{t("myInformation")}</Text>
+      <View style={styles.listCard}>
+        <ExpandableListItem
+          icon={User}
+          title={t("personalDetails")}
+          isExpanded={expandedSection === "personal"}
+          onPress={() => toggleSection("personal")}
+        >
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{t("fullName")}</Text>
+            <Text style={styles.detailValue}>{phmInfo?.fullName || "N/A"}</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{t("phoneNumber")}</Text>
+            <Text style={styles.detailValue}>
+              {phmInfo?.phoneNumber || "Not Set"}
+            </Text>
+          </View>
+          <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
+            <Text style={styles.detailLabel}>{t("emailAddress")}</Text>
+            <Text style={styles.detailValue}>
+              {phmInfo?.email || "No Email"}
+            </Text>
+          </View>
+        </ExpandableListItem>
+        <View style={styles.listDivider} />
+        <ExpandableListItem
+          icon={Briefcase}
+          title={t("professionalDetails")}
+          isExpanded={expandedSection === "professional"}
+          onPress={() => toggleSection("professional")}
+        >
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{t("province")}</Text>
+            <Text style={styles.detailValue}>
+              {phmInfo?.province || "Central Province"}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{t("district")}</Text>
+            <Text style={styles.detailValue}>
+              {phmInfo?.district || "Kandy"}
+            </Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{t("mohArea")}</Text>
+            <Text style={styles.detailValue}>{phmInfo?.mohArea || "N/A"}</Text>
+          </View>
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>{t("gnDivision")}</Text>
+            <Text style={styles.detailValue}>
+              {phmInfo?.gnDivision || "N/A"}
+            </Text>
+          </View>
+          <View style={[styles.detailRow, { borderBottomWidth: 0 }]}>
+            <Text style={styles.detailLabel}>{t("phmId")}</Text>
+            <Text style={styles.detailValue}>
+              {phmInfo?.staffId || phmInfo?.registrationNumber || "Pending"}
+            </Text>
+          </View>
+        </ExpandableListItem>
+      </View>
+
+      <Text style={styles.sectionTitle}>{t("systemPreferences")}</Text>
+      <View style={styles.listCard}>
+        <TouchableOpacity style={styles.listItem}>
+          <View style={styles.listItemLeft}>
+            <View style={styles.iconBox}>
+              <Bell color={THEME.primary} size={18} />
+            </View>
+            <Text style={styles.listItemTitle}>{t("notifications")}</Text>
+          </View>
+          <View style={styles.listItemRight}>
+            <ChevronRight color={THEME.textMuted} size={18} />
+          </View>
+        </TouchableOpacity>
+        <View style={styles.listDivider} />
+        <TouchableOpacity
+          style={styles.listItem}
+          onPress={() => setLangModalVisible(true)}
+        >
+          <View style={styles.listItemLeft}>
+            <View style={styles.iconBox}>
+              <Globe color={THEME.primary} size={18} />
+            </View>
+            <Text style={styles.listItemTitle}>{t("language")}</Text>
+          </View>
+          <View style={styles.listItemRight}>
+            <Text style={styles.listItemValue}>{selectedLang}</Text>
+            <ChevronRight color={THEME.textMuted} size={18} />
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity
+        style={styles.logoutBtn}
+        onPress={async () => {
+          await AsyncStorage.clear();
+          router.replace("/");
+        }}
+      >
+        <LogOut color={THEME.dangerText} size={18} style={{ marginRight: 8 }} />
+        <Text style={styles.logoutText}>{t("secureLogout")}</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 
   if (loading)
@@ -592,14 +681,322 @@ export default function PHMDashboard() {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor={THEME.bg} />
-        {/* ... (Existing mothers page code) ... */}
+        <View style={styles.modernHeader}>
+          <TouchableOpacity
+            onPress={() => setIsMothersPageVisible(false)}
+            style={styles.backBtnWrapper}
+          >
+            <ChevronRight
+              color={THEME.textHeader}
+              size={24}
+              style={{ transform: [{ rotate: "180deg" }] }}
+            />
+          </TouchableOpacity>
+          <Text style={styles.modernHeaderTitle}>{t("assignedMothers")}</Text>
+          <View style={{ width: 44 }} />
+        </View>
+
+        <View style={{ flex: 1, paddingHorizontal: 20 }}>
+          <View style={styles.searchContainer}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              style={styles.searchBarModern}
+              placeholder="Search records..."
+              placeholderTextColor={THEME.textMuted}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+
+          <FlatList
+            data={patients.filter((p) =>
+              p.fullName.toLowerCase().includes(searchQuery.toLowerCase()),
+            )}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100, paddingTop: 10 }}
+            keyExtractor={(item: any) => item.id.toString()}
+            renderItem={({ item }: any) => (
+              <View style={styles.motherPremiumCard}>
+                <View style={styles.avatarPremium}>
+                  <Text style={styles.avatarPremiumText}>
+                    {item.fullName.charAt(0)}
+                  </Text>
+                </View>
+                <View style={styles.motherCardContent}>
+                  <Text style={styles.cardMotherName} numberOfLines={1}>
+                    {item.fullName}
+                  </Text>
+                  <View style={styles.modernPill}>
+                    <Text style={styles.modernPillText}>
+                      Week {calculatePregnancyWeek(item.lastMenstrualPeriod)}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.cardFooterActions}>
+                  <TouchableOpacity
+                    style={styles.footerActionBtn}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/phm/view-visits",
+                        params: {
+                          motherId: item.id,
+                          motherName: item.fullName,
+                        },
+                      })
+                    }
+                  >
+                    <Text style={styles.footerActionText}>📊</Text>
+                  </TouchableOpacity>
+                  <View style={styles.actionDivider} />
+                  <TouchableOpacity
+                    style={styles.footerActionBtn}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/phm/record-visit",
+                        params: {
+                          motherId: item.id,
+                          motherName: item.fullName,
+                        },
+                      })
+                    }
+                  >
+                    <Text style={styles.footerActionText}>📝</Text>
+                  </TouchableOpacity>
+                  <View style={styles.actionDivider} />
+                  <TouchableOpacity
+                    style={styles.footerActionBtn}
+                    onPress={() => {
+                      setSelectedMothers([item]);
+                      setIsSelectingDate(true);
+                      setDate(new Date());
+                      setRemarks("");
+                      setModalVisible(true);
+                    }}
+                  >
+                    <Text style={styles.footerActionText}>📅</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          />
+        </View>
+
+        {/* --- Link Patient Modal --- */}
+        <Modal
+          visible={assignModalVisible}
+          animationType="fade"
+          transparent={true}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Link Patient</Text>
+              <Text style={styles.modalSub}>
+                Enter the mother's 12-digit NIC number to add her to your care
+                list.
+              </Text>
+
+              <TextInput
+                style={styles.modalInput}
+                placeholder="e.g. 199012345678"
+                placeholderTextColor="#94A3B8"
+                value={searchNic}
+                onChangeText={setSearchNic}
+              />
+
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setAssignModalVisible(false);
+                    setSearchNic("");
+                  }}
+                  style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
+                >
+                  <Text style={{ color: "#475569", fontWeight: "bold" }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleAssignMother}
+                  style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    Link
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* --- Scheduling Modal --- */}
+        <Modal visible={modalVisible} animationType="fade" transparent={true}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>New Appointment</Text>
+
+              {!isSelectingDate ? (
+                <View>
+                  <View style={styles.selectAllHeaderRow}>
+                    <Text style={styles.modalSub}>
+                      Select patients to schedule:
+                    </Text>
+                    <TouchableOpacity onPress={toggleSelectAll}>
+                      <Text style={styles.selectAllText}>
+                        {selectedMothers.length === patients.length &&
+                        patients.length > 0
+                          ? "Deselect All"
+                          : "Select All"}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.patientListContainer}>
+                    <FlatList
+                      data={patients}
+                      keyExtractor={(item: any) => item.id.toString()}
+                      renderItem={({ item }) => {
+                        const isSelected = selectedMothers.some(
+                          (m) => m.id === item.id,
+                        );
+                        return (
+                          <TouchableOpacity
+                            style={[
+                              styles.motherSelectBtn,
+                              isSelected && styles.motherSelectBtnActive,
+                            ]}
+                            onPress={() => toggleMotherSelection(item)}
+                          >
+                            <View>
+                              <Text
+                                style={[
+                                  styles.motherSelectText,
+                                  isSelected && { color: "white" },
+                                ]}
+                              >
+                                {item.fullName}
+                              </Text>
+                              <Text
+                                style={[
+                                  styles.motherSelectNic,
+                                  isSelected && { color: "#E2E8F0" },
+                                ]}
+                              >
+                                NIC: {item.nic}
+                              </Text>
+                            </View>
+                            {isSelected && (
+                              <Text style={styles.checkIcon}>✓</Text>
+                            )}
+                          </TouchableOpacity>
+                        );
+                      }}
+                    />
+                  </View>
+
+                  <View style={styles.modalActions}>
+                    <TouchableOpacity
+                      onPress={() => setModalVisible(false)}
+                      style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
+                    >
+                      <Text style={{ color: "#475569", fontWeight: "bold" }}>
+                        Cancel
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      disabled={selectedMothers.length === 0}
+                      onPress={() => setIsSelectingDate(true)}
+                      style={[
+                        styles.modalBtn,
+                        {
+                          backgroundColor:
+                            selectedMothers.length > 0 ? "#0056b3" : "#94A3B8",
+                        },
+                      ]}
+                    >
+                      <Text style={{ color: "white", fontWeight: "bold" }}>
+                        Next ({selectedMothers.length})
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ) : (
+                <View>
+                  <View style={styles.selectedMotherRow}>
+                    <Text style={styles.modalSub}>
+                      {selectedMothers.length === 1
+                        ? `Patient: ${selectedMothers[0].fullName}`
+                        : `Scheduling for ${selectedMothers.length} Patients`}
+                    </Text>
+                    <TouchableOpacity onPress={() => setIsSelectingDate(false)}>
+                      <Text style={styles.changePatientText}>Edit List</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      setPickerMode(
+                        Platform.OS === "ios" ? "datetime" : "date",
+                      );
+                      setShowPicker(!showPicker);
+                    }}
+                    style={styles.dateSelectorButton}
+                  >
+                    <Text style={styles.dateSelectorText}>
+                      {`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} at ${String(date.getHours() % 12 || 12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")} ${date.getHours() >= 12 ? "PM" : "AM"}`}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {showPicker && (
+                    <DateTimePicker
+                      value={date}
+                      mode={pickerMode}
+                      is24Hour={false}
+                      display={Platform.OS === "ios" ? "spinner" : "default"}
+                      onChange={onChangeDate}
+                      themeVariant="light"
+                      textColor="#000000"
+                    />
+                  )}
+
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="Reason (e.g. Routine Clinic)"
+                    placeholderTextColor="#94A3B8"
+                    value={remarks}
+                    onChangeText={setRemarks}
+                  />
+
+                  <View style={styles.modalActions}>
+                    <TouchableOpacity
+                      onPress={() => setIsSelectingDate(false)}
+                      style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
+                    >
+                      <Text style={{ color: "#475569", fontWeight: "bold" }}>
+                        Back
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleSaveAppointment}
+                      style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
+                    >
+                      <Text style={{ color: "white", fontWeight: "bold" }}>
+                        Confirm
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
     );
   }
 
   return (
     <View style={styles.mainContainer}>
-      {/* 🌟 CHANGED to dark-content because backgrounds are now light */}
       <StatusBar barStyle="dark-content" backgroundColor={THEME.bg} />
       <View style={{ flex: 1 }}>
         {activeTab === "Home" && renderHome()}
@@ -679,10 +1076,6 @@ export default function PHMDashboard() {
           </View>
         </TouchableOpacity>
       </View>
-      <AssignPatientModal />
-      <SchedulingModal />
-      <SettingsModal />
-      <LanguageModal />
     </View>
   );
 }
@@ -704,7 +1097,6 @@ const styles = StyleSheet.create({
   },
   homeWrapper: { flex: 1, backgroundColor: THEME.bg },
 
-  // 🌟 NEW CLEAN HOME HEADER
   homeHeaderContainer: {
     paddingTop: Platform.OS === "ios" ? 60 : 40,
     paddingHorizontal: 24,
@@ -826,7 +1218,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  // 🌟 NEW CLEAN PROFILE HEADER
   scrollContent: { paddingHorizontal: 24, paddingBottom: 40 },
   topHeaderRow: {
     flexDirection: "row",
@@ -987,7 +1378,6 @@ const styles = StyleSheet.create({
   },
   logoutText: { color: THEME.dangerText, fontWeight: "700", fontSize: 15 },
 
-  // Modals & Misc
   modernTabBar: {
     flexDirection: "row",
     height: Platform.OS === "ios" ? 85 : 70,
@@ -1145,7 +1535,6 @@ const styles = StyleSheet.create({
   },
   singleActionContainer: { paddingTop: 20, marginBottom: 15 },
 
-  // (Retained unused styles for compatibility)
   modernHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
