@@ -53,7 +53,9 @@
             "usesCleartextTraffic": true
           }
         }
-      ]
+      ],
+      "expo-localization",
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,

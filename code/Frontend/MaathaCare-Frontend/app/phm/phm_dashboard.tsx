@@ -38,8 +38,6 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import PhmAppointments from "../../components/phmAppointments/PhmAppointments";
-
-import PhmAppointments from "../../components/PhmAppointments";
 import { API_BASE_URL } from "../../constants/apiConfig";
 
 const { width } = Dimensions.get("window");
@@ -551,6 +549,168 @@ export default function PHMDashboard() {
     { label: "தமிழ்", code: "ta" },
   ];
 
+
+  const renderAppointmentModal = () => (
+    <Modal visible={modalVisible} animationType="fade" transparent={true}>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>New Appointment</Text>
+          {!isSelectingDate ? (
+            <View>
+              <View style={styles.selectAllHeaderRow}>
+                <Text style={styles.modalSub}>
+                  Select patients to schedule:
+                </Text>
+                <TouchableOpacity onPress={toggleSelectAll}>
+                  <Text style={styles.selectAllText}>
+                    {selectedMothers.length === patients.length &&
+                    patients.length > 0
+                      ? "Deselect All"
+                      : "Select All"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.patientListContainer}>
+                <FlatList
+                  data={patients}
+                  keyExtractor={(item: any) => item.id.toString()}
+                  renderItem={({ item }) => {
+                    const isSelected = selectedMothers.some(
+                      (m) => m.id === item.id,
+                    );
+                    return (
+                      <TouchableOpacity
+                        style={[
+                          styles.motherSelectBtn,
+                          isSelected && styles.motherSelectBtnActive,
+                        ]}
+                        onPress={() => toggleMotherSelection(item)}
+                      >
+                        <View>
+                          <Text
+                            style={[
+                              styles.motherSelectText,
+                              isSelected && { color: "white" },
+                            ]}
+                          >
+                            {item.fullName}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.motherSelectNic,
+                              isSelected && { color: "#E2E8F0" },
+                            ]}
+                          >
+                            NIC: {item.nic}
+                          </Text>
+                        </View>
+                        {isSelected && (
+                          <Text style={styles.checkIcon}>✓</Text>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModalVisible(false);
+                    setSelectedMothers([]);
+                    setIsSelectingDate(false);
+                    setShowPicker(false);
+                  }}
+                  style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
+                >
+                  <Text style={{ color: "#475569", fontWeight: "bold" }}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={selectedMothers.length === 0}
+                  onPress={() => setIsSelectingDate(true)}
+                  style={[
+                    styles.modalBtn,
+                    {
+                      backgroundColor:
+                        selectedMothers.length > 0 ? "#0056b3" : "#94A3B8",
+                    },
+                  ]}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    Next ({selectedMothers.length})
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <View>
+              <View style={styles.selectedMotherRow}>
+                <Text style={styles.modalSub}>
+                  {selectedMothers.length === 1
+                    ? `Patient: ${selectedMothers[0].fullName}`
+                    : `Scheduling for ${selectedMothers.length} Patients`}
+                </Text>
+                <TouchableOpacity onPress={() => setIsSelectingDate(false)}>
+                  <Text style={styles.changePatientText}>Edit List</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setPickerMode(
+                    Platform.OS === "ios" ? "datetime" : "date",
+                  );
+                  setShowPicker(!showPicker);
+                }}
+                style={styles.dateSelectorButton}
+              >
+                <Text
+                  style={styles.dateSelectorText}
+                >{`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} at ${String(date.getHours() % 12 || 12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")} ${date.getHours() >= 12 ? "PM" : "AM"}`}</Text>
+              </TouchableOpacity>
+              {showPicker && (
+                <DateTimePicker
+                  value={date}
+                  mode={pickerMode}
+                  is24Hour={false}
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={onChangeDate}
+                  themeVariant="light"
+                  textColor="#000000"
+                />
+              )}
+              <TextInput
+                style={styles.modalInput}
+                placeholder="Reason (e.g. Routine Clinic)"
+                placeholderTextColor="#94A3B8"
+                value={remarks}
+                onChangeText={setRemarks}
+              />
+              <View style={styles.modalActions}>
+                <TouchableOpacity
+                  onPress={() => setIsSelectingDate(false)}
+                  style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
+                >
+                  <Text style={{ color: "#475569", fontWeight: "bold" }}>
+                    Back
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleSaveAppointment}
+                  style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    Confirm
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </View>
+      </View>
+    </Modal>
+  );
+
   if (loading)
     return (
       <View style={styles.centered}>
@@ -708,159 +868,7 @@ export default function PHMDashboard() {
           </View>
         </Modal>
 
-        <Modal visible={modalVisible} animationType="fade" transparent={true}>
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>New Appointment</Text>
-              {!isSelectingDate ? (
-                <View>
-                  <View style={styles.selectAllHeaderRow}>
-                    <Text style={styles.modalSub}>
-                      Select patients to schedule:
-                    </Text>
-                    <TouchableOpacity onPress={toggleSelectAll}>
-                      <Text style={styles.selectAllText}>
-                        {selectedMothers.length === patients.length &&
-                        patients.length > 0
-                          ? "Deselect All"
-                          : "Select All"}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.patientListContainer}>
-                    <FlatList
-                      data={patients}
-                      keyExtractor={(item: any) => item.id.toString()}
-                      renderItem={({ item }) => {
-                        const isSelected = selectedMothers.some(
-                          (m) => m.id === item.id,
-                        );
-                        return (
-                          <TouchableOpacity
-                            style={[
-                              styles.motherSelectBtn,
-                              isSelected && styles.motherSelectBtnActive,
-                            ]}
-                            onPress={() => toggleMotherSelection(item)}
-                          >
-                            <View>
-                              <Text
-                                style={[
-                                  styles.motherSelectText,
-                                  isSelected && { color: "white" },
-                                ]}
-                              >
-                                {item.fullName}
-                              </Text>
-                              <Text
-                                style={[
-                                  styles.motherSelectNic,
-                                  isSelected && { color: "#E2E8F0" },
-                                ]}
-                              >
-                                NIC: {item.nic}
-                              </Text>
-                            </View>
-                            {isSelected && (
-                              <Text style={styles.checkIcon}>✓</Text>
-                            )}
-                          </TouchableOpacity>
-                        );
-                      }}
-                    />
-                  </View>
-                  <View style={styles.modalActions}>
-                    <TouchableOpacity
-                      onPress={() => setModalVisible(false)}
-                      style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
-                    >
-                      <Text style={{ color: "#475569", fontWeight: "bold" }}>
-                        Cancel
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      disabled={selectedMothers.length === 0}
-                      onPress={() => setIsSelectingDate(true)}
-                      style={[
-                        styles.modalBtn,
-                        {
-                          backgroundColor:
-                            selectedMothers.length > 0 ? "#0056b3" : "#94A3B8",
-                        },
-                      ]}
-                    >
-                      <Text style={{ color: "white", fontWeight: "bold" }}>
-                        Next ({selectedMothers.length})
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ) : (
-                <View>
-                  <View style={styles.selectedMotherRow}>
-                    <Text style={styles.modalSub}>
-                      {selectedMothers.length === 1
-                        ? `Patient: ${selectedMothers[0].fullName}`
-                        : `Scheduling for ${selectedMothers.length} Patients`}
-                    </Text>
-                    <TouchableOpacity onPress={() => setIsSelectingDate(false)}>
-                      <Text style={styles.changePatientText}>Edit List</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setPickerMode(
-                        Platform.OS === "ios" ? "datetime" : "date",
-                      );
-                      setShowPicker(!showPicker);
-                    }}
-                    style={styles.dateSelectorButton}
-                  >
-                    <Text
-                      style={styles.dateSelectorText}
-                    >{`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} at ${String(date.getHours() % 12 || 12).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")} ${date.getHours() >= 12 ? "PM" : "AM"}`}</Text>
-                  </TouchableOpacity>
-                  {showPicker && (
-                    <DateTimePicker
-                      value={date}
-                      mode={pickerMode}
-                      is24Hour={false}
-                      display={Platform.OS === "ios" ? "spinner" : "default"}
-                      onChange={onChangeDate}
-                      themeVariant="light"
-                      textColor="#000000"
-                    />
-                  )}
-                  <TextInput
-                    style={styles.modalInput}
-                    placeholder="Reason (e.g. Routine Clinic)"
-                    placeholderTextColor="#94A3B8"
-                    value={remarks}
-                    onChangeText={setRemarks}
-                  />
-                  <View style={styles.modalActions}>
-                    <TouchableOpacity
-                      onPress={() => setIsSelectingDate(false)}
-                      style={[styles.modalBtn, { backgroundColor: "#F1F5F9" }]}
-                    >
-                      <Text style={{ color: "#475569", fontWeight: "bold" }}>
-                        Back
-                      </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={handleSaveAppointment}
-                      style={[styles.modalBtn, { backgroundColor: "#0056b3" }]}
-                    >
-                      <Text style={{ color: "white", fontWeight: "bold" }}>
-                        Confirm
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            </View>
-          </View>
-        </Modal>
+        {renderAppointmentModal()}
       </SafeAreaView>
     );
   }
@@ -1050,6 +1058,8 @@ export default function PHMDashboard() {
           </View>
         </View>
       </Modal>
+
+      {renderAppointmentModal()}
     </View>
   );
 }

@@ -1,1 +1,7 @@
 node_modules
+# Firebase Admin SDK Key
+maathacare-*.json
+*-firebase-adminsdk-*.json
+
+# Ignore built APKs
+*.apk
