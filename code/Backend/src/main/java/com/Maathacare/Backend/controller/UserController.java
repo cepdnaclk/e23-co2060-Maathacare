@@ -26,7 +26,9 @@ import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
-
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/users")
@@ -211,6 +213,20 @@ public class UserController {
             return ResponseEntity.ok("Password successfully updated!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating password: " + e.getMessage());
+        }
+
+    }
+
+    // ----------------------------------------------------
+    // 📱 PUSH NOTIFICATION ENDPOINTS
+    // ----------------------------------------------------
+    @PutMapping("/{userId}/push-token")
+    public ResponseEntity<?> updatePushToken(@PathVariable String userId, @RequestParam String token) {
+        try {
+            userService.updatePushToken(userId, token);
+            return ResponseEntity.ok("Push token updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving push token: " + e.getMessage());
         }
     }
 }

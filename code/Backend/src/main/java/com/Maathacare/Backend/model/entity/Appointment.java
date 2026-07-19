@@ -1,10 +1,22 @@
 package com.Maathacare.Backend.model.entity;
 
-import com.Maathacare.Backend.model.enums.AppointmentStatus;
-import jakarta.persistence.*;
+import java.time.ZonedDateTime;
+
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.ZonedDateTime;
+import com.Maathacare.Backend.model.enums.AppointmentStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "appointments")
@@ -14,11 +26,11 @@ public class Appointment {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mother_profile_id", nullable = true)
+    @JoinColumn(name = "mother_id", nullable = false)
     private MotherProfile mother;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "phm_profile_id", nullable = true)
+    @JoinColumn(name = "phm_id", nullable = false)
     private PHMProfile phm;
 
     @Column(name = "appointment_date", nullable = false)
@@ -31,12 +43,29 @@ public class Appointment {
     @Column(columnDefinition = "TEXT")
     private String remarks;
 
+    @Column(columnDefinition = "TEXT")
+    private String additionalNotes;
+
+    private String nextDate;
+
+    private String nextTime;
+
+
     @Column(length = 100)
     private String location; // e.g., "Home Visit" or "Clinic"
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
+
+    @Column(name = "reminder_3_days_sent")
+    private boolean reminder3DaysSent = false;
+
+    @Column(name = "reminder_1_day_sent")
+    private boolean reminder1DaySent = false;
+
+    @Column(name = "reminder_3_hours_sent")
+    private boolean reminder3HoursSent = false;
 
     // Getters and Setters
     public String getId() { return id; }
@@ -55,4 +84,34 @@ public class Appointment {
     public void setLocation(String location) { this.location = location; }
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
+    public boolean isReminder3DaysSent() { return reminder3DaysSent; }
+    public void setReminder3DaysSent(boolean reminder3DaysSent) { this.reminder3DaysSent = reminder3DaysSent; }
+    public boolean isReminder1DaySent() { return reminder1DaySent; }
+    public void setReminder1DaySent(boolean reminder1DaySent) { this.reminder1DaySent = reminder1DaySent; }
+    public boolean isReminder3HoursSent() { return reminder3HoursSent; }
+    public void setReminder3HoursSent(boolean reminder3HoursSent) { this.reminder3HoursSent = reminder3HoursSent; }
+
+    public String getAdditionalNotes() {
+        return additionalNotes;
+    }
+
+    public void setAdditionalNotes(String additionalNotes) {
+        this.additionalNotes = additionalNotes;
+    }
+
+    public String getNextDate() {
+        return nextDate;
+    }
+
+    public void setNextDate(String nextDate) {
+        this.nextDate = nextDate;
+    }
+
+    public String getNextTime() {
+        return nextTime;
+    }
+
+    public void setNextTime(String nextTime) {
+        this.nextTime = nextTime;
+    }
 }

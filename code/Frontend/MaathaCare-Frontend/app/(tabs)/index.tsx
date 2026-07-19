@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import Constants from "expo-constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Activity, Bell, Calendar, Footprints } from "lucide-react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -13,9 +14,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-const { width } = Dimensions.get("window");
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
 
 import { API_BASE_URL } from "../../constants/apiConfig";
+
+// 🌟 Tells the OS to show the notification banner even if the app is open!
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
+const { width } = Dimensions.get("window");
 
 export default function HomeTab() {
   const [loading, setLoading] = useState(true);
@@ -23,59 +37,110 @@ export default function HomeTab() {
   const [userName, setUserName] = useState("");
   const router = useRouter();
 
-  // 🌟 Added state to hold the Midwife info
+  // State to hold the Midwife info
   const [phmInfo, setPhmInfo] = useState({ name: "Loading...", id: "" });
 
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPregnancyData = async () => {
-        try {
-          const userId = await AsyncStorage.getItem("userId");
-          const token = await AsyncStorage.getItem("userToken");
+  // 🌟 PUSH NOTIFICATION TRIGGER (Merged & Fixed to run only once)
+  useEffect(() => {
+    const registerAndSyncPushToken = async () => {
+      if (!Device.isDevice) {
+        console.log("Must use a physical device for Push Notifications");
+        return;
+      }
 
-          if (!token || !userId) {
-            setLoading(false);
-            return;
-          }
+      try {
+        const { status: existingStatus } = await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
 
-          const response = await axios.get(
-            `${API_BASE_URL}/api/mothers/profile/${userId}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
-
-          const data = response.data;
-          setUserName(data.fullName ? data.fullName.split(" ")[0] : "Mother");
-
-          // 🌟 Capture the PHM data sent from the backend
-          setPhmInfo({
-            name: data.phmName || "Pending",
-            id: data.phmId && data.phmId !== "Pending" ? data.phmId : "",
-          });
-
-          if (data.lastMenstrualPeriod) {
-            const lmp = new Date(data.lastMenstrualPeriod);
-            const today = new Date();
-            const diffInMs = today.getTime() - lmp.getTime();
-            const totalDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-            if (totalDays >= 0) {
-              setStats({
-                weeks: Math.floor(totalDays / 7),
-                days: totalDays % 7,
-                totalDays: totalDays,
-              });
-            }
-          }
-        } catch (error) {
-          console.error("Dashboard error:", error);
-        } finally {
-          setLoading(false);
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
         }
-      };
-      fetchPregnancyData();
-    }, []),
+
+        if (finalStatus !== "granted") {
+          console.log("Failed to get push token for push notification!");
+          return;
+        }
+
+        const projectId =
+            Constants.expoConfig?.extra?.eas?.projectId ??
+            "a06d1659-753c-4fd0-a631-c20c42877558";
+
+        const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
+        const token = tokenData.data;
+        console.log("🌟 Generated Push Token:", token);
+
+        const userToken = await AsyncStorage.getItem("userToken");
+        const userId = await AsyncStorage.getItem("userId");
+
+        if (!userToken || !userId) return;
+
+        // Merged Fix: Using API_BASE_URL and standard userId instead of hardcoded IP + jwtDecode
+        await axios.put(
+            `${API_BASE_URL}/api/mothers/${userId}/push-token`,
+            { pushToken: token },
+            { headers: { Authorization: `Bearer ${userToken}` } }
+        );
+        console.log("✅ Token synced successfully to backend!");
+      } catch (error) {
+        console.error("Error generating or syncing token:", error);
+      }
+    };
+
+    registerAndSyncPushToken();
+  }, []);
+
+  // 🌟 FETCH DASHBOARD DATA (From git main)
+  useFocusEffect(
+      useCallback(() => {
+        const fetchPregnancyData = async () => {
+          try {
+            const userId = await AsyncStorage.getItem("userId");
+            const token = await AsyncStorage.getItem("userToken");
+
+            if (!token || !userId) {
+              setLoading(false);
+              return;
+            }
+
+            const response = await axios.get(
+                `${API_BASE_URL}/api/mothers/profile/${userId}`,
+                {
+                  headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            const data = response.data;
+            setUserName(data.fullName ? data.fullName.split(" ")[0] : "Mother");
+
+            // Capture the PHM data sent from the backend
+            setPhmInfo({
+              name: data.phmName || "Pending",
+              id: data.phmId && data.phmId !== "Pending" ? data.phmId : "",
+            });
+
+            if (data.lastMenstrualPeriod) {
+              const lmp = new Date(data.lastMenstrualPeriod);
+              const today = new Date();
+              const diffInMs = today.getTime() - lmp.getTime();
+              const totalDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+              if (totalDays >= 0) {
+                setStats({
+                  weeks: Math.floor(totalDays / 7),
+                  days: totalDays % 7,
+                  totalDays: totalDays,
+                });
+              }
+            }
+          } catch (error) {
+            console.error("Dashboard error:", error);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchPregnancyData();
+      }, [])
   );
 
   // Calculate progress percentage (Pregnancy is ~280 days)
@@ -99,127 +164,127 @@ export default function HomeTab() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.welcomeText}>Hi, {userName}</Text>
-          <Text style={styles.subText}>Your gentle journey</Text>
+      <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View>
+            <Text style={styles.welcomeText}>Hi, {userName}</Text>
+            <Text style={styles.subText}>Your gentle journey</Text>
+          </View>
+
+          <TouchableOpacity activeOpacity={0.8}>
+            <LinearGradient
+                colors={["#FFE2F1", "#E3F1FF"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.iconCircle}
+            >
+              <Bell size={20} color="#8A6FA8" />
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity activeOpacity={0.8}>
-          <LinearGradient
-            colors={["#FFE2F1", "#E3F1FF"]}
+        {/* 🌟 ASSIGNED MIDWIFE BADGE */}
+        <View style={styles.phmCard}>
+          <View style={styles.phmIconWrapper}>
+            <Text style={{ fontSize: 18 }}>👩‍⚕️</Text>
+          </View>
+          <View>
+            <Text style={styles.phmLabel}>Assigned Midwife</Text>
+            <Text style={styles.phmName}>
+              {phmInfo.name === "Pending"
+                  ? "Assignment Pending"
+                  : `${phmInfo.name} (${phmInfo.id})`}
+            </Text>
+          </View>
+        </View>
+
+        <LinearGradient
+            colors={["#FFE7F3", "#E8F3FF"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.iconCircle}
-          >
-            <Bell size={20} color="#8A6FA8" />
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-
-      {/* 🌟 NEW ASSIGNED MIDWIFE BADGE */}
-      <View style={styles.phmCard}>
-        <View style={styles.phmIconWrapper}>
-          <Text style={{ fontSize: 18 }}>👩‍⚕️</Text>
-        </View>
-        <View>
-          <Text style={styles.phmLabel}>Assigned Midwife</Text>
-          <Text style={styles.phmName}>
-            {phmInfo.name === "Pending"
-              ? "Assignment Pending"
-              : `${phmInfo.name} (${phmInfo.id})`}
-          </Text>
-        </View>
-      </View>
-
-      <LinearGradient
-        colors={["#FFE7F3", "#E8F3FF"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.statsCard}
-      >
-        <View style={styles.topBadge}>
-          <Text style={styles.topBadgeText}>Today</Text>
-        </View>
-
-        <View style={styles.babyBadge}>
-          <Text style={styles.babyIcon}>
-            {getBabySizeInfo(stats.weeks).icon}
-          </Text>
-        </View>
-
-        <Text style={styles.softLabel}>Baby size</Text>
-        <Text style={styles.fruitText}>
-          {getBabySizeInfo(stats.weeks).size}
-        </Text>
-
-        <View style={styles.weekRow}>
-          <View style={styles.timeCard}>
-            <Text style={styles.bigNumber}>{stats.weeks}</Text>
-            <Text style={styles.unitText}>Weeks</Text>
+            style={styles.statsCard}
+        >
+          <View style={styles.topBadge}>
+            <Text style={styles.topBadgeText}>Today</Text>
           </View>
 
-          <View style={styles.timeCard}>
-            <Text style={styles.bigNumber}>{stats.days}</Text>
-            <Text style={styles.unitText}>Days</Text>
+          <View style={styles.babyBadge}>
+            <Text style={styles.babyIcon}>
+              {getBabySizeInfo(stats.weeks).icon}
+            </Text>
           </View>
-        </View>
 
-        <View style={styles.progressBarBackground}>
-          <LinearGradient
-            colors={["#F59AC2", "#9ECDF8"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
+          <Text style={styles.softLabel}>Baby size</Text>
+          <Text style={styles.fruitText}>
+            {getBabySizeInfo(stats.weeks).size}
+          </Text>
+
+          <View style={styles.weekRow}>
+            <View style={styles.timeCard}>
+              <Text style={styles.bigNumber}>{stats.weeks}</Text>
+              <Text style={styles.unitText}>Weeks</Text>
+            </View>
+
+            <View style={styles.timeCard}>
+              <Text style={styles.bigNumber}>{stats.days}</Text>
+              <Text style={styles.unitText}>Days</Text>
+            </View>
+          </View>
+
+          <View style={styles.progressBarBackground}>
+            <LinearGradient
+                colors={["#F59AC2", "#9ECDF8"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
+            />
+          </View>
+
+          <Text style={styles.progressLabel}>
+            {Math.floor(progress * 100)}% complete
+          </Text>
+        </LinearGradient>
+
+        <Text style={styles.sectionTitle}>Quick Actions</Text>
+
+        <View style={styles.grid}>
+          <ActionCard
+              icon={<Activity color="#D962A0" size={23} />}
+              label="Symptoms"
+              colors={["#FFE6F2", "#FFF1F7"]}
+              onPress={() => router.push("/log-symptoms")}
+          />
+
+          <ActionCard
+              icon={<Calendar color="#5D9CE6" size={23} />}
+              label="Clinic"
+              colors={["#E4F0FF", "#F1F7FF"]}
+              onPress={() => router.push("/upcoming-clinic")}
+          />
+
+          <ActionCard
+              icon={<Footprints color="#8C7CF3" size={23} />}
+              label="Kicks"
+              colors={["#F3E7FF", "#E8F2FF"]}
+              fullWidth
+              onPress={() => router.push("/kick-counter")}
           />
         </View>
-
-        <Text style={styles.progressLabel}>
-          {Math.floor(progress * 100)}% complete
-        </Text>
-      </LinearGradient>
-
-      <Text style={styles.sectionTitle}>Quick Actions</Text>
-
-      <View style={styles.grid}>
-        <ActionCard
-          icon={<Activity color="#D962A0" size={23} />}
-          label="Symptoms"
-          colors={["#FFE6F2", "#FFF1F7"]}
-          onPress={() => router.push("/log-symptoms")}
-        />
-
-        <ActionCard
-          icon={<Calendar color="#5D9CE6" size={23} />}
-          label="Clinic"
-          colors={["#E4F0FF", "#F1F7FF"]}
-          onPress={() => router.push("/upcoming-clinic")}
-        />
-
-        <ActionCard
-          icon={<Footprints color="#8C7CF3" size={23} />}
-          label="Kicks"
-          colors={["#F3E7FF", "#E8F2FF"]}
-          fullWidth
-          onPress={() => router.push("/kick-counter")}
-        />
-      </View>
-    </ScrollView>
+      </ScrollView>
   );
 }
 
 function ActionCard({
-  icon,
-  label,
-  colors,
-  fullWidth,
-  onPress,
-}: {
+                      icon,
+                      label,
+                      colors,
+                      fullWidth,
+                      onPress,
+                    }: {
   icon: React.ReactNode;
   label: string;
   colors: string[];
@@ -227,21 +292,21 @@ function ActionCard({
   onPress?: () => void;
 }) {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.82}
-      style={[styles.actionWrapper, fullWidth && styles.fullWidth]}
-    >
-      <LinearGradient
-        colors={colors as any}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.actionCard}
+      <TouchableOpacity
+          onPress={onPress}
+          activeOpacity={0.82}
+          style={[styles.actionWrapper, fullWidth && styles.fullWidth]}
       >
-        <View style={styles.actionIcon}>{icon}</View>
-        <Text style={styles.actionLabel}>{label}</Text>
-      </LinearGradient>
-    </TouchableOpacity>
+        <LinearGradient
+            colors={colors as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.actionCard}
+        >
+          <View style={styles.actionIcon}>{icon}</View>
+          <Text style={styles.actionLabel}>{label}</Text>
+        </LinearGradient>
+      </TouchableOpacity>
   );
 }
 
@@ -289,7 +354,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     elevation: 3,
   },
-  // 🌟 NEW STYLES FOR PHM BADGE
   phmCard: {
     backgroundColor: "rgba(255,255,255,0.7)",
     borderRadius: 16,

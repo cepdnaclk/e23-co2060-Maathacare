@@ -158,6 +158,3 @@ const styles = StyleSheet.create({
   viewText: { fontWeight: "600", color: "#555" },
 });
 
-function setIsDeleting(id: string) {
-  throw new Error("Function not implemented.");
-}

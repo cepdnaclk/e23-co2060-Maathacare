@@ -138,6 +138,7 @@ public class MotherProfileService {
     }
 
     public void saveDailyKicks(KickCountRequest request) {
+        // 1. Find the MotherProfile using the userId
         MotherProfile profile = motherProfileRepository.findByUserUserId(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("Profile not found"));
 
@@ -172,6 +173,17 @@ public class MotherProfileService {
         }).collect(Collectors.toList());
     }
 
+    // --- NEW METHOD ADDED HERE ---
+    public void updatePushTokenByUserId(String userId, String pushToken) {
+        // Find the mother profile by user ID or throw an error if not found
+        MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Mother profile not found for user ID: " + userId));
+
+        // Set the token and save it back to PostgreSQL
+        profile.setPushToken(pushToken);
+        motherProfileRepository.save(profile);
+    }
+    // Use String userId to match your app's login tracking
     public List<KickRecord> getKickHistoryByMotherId(String userId) {
         MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Mother profile not found"));
