@@ -9,4 +9,6 @@ public class StaffResponse {
     private String fullName;
     private String mohArea;
     private Boolean isActive;
+    private String gnDivision;
+    private long motherCount;
 }

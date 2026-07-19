@@ -78,8 +78,6 @@ public class MotherProfileService {
         if (request.getAddress() != null) profile.setAddress(request.getAddress());
         if (request.getChronicDiseaseStatus() != null) profile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
         if (request.getResidentialDivision() != null) profile.setResidentialDivision(request.getResidentialDivision());
-        if (request.getDistrict() != null) profile.setDistrict(request.getDistrict());
-        if (request.getProvince() != null) profile.setProvince(request.getProvince());
         if (request.getEmergencyContactName() != null) profile.setEmergencyContactName(request.getEmergencyContactName());
         if (request.getEmergencyContactRelationship() != null) profile.setEmergencyContactRelationship(request.getEmergencyContactRelationship());
 

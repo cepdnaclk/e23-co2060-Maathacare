@@ -24,58 +24,63 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // Preflight requests never need JWT processing.
+        return "OPTIONS".equalsIgnoreCase(request.getMethod());
+    }
 
-        // 🔓 1. THE VIP BYPASS: Tell the JWT guard to step aside for Login, Register, and OPTIONS checks!
-        String path = request.getServletPath();
-        if (path.contains("/api/users/register") ||
-                path.contains("/api/users/login") ||
-                path.contains("/api/users/staff/login") ||
-                path.contains("/api/users/staff/create-test") ||
-                path.contains("/api/users/staff/register") ||
-                path.contains("/api/users/staff/all") ||
-                path.contains("/api/users/admin/setup") ||
-                path.contains("/api/users/staff/delete") ||
-                request.getMethod().equals("OPTIONS")) {
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
-            filterChain.doFilter(request, response);
-            return; // Exit the filter immediately without checking for a token!
-        }
-
-        // 2. Look for the "Authorization" header
         final String authHeader = request.getHeader("Authorization");
 
-        // 3. If there is no token, let Spring Security block them automatically
+        // Public routes and anonymous requests can continue. Spring Security
+        // will block protected routes later if authentication is required.
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 4. Extract the token (Remove "Bearer " from the string)
-        final String jwt = authHeader.substring(7);
-        final String userPhone = jwtService.extractUsername(jwt);
-
-        // 5. If the token has a user, and they aren't already authenticated...
-        if (userPhone != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-
-            // 6. Verify the token signature is legit
-            if (jwtService.isTokenValid(jwt)) {
-                String role = jwtService.extractRole(jwt);
-
-                // 7. Tell Spring Security: "This user is verified, let them in!"
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userPhone,
-                        null,
-                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
-                );
-
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
+        final String jwt = authHeader.substring(7).trim();
+        if (jwt.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
         }
 
-        // 8. Pass the request to the next step
+        try {
+            if (SecurityContextHolder.getContext().getAuthentication() == null
+                    && jwtService.isTokenValid(jwt)) {
+
+                String identifier = jwtService.extractUsername(jwt);
+                String role = jwtService.extractRole(jwt);
+
+                if (identifier != null && role != null && !role.isBlank()) {
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    identifier,
+                                    null,
+                                    Collections.singletonList(
+                                            new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
+                                    )
+                            );
+
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+        } catch (Exception ignored) {
+            // Invalid or expired tokens must not crash the request with HTTP 500.
+            // Leave the context unauthenticated so Spring returns 401/403 for
+            // protected routes.
+            SecurityContextHolder.clearContext();
+        }
+
         filterChain.doFilter(request, response);
     }
 }

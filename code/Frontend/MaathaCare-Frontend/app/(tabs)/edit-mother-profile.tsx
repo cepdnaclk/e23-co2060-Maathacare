@@ -29,8 +29,6 @@ export default function EditMotherProfileScreen() {
     emergencyContactRelationship: paramValue(params.emergencyContactRelationship),
     emergencyContactNumber: paramValue(params.emergencyContactNumber),
     address: paramValue(params.address),
-    district: paramValue(params.district),
-    province: paramValue(params.province),
   });
   const [loading, setLoading] = useState(false);
 
@@ -75,10 +73,6 @@ export default function EditMotherProfileScreen() {
             <Field label="Relationship to Mother" value={formData.emergencyContactRelationship} onChangeText={(value) => updateField("emergencyContactRelationship", value)} />
             <Field label="Emergency Contact Number" value={formData.emergencyContactNumber} keyboardType="phone-pad" maxLength={10} onChangeText={(value) => updateField("emergencyContactNumber", value.replace(/[^0-9]/g, ""))} />
             <Field label="Full Address" value={formData.address} multiline onChangeText={(value) => updateField("address", value)} />
-            <View style={styles.row}>
-              <View style={styles.halfField}><Field label="District" value={formData.district} onChangeText={(value) => updateField("district", value)} /></View>
-              <View style={styles.halfField}><Field label="Province" value={formData.province} onChangeText={(value) => updateField("province", value)} /></View>
-            </View>
           </View>
           <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={loading}>
             {loading ? <ActivityIndicator color="white" /> : <Text style={styles.saveButtonText}>Save Changes</Text>}
@@ -94,5 +88,5 @@ function Field({ label, multiline, ...props }: { label: string; multiline?: bool
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#fff5f8" }, container: { flex: 1, paddingHorizontal: 25 }, backBtn: { marginTop: 20, marginBottom: 15 }, backBtnText: { color: "#db2777", fontWeight: "bold", fontSize: 16 }, headerTitle: { fontSize: 28, fontWeight: "bold", color: "#1f2937", marginBottom: 5 }, subHeader: { fontSize: 14, color: "#6b7280", marginBottom: 25 }, formCard: { backgroundColor: "white", padding: 20, borderRadius: 20, elevation: 3, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 10, marginBottom: 25 }, inputLabel: { fontSize: 12, fontWeight: "bold", color: "#9ca3af", textTransform: "uppercase", marginBottom: 8 }, input: { backgroundColor: "#f9fafb", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 15, fontSize: 16, color: "#374151", marginBottom: 20 }, multiline: { height: 80, textAlignVertical: "top" }, row: { flexDirection: "row", gap: 10 }, halfField: { flex: 1 }, saveButton: { backgroundColor: "#db2777", height: 60, borderRadius: 20, justifyContent: "center", alignItems: "center", elevation: 5, shadowColor: "#db2777", shadowOpacity: 0.3, shadowRadius: 10, marginBottom: 40 }, saveButtonText: { color: "white", fontWeight: "bold", fontSize: 17 },
+  safeArea: { flex: 1, backgroundColor: "#fff5f8" }, container: { flex: 1, paddingHorizontal: 25 }, backBtn: { marginTop: 20, marginBottom: 15 }, backBtnText: { color: "#db2777", fontWeight: "bold", fontSize: 16 }, headerTitle: { fontSize: 28, fontWeight: "bold", color: "#1f2937", marginBottom: 5 }, subHeader: { fontSize: 14, color: "#6b7280", marginBottom: 25 }, formCard: { backgroundColor: "white", padding: 20, borderRadius: 20, elevation: 3, shadowColor: "#000", shadowOpacity: 0.05, shadowRadius: 10, marginBottom: 25 }, inputLabel: { fontSize: 12, fontWeight: "bold", color: "#9ca3af", textTransform: "uppercase", marginBottom: 8 }, input: { backgroundColor: "#f9fafb", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, padding: 15, fontSize: 16, color: "#374151", marginBottom: 20 }, multiline: { height: 80, textAlignVertical: "top" }, saveButton: { backgroundColor: "#db2777", height: 60, borderRadius: 20, justifyContent: "center", alignItems: "center", elevation: 5, shadowColor: "#db2777", shadowOpacity: 0.3, shadowRadius: 10, marginBottom: 40 }, saveButtonText: { color: "white", fontWeight: "bold", fontSize: 17 },
 });
