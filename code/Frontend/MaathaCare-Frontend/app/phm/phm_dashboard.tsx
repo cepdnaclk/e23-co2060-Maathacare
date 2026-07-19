@@ -151,7 +151,9 @@ export default function PHMDashboard() {
       if (profileRes.ok) {
         const data = await profileRes.json();
         setPhmInfo(data);
-        if (data.profilePictureUrl) setProfileImage(data.profilePictureUrl);
+        if (data.profilePictureUrl) {
+          setProfileImage(`${data.profilePictureUrl}?v=${Date.now()}`);
+        }
       }
       if (patientsRes.ok) setPatients(await patientsRes.json());
     } catch (error) {
@@ -192,20 +194,21 @@ export default function PHMDashboard() {
         const formData = new FormData();
         formData.append("file", {
           uri: imageUri,
-          name: "profile.jpg",
-          type: "image/jpeg",
+          name: result.assets[0].fileName || "profile.jpg",
+          type: result.assets[0].mimeType || "image/jpeg",
         } as any);
 
-        await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
+        const response = await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
+        if (!response.ok) throw new Error(await response.text());
+        const data = await response.json();
+        setProfileImage(`${data.profilePictureUrl}?v=${Date.now()}`);
       } catch (err) {
-        console.log("Background upload err:", err);
+        console.log("Profile picture upload error:", err);
+        Alert.alert("Upload failed", "Could not save the profile picture.");
       }
     }
   };

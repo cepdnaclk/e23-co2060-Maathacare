@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import {
+  Camera,
   Check,
   CreditCard,
   Droplets,
@@ -18,7 +20,7 @@ import {
   X,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next"; // 🌟 NEW IMPORT
+import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
   Alert,
@@ -43,11 +45,12 @@ const LANGUAGES = [
 
 export default function ProfileScreen() {
   const [profile, setProfile] = useState<any>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [showLanguages, setShowLanguages] = useState(false);
 
-  const { t, i18n } = useTranslation(); // 🌟 TRANSLATION HOOK
+  const { t, i18n } = useTranslation();
   const [selectedLanguage, setSelectedLanguage] = useState(
     i18n.language || "en",
   );
@@ -73,7 +76,13 @@ export default function ProfileScreen() {
         `${API_BASE_URL}/api/mothers/profile/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
+
       setProfile(response.data);
+
+      // Fetch saved profile picture URL from the database
+      if (response.data.profilePictureUrl) {
+        setProfileImage(`${response.data.profilePictureUrl}?v=${Date.now()}`);
+      }
     } catch (error: any) {
       if (error.response?.status === 403) {
         Alert.alert("Security Error", "Your session has expired.");
@@ -88,7 +97,7 @@ export default function ProfileScreen() {
       const storedLang = await AsyncStorage.getItem("appLanguage");
       if (storedLang) {
         setSelectedLanguage(storedLang);
-        i18n.changeLanguage(storedLang); // 🌟 Ensure i18n is synced on load
+        i18n.changeLanguage(storedLang);
       }
     } catch (error) {
       console.error("Failed to load language preference:", error);
@@ -99,10 +108,75 @@ export default function ProfileScreen() {
     try {
       setSelectedLanguage(code);
       await AsyncStorage.setItem("appLanguage", code);
-      i18n.changeLanguage(code); // 🌟 THIS CHANGES THE ENTIRE APP'S LANGUAGE INSTANTLY
+      i18n.changeLanguage(code);
       setTimeout(() => setShowLanguages(false), 300);
     } catch (error) {
       console.error("Failed to save language preference:", error);
+    }
+  };
+
+  // 🌟 BACKEND API IMAGE UPLOAD LOGIC
+  const handlePickImage = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Denied",
+          "We need camera roll permissions to update your photo.",
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const imageUri = result.assets[0].uri;
+
+        // Show the selected image while the upload is in progress.
+        setProfileImage(imageUri);
+
+        const userId = await AsyncStorage.getItem("userId");
+        const token = await AsyncStorage.getItem("userToken");
+
+        if (!userId || !token) return;
+
+        // Package the image for your Spring Boot backend
+        const formData = new FormData();
+        formData.append("file", {
+          uri:
+            Platform.OS === "ios" ? imageUri.replace("file://", "") : imageUri,
+          name: `profile_${userId}_${Date.now()}.jpg`,
+          type: "image/jpeg",
+        } as any);
+
+        // Send to your backend API
+        const uploadResponse = await axios.post(
+          `${API_BASE_URL}/api/mothers/upload-profile-picture/${userId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        // Use the saved Supabase URL (with a cache buster for a replacement upload).
+        setProfileImage(`${uploadResponse.data.profilePictureUrl}?v=${Date.now()}`);
+
+        Alert.alert("Success", "Profile photo updated successfully!");
+      }
+    } catch (error) {
+      console.error("Image Upload Error:", error);
+      Alert.alert(
+        "Upload Failed",
+        "Could not save the profile picture to the server.",
+      );
     }
   };
 
@@ -137,12 +211,27 @@ export default function ProfileScreen() {
         <View style={styles.headerSection}>
           <View style={styles.avatarWrapper}>
             <View style={styles.avatarCircle}>
-              <Image
-                source={require("../../assets/images/image_d73a98.jpeg")}
-                style={styles.avatar}
-                resizeMode="cover"
-              />
+              {profileImage ? (
+                <Image
+                  source={{ uri: profileImage }}
+                  style={styles.avatar}
+                  resizeMode="cover"
+                />
+              ) : (
+                <Text
+                  style={{ fontSize: 40, color: "white", fontWeight: "bold" }}
+                >
+                  {profile?.fullName?.charAt(0) || "M"}
+                </Text>
+              )}
             </View>
+            <TouchableOpacity
+              style={styles.cameraBadge}
+              onPress={handlePickImage}
+              activeOpacity={0.8}
+            >
+              <Camera size={18} color="#db2777" />
+            </TouchableOpacity>
           </View>
           <Text style={styles.profileName}>
             {profile?.fullName || "Mother Name"}
@@ -175,6 +264,16 @@ export default function ProfileScreen() {
             icon={<MapPin size={20} color="#db2777" />}
             label={t("districtAndProvince")}
             value={`${profile?.district}, ${profile?.province}`}
+          />
+          <DetailRow
+            icon={<MapPin size={20} color="#db2777" />}
+            label={t("mohArea")}
+            value={profile?.mohArea}
+          />
+          <DetailRow
+            icon={<MapPin size={20} color="#db2777" />}
+            label={t("gnDivision")}
+            value={profile?.gnDivision}
           />
           <DetailRow
             icon={<Home size={20} color="#db2777" />}
@@ -216,6 +315,8 @@ export default function ProfileScreen() {
                 address: profile?.address,
                 district: profile?.district,
                 province: profile?.province,
+                mohArea: profile?.mohArea,
+                gnDivision: profile?.gnDivision,
               },
             })
           }
@@ -339,7 +440,6 @@ const DetailRow = ({
   </View>
 );
 
-// Note: Keep your styles exactly the same as the previous version you uploaded.
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: "#fff5f8" },
   container: { flex: 1, paddingHorizontal: 25 },
@@ -367,6 +467,7 @@ const styles = StyleSheet.create({
   },
   headerSection: { alignItems: "center", marginTop: 55, marginBottom: 30 },
   avatarWrapper: {
+    position: "relative",
     shadowColor: "#db2777",
     shadowOpacity: 0.1,
     shadowRadius: 15,
@@ -384,6 +485,21 @@ const styles = StyleSheet.create({
     borderColor: "white",
   },
   avatar: { width: "100%", height: "100%" },
+  cameraBadge: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    backgroundColor: "white",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 5,
+  },
   profileName: {
     fontSize: 26,
     fontWeight: "700",

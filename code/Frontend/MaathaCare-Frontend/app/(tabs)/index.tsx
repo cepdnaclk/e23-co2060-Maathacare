@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Activity, Bell, Calendar, Footprints } from "lucide-react-native";
@@ -31,10 +32,19 @@ export default function HomeTab() {
     useCallback(() => {
       const fetchPregnancyData = async () => {
         try {
-          const userId = await AsyncStorage.getItem("userId");
+          const storedUserId = await AsyncStorage.getItem("userId");
           const token = await AsyncStorage.getItem("userToken");
 
-          if (!token || !userId) {
+          if (!token) {
+            setLoading(false);
+            return;
+          }
+
+          // The backend authorizes a profile request against the JWT subject.
+          // Use that canonical ID instead of a possibly stale locally stored value.
+          const claims = jwtDecode<{ sub?: string; userId?: string }>(token);
+          const userId = claims.userId || claims.sub || storedUserId;
+          if (!userId) {
             setLoading(false);
             return;
           }

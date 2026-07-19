@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -53,7 +54,8 @@ export default function App() {
 
       await AsyncStorage.setItem("userToken", token);
       await AsyncStorage.setItem("userRole", role);
-      await AsyncStorage.setItem("userId", phoneNumber);
+      const claims = jwtDecode<{ sub?: string; userId?: string }>(token);
+      await AsyncStorage.setItem("userId", claims.userId || claims.sub || phoneNumber.trim());
 
       router.replace("/(tabs)");
     } catch (error) {
