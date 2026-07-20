@@ -60,7 +60,7 @@ MaathaCare is a smart digital healthcare ecosystem designed to modernize materna
 
 MaathaCare follows a modern **three-tier architecture** to ensure scalability and security. The system connects pregnant mothers and healthcare professionals (midwives/doctors) through a centralized cloud-based backend.
 
-![MaathaCare System Architecture Diagram](./code/docs/architecture-diagram.png)
+[![MaathaCare System Architecture Diagram](./architecture-diagram.png)](./architecture-diagram.png)
 
 ### Key Components:
 * **Frontend:** A responsive web application built using [React.js] for healthcare workers and a mobile-friendly interface for mothers.
