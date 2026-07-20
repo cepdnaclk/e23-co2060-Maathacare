@@ -1,6 +1,6 @@
 package com.Maathacare.Backend.util;
 
-import com.Maathacare.Backend.entity.WeeklyMilestone;
+import com.Maathacare.Backend.model.entity.WeeklyMilestone;
 import com.Maathacare.Backend.repository.WeeklyMilestoneRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

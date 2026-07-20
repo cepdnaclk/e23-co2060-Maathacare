@@ -1,4 +1,4 @@
-package com.Maathacare.Backend.entity;
+package com.Maathacare.Backend.model.entity;
 
 import jakarta.persistence.*;
 

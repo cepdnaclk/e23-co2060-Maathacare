@@ -8,12 +8,12 @@ import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import com.Maathacare.Backend.dto.KickCountRequest;
-import com.Maathacare.Backend.model.entity.KickRecord;
 import com.Maathacare.Backend.repository.KickRepository;
 import java.time.LocalDateTime;
 import com.Maathacare.Backend.model.entity.PHMProfile;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
 import org.springframework.transaction.annotation.Transactional;
+import com.Maathacare.Backend.model.entity.KickRecord;
 
 import java.util.Optional;
 import java.util.List;
@@ -192,6 +192,6 @@ public class MotherProfileService {
         MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Mother profile not found"));
 
-        return kickRepository.findByMotherProfileIdOrderByTimestampAsc(profile.getId());
+        return kickRepository.findByMotherProfile_IdOrderByTimestampAsc(profile.getId());
     }
 }

@@ -35,39 +35,34 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Authentication and public onboarding routes.
                         .requestMatchers(
                                 "/api/users/register",
                                 "/api/users/login",
                                 "/api/users/staff/login",
                                 "/api/auth/**",
                                 "/api/weekly-milestones/**",
-                                "/api/visits/**",
                                 "/api/locations/**"
                         ).permitAll()
 
-                        // Mother-only routes.
-                        .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
-                        .requestMatchers("/api/kicks/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/upload-profile-picture/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/pregnancy-data/**").permitAll()
-                        .requestMatchers("/api/mothers/symptoms/**").hasRole("MOTHER")
-
-                        // Every staff management route requires a valid ADMIN JWT.
-                        // Do not skip these routes in JWTAuthenticationFilter.
+                        // Administrator web dashboard endpoints.
                         .requestMatchers("/api/users/staff/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/mothers/**").hasRole("ADMIN")
 
-                        // PHMs can use their own portal; admins may inspect it too.
-                        .requestMatchers("/api/phm/**").hasAnyRole("PHM", "ADMIN")
+                        // Mother-owned profile endpoints.
+                        .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
+                        .requestMatchers("/api/mothers/upload-profile-picture/**").hasRole("MOTHER")
+                        .requestMatchers("/api/mothers/pregnancy-data/**").authenticated()
 
                         .requestMatchers("/api/appointments/**").authenticated()
-                        .requestMatchers("/api/medical-records/**").permitAll()
+                        .requestMatchers("/api/phm/**").authenticated()
+                        .requestMatchers("/api/visits/**").authenticated()
+                        .requestMatchers("/api/medical-records/**").authenticated()
+                        .requestMatchers("/api/mothers/kicks/**").hasRole("MOTHER")
+                        .requestMatchers("/api/mothers/symptoms/**").hasRole("MOTHER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -78,14 +73,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // Bearer-token authentication does not require allowCredentials=true.
-        // For production, replace "*" with the deployed frontend URL.
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
         configuration.setExposedHeaders(List.of("Authorization"));
-        configuration.setMaxAge(3600L);
+        configuration.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

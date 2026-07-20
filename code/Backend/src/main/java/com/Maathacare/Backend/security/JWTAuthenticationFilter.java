@@ -25,8 +25,14 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        // Preflight requests never need JWT processing.
-        return "OPTIONS".equalsIgnoreCase(request.getMethod());
+        String path = request.getServletPath();
+        return "OPTIONS".equalsIgnoreCase(request.getMethod())
+                || "/api/users/register".equals(path)
+                || "/api/users/login".equals(path)
+                || "/api/users/staff/login".equals(path)
+                || path.startsWith("/api/auth/")
+                || path.startsWith("/api/locations/")
+                || path.startsWith("/api/weekly-milestones/");
     }
 
     @Override
@@ -36,48 +42,35 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
-
-        // Public routes and anonymous requests can continue. Spring Security
-        // will block protected routes later if authentication is required.
+        String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwt = authHeader.substring(7).trim();
+        String jwt = authHeader.substring(7).trim();
         if (jwt.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            if (SecurityContextHolder.getContext().getAuthentication() == null
-                    && jwtService.isTokenValid(jwt)) {
-
-                String identifier = jwtService.extractUsername(jwt);
+            if (SecurityContextHolder.getContext().getAuthentication() == null && jwtService.isTokenValid(jwt)) {
+                String username = jwtService.extractUsername(jwt);
                 String role = jwtService.extractRole(jwt);
 
-                if (identifier != null && role != null && !role.isBlank()) {
+                if (username != null && role != null) {
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
-                                    identifier,
+                                    username,
                                     null,
-                                    Collections.singletonList(
-                                            new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
-                                    )
+                                    Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role))
                             );
-
-                    authentication.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (Exception ignored) {
-            // Invalid or expired tokens must not crash the request with HTTP 500.
-            // Leave the context unauthenticated so Spring returns 401/403 for
-            // protected routes.
+        } catch (RuntimeException ignored) {
             SecurityContextHolder.clearContext();
         }
 

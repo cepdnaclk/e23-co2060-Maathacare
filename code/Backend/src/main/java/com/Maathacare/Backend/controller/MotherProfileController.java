@@ -1,10 +1,7 @@
 package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.MotherProfileRequest;
-import com.Maathacare.Backend.dto.MotherProfileResponse;
-import com.Maathacare.Backend.model.entity.KickRecord;
 import com.Maathacare.Backend.model.entity.MotherProfile; // Correct entity
-import com.Maathacare.Backend.model.entity.SymptomRecord;
 import com.Maathacare.Backend.repository.SymptomRepository;
 import com.Maathacare.Backend.repository.MotherProfileRepository; // Correct repository
 import com.Maathacare.Backend.service.MotherProfileService;
@@ -16,8 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
 import java.util.Map;
 import java.util.HashMap;
-import java.time.LocalDateTime;
-import java.util.List;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
