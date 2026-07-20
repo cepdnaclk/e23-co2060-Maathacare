@@ -61,6 +61,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/phm/**").authenticated()
                         .requestMatchers("/api/visits/**").authenticated()
                         .requestMatchers("/api/medical-records/**").authenticated()
+                        .requestMatchers("/api/mothers/kicks/**").hasRole("MOTHER")
+                        .requestMatchers("/api/mothers/symptoms/**").hasRole("MOTHER")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
