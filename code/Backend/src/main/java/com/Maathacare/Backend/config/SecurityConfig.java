@@ -54,8 +54,10 @@ public class SecurityConfig {
 
                         // Mother-only routes.
                         .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
+                        .requestMatchers("/api/kicks/**").hasRole("MOTHER")
                         .requestMatchers("/api/mothers/upload-profile-picture/**").hasRole("MOTHER")
                         .requestMatchers("/api/mothers/pregnancy-data/**").permitAll()
+                        .requestMatchers("/api/mothers/symptoms/**").hasRole("MOTHER")
 
                         // Every staff management route requires a valid ADMIN JWT.
                         // Do not skip these routes in JWTAuthenticationFilter.
