@@ -9,11 +9,13 @@ import java.util.List;
 @Repository
 public interface VisitRecordRepository extends JpaRepository<VisitRecord, String> {
 
-    /**
-     * Fetches all clinical visit records for a specific mother,
-     * ordered chronologically by gestational week.
-     * This is essential for generating accurate growth and BP charts.
-     */
-    List<VisitRecord> findByMotherProfile_IdOrderByGestationalWeekAsc(String motherId);
+    List<VisitRecord> findByMotherProfile_IdOrderByGestationalWeekAsc(
+            String motherId
+    );
 
+    List<VisitRecord> findByMotherProfile_IdOrderByVisitDateDesc(
+            String motherId
+    );
+
+    List<VisitRecord> findAllByOrderByVisitDateDesc();
 }
