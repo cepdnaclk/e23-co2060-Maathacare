@@ -48,6 +48,14 @@ A HTML template integrated with the given GitHub repository templates, based on 
 
 MaathaCare is a smart digital healthcare ecosystem designed to modernize maternal support services within Sri Lanka’s public health sector. While the current healthcare framework is fundamentally robust, it is heavily reliant on manual, paper-based record-keeping. MaathaCare bridges this technological gap by digitizing the tracking of clinic schedules, supplement adherence, and high-risk pregnancy indicators, ensuring no mother is left behind due to administrative inefficiencies.
 
+* 📁 **Digital Health Locker:** Secure, paperless medical report and document management for mothers.
+
+* 📅 **Smart Clinic Scheduling:** Automated appointments and automated SMS supplement reminders triggered directly by PHMs.
+
+* 📈 **Pregnancy Milestones Timeline:** An interactive week-by-week tracker complete with baby growth details and instructional videos.
+
+* 🌍 **Inclusivity First:** Complete multilingual translation support (English, Sinhala, Tamil) to eliminate language barriers.
+
 ## Solution Architecture
 
 MaathaCare follows a modern **three-tier architecture** to ensure scalability and security. The system connects pregnant mothers and healthcare professionals (midwives/doctors) through a centralized cloud-based backend.
