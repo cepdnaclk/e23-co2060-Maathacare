@@ -16,6 +16,9 @@ public class MotherProfileResponse {
     private String phmId;
     private String emergencyContactName;
     private String emergencyContactRelationship;
+    private String profilePictureUrl;
+    private String mohArea;
+    private String gnDivision;
 
     // --- Getters and Setters ---
     // These allow the app to read and write the data
@@ -69,4 +72,13 @@ public class MotherProfileResponse {
 
     public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
     public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+
+    public String getMohArea() { return mohArea; }
+    public void setMohArea(String mohArea) { this.mohArea = mohArea; }
+
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 }

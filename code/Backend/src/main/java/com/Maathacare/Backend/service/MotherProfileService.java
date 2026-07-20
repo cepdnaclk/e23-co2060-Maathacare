@@ -78,8 +78,6 @@ public class MotherProfileService {
         if (request.getAddress() != null) profile.setAddress(request.getAddress());
         if (request.getChronicDiseaseStatus() != null) profile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
         if (request.getResidentialDivision() != null) profile.setResidentialDivision(request.getResidentialDivision());
-        if (request.getDistrict() != null) profile.setDistrict(request.getDistrict());
-        if (request.getProvince() != null) profile.setProvince(request.getProvince());
         if (request.getEmergencyContactName() != null) profile.setEmergencyContactName(request.getEmergencyContactName());
         if (request.getEmergencyContactRelationship() != null) profile.setEmergencyContactRelationship(request.getEmergencyContactRelationship());
 
@@ -97,6 +95,9 @@ public class MotherProfileService {
         response.setProvince(savedProfile.getProvince());
         response.setEmergencyContactName(savedProfile.getEmergencyContactName());
         response.setEmergencyContactRelationship(savedProfile.getEmergencyContactRelationship());
+        response.setProfilePictureUrl(savedProfile.getProfilePictureUrl());
+        response.setMohArea(savedProfile.getResidentialDivision());
+        response.setGnDivision(savedProfile.getGnDivision());
 
         if (savedProfile.getPhmProfile() != null) {
             response.setPhmName(savedProfile.getPhmProfile().getFullName());
@@ -125,6 +126,9 @@ public class MotherProfileService {
         response.setProvince(profile.getProvince());
         response.setEmergencyContactName(profile.getEmergencyContactName());
         response.setEmergencyContactRelationship(profile.getEmergencyContactRelationship());
+        response.setProfilePictureUrl(profile.getProfilePictureUrl());
+        response.setMohArea(profile.getResidentialDivision());
+        response.setGnDivision(profile.getGnDivision());
 
         if (profile.getPhmProfile() != null) {
             response.setPhmName(profile.getPhmProfile().getFullName());

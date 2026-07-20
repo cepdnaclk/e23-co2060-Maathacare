@@ -30,6 +30,9 @@ public class PHMProfile {
     @Column(name = "contact_number", length = 15)
     private String contactNumber;
 
+    @Column(name = "profile_picture_url", length = 1000)
+    private String profilePictureUrl;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
@@ -54,6 +57,9 @@ public class PHMProfile {
 
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
 
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }

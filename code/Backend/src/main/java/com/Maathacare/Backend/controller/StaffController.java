@@ -18,6 +18,7 @@ import com.Maathacare.Backend.dto.AreaStat;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/users/staff")
@@ -45,9 +46,39 @@ public class StaffController {
             dto.setMohArea(profile.getMohArea());
             dto.setNic(profile.getUser().getUserId());
             dto.setStaffId(profile.getUser().getStaffId());
+            dto.setGnDivision(profile.getGnDivision());
+            dto.setIsActive(profile.getUser().getActive());
+            dto.setMotherCount(motherProfileRepository.findByPhmProfile_Id(profile.getId()).size());
             return dto;
         }).collect(Collectors.toList());
         return ResponseEntity.ok(responseList);
+    }
+
+    /** Detailed, administrator-only view of each PHM's assigned mothers. */
+    @GetMapping("/workload")
+    public ResponseEntity<List<Map<String, Object>>> getPhmWorkloads() {
+        List<Map<String, Object>> workloads = phmProfileRepository.findAll().stream().map(phm -> {
+            List<Map<String, String>> mothers = motherProfileRepository.findByPhmProfile_Id(phm.getId()).stream()
+                    .map(mother -> {
+                        Map<String, String> summary = new HashMap<>();
+                        summary.put("fullName", mother.getFullName());
+                        summary.put("nic", mother.getNic());
+                        summary.put("contactNumber", mother.getEmergencyContactNumber());
+                        summary.put("district", mother.getDistrict());
+                        summary.put("gnDivision", mother.getGnDivision());
+                        return summary;
+                    }).collect(Collectors.toList());
+
+            Map<String, Object> workload = new HashMap<>();
+            workload.put("staffId", phm.getUser().getStaffId());
+            workload.put("fullName", phm.getFullName());
+            workload.put("mohArea", phm.getMohArea());
+            workload.put("gnDivision", phm.getGnDivision());
+            workload.put("motherCount", mothers.size());
+            workload.put("mothers", mothers);
+            return workload;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(workloads);
     }
 
     @PostMapping("/register")

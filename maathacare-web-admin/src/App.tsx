@@ -1,19 +1,21 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
+import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard'; // 🚀 Import the new dashboard!
+import './App.css';
 
-function App() {
+function ProtectedDashboard() {
+  return localStorage.getItem('adminToken') ? <AdminDashboard /> : <Navigate to="/login" replace />;
+}
+
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Navigate to={localStorage.getItem('adminToken') ? '/dashboard' : '/login'} replace />} />
         <Route path="/login" element={<AdminLogin />} />
-        
-        {/* 🚀 Replace the div with the actual Component */}
-        <Route path="/dashboard" element={<AdminDashboard />} /> 
+        <Route path="/dashboard" element={<ProtectedDashboard />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
