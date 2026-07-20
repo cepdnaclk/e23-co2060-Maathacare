@@ -39,6 +39,7 @@ export default function UpcomingClinicScreen() {
       const userId = await AsyncStorage.getItem("userId");
       const token = await AsyncStorage.getItem("userToken");
 
+
       if (!token || !userId) {
         setLoading(false);
         return;
@@ -68,21 +69,16 @@ export default function UpcomingClinicScreen() {
   }
 
   const nextAppointment = appointments.length > 0 ? appointments[0] : null;
-  const futureAppointments =
-    appointments.length > 1 ? appointments.slice(1) : [];
+  const futureAppointments = appointments.length > 1 ? appointments.slice(1) : [];
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* --- HEADER --- */}
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <ArrowLeft color="#665A7A" size={24} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Clinic Schedule</Text>
-        <View style={{ width: 40 }} /> {/* Spacer for centering */}
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -91,14 +87,13 @@ export default function UpcomingClinicScreen() {
             <Calendar color="#D8B0D2" size={60} />
             <Text style={styles.emptyTitle}>No Clinics Scheduled</Text>
             <Text style={styles.emptySub}>
-              Your midwife hasn't assigned your next visit yet.
+              {"Your midwife hasn't assigned your next visit yet."}
             </Text>
           </View>
         ) : (
-          <>
-            {/* --- NEXT APPOINTMENT HERO CARD --- */}
+          <View>
             {nextAppointment && (
-              <>
+              <View>
                 <Text style={styles.sectionTitle}>Next Appointment</Text>
                 <LinearGradient
                   colors={["#FFE2F1", "#E3F1FF"]}
@@ -109,21 +104,15 @@ export default function UpcomingClinicScreen() {
                   <View style={styles.heroDateRow}>
                     <View style={styles.heroDateBadge}>
                       <Text style={styles.heroDateText}>
-                        {nextAppointment.date
-                          ? nextAppointment.date.split(" ")[0]
-                          : "--"}
+                        {nextAppointment.date ? nextAppointment.date.split(" ")[0] : "--"}
                       </Text>
                       <Text style={styles.heroMonthText}>
-                        {nextAppointment.date
-                          ? nextAppointment.date.split(" ")[1]
-                          : "..."}
+                        {nextAppointment.date ? nextAppointment.date.split(" ")[1] : "..."}
                       </Text>
                     </View>
                     <View style={styles.heroTimeWrap}>
                       <Clock size={16} color="#8A6FA8" />
-                      <Text style={styles.heroTimeText}>
-                        {nextAppointment.time}
-                      </Text>
+                      <Text style={styles.heroTimeText}>{nextAppointment.time}</Text>
                     </View>
                   </View>
 
@@ -141,18 +130,15 @@ export default function UpcomingClinicScreen() {
                   {/* 🌟 FIX: Safely handling empty notes using a ternary operator */}
                   {nextAppointment.notes ? (
                     <View style={styles.notesBox}>
-                      <Text style={styles.notesText}>
-                        {nextAppointment.notes}
-                      </Text>
+                      <Text style={styles.notesText}>{nextAppointment.notes}</Text>
                     </View>
                   ) : null}
                 </LinearGradient>
-              </>
+              </View>
             )}
 
-            {/* --- FUTURE APPOINTMENTS LIST --- */}
             {futureAppointments.length > 0 && (
-              <>
+              <View>
                 <Text style={styles.sectionTitle}>Future Visits</Text>
                 {futureAppointments.map((apt) => (
                   <View key={apt.id} style={styles.listCard}>
@@ -170,9 +156,9 @@ export default function UpcomingClinicScreen() {
                     </View>
                   </View>
                 ))}
-              </>
+              </View>
             )}
-          </>
+          </View>
         )}
         <View style={{ height: 40 }} />
       </ScrollView>
