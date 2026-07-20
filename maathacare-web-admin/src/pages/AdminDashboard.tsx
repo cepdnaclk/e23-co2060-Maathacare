@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SriLankaMap, { type DistrictSummary, type MapMetric } from '../components/SriLankaMap';
+import { DISTRICTS as LOCATION_DISTRICTS, MOH_AREAS } from './location';
 import './AdminDashboard.css';
 
-type DashboardView = 'overview' | 'workforce' | 'mothers';
+type DashboardView = 'overview' | 'map' | 'workforce' | 'mothers';
 type JsonRecord = Record<string, unknown>;
 
 interface PHM {
@@ -25,6 +27,7 @@ interface Mother {
   nic: string;
   phone: string;
   address: string;
+  district: string;
   mohArea: string;
   gnDivision: string;
   assignedStaffId: string;
@@ -63,12 +66,24 @@ interface RegistrationForm {
 const API_URL = (((import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_API_URL) || 'http://localhost:8080').replace(/\/$/, '');
 const CASELOAD_TARGET = 150;
 
-const DISTRICTS = [
-  'Ampara', 'Anuradhapura', 'Badulla', 'Batticaloa', 'Colombo', 'Galle', 'Gampaha',
-  'Hambantota', 'Jaffna', 'Kalutara', 'Kandy', 'Kegalle', 'Kilinochchi', 'Kurunegala',
-  'Mannar', 'Matale', 'Matara', 'Monaragala', 'Mullaitivu', 'Nuwara Eliya', 'Polonnaruwa',
-  'Puttalam', 'Ratnapura', 'Trincomalee', 'Vavuniya',
-];
+const DISTRICT_NAMES = LOCATION_DISTRICTS.map((district) => district.name);
+
+const locationKey = (value: string): string =>
+  value.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+const DISTRICT_NAME_BY_CODE = new Map(
+  LOCATION_DISTRICTS.map((district) => [district.code, district.name]),
+);
+
+const DISTRICT_BY_MOH = new Map<string, string>();
+Object.entries(MOH_AREAS).forEach(([districtCode, areas]) => {
+  const districtName = DISTRICT_NAME_BY_CODE.get(districtCode);
+  if (!districtName) return;
+  areas.forEach((area) => DISTRICT_BY_MOH.set(locationKey(area.name), districtName));
+});
+
+const resolveDistrict = (district: string, mohArea: string): string =>
+  district.trim() || DISTRICT_BY_MOH.get(locationKey(mohArea)) || '';
 
 const STAFF_ENDPOINTS = [
   '/api/users/staff/all',
@@ -175,6 +190,7 @@ const normaliseMother = (value: unknown, index: number): Mother => {
     nic: text(firstValue(record, ['nic', 'NIC', 'nationalId'])),
     phone: text(firstValue(record, ['phone', 'phoneNumber', 'mobile', 'contactNumber'])),
     address: text(firstValue(record, ['address', 'homeAddress'])),
+    district: text(firstValue(record, ['district', 'districtName'])),
     mohArea: text(firstValue(record, ['mohArea', 'mohAreaName', 'areaName'])) || nestedText(record, ['moh', 'mohArea'], ['name', 'areaName']),
     gnDivision: text(firstValue(record, ['gnDivision', 'gnDivisionName'])) || nestedText(record, ['gn', 'gnDivision'], ['name']),
     assignedStaffId,
@@ -288,6 +304,8 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState('');
   const [motherSearch, setMotherSearch] = useState('');
   const [selectedPHM, setSelectedPHM] = useState<PHM | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [mapMetric, setMapMetric] = useState<MapMetric>('coverage');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -405,7 +423,7 @@ export default function AdminDashboard() {
     const query = motherSearch.trim().toLowerCase();
     if (!query) return mothers;
     return mothers.filter((mother) =>
-      `${mother.fullName} ${mother.id} ${mother.nic} ${mother.assignedStaffId} ${mother.mohArea}`.toLowerCase().includes(query),
+      `${mother.fullName} ${mother.id} ${mother.nic} ${mother.assignedStaffId} ${mother.mohArea} ${mother.district} ${mother.gnDivision}`.toLowerCase().includes(query),
     );
   }, [motherSearch, mothers]);
 
@@ -413,6 +431,96 @@ export default function AdminDashboard() {
     if (!selectedPHM) return [];
     return mothersByStaff.get(selectedPHM.staffId.toLowerCase()) || [];
   }, [mothersByStaff, selectedPHM]);
+
+  const districtStats = useMemo<Record<string, DistrictSummary>>(() => {
+    const result: Record<string, DistrictSummary> = {};
+    const staffDistrictById = new Map<string, string>();
+    const staffCountByMoh = new Map<string, number>();
+    const areaStatByMoh = new Map(areaStats.map((area) => [locationKey(area.areaName), area]));
+
+    LOCATION_DISTRICTS.forEach((district) => {
+      result[district.name] = {
+        phmCount: 0,
+        motherCount: 0,
+        totalMoh: MOH_AREAS[district.code]?.length || 0,
+        understaffedMoh: 0,
+      };
+    });
+
+    enrichedStaff.forEach((person) => {
+      const districtName = resolveDistrict(person.district, person.mohArea);
+      if (districtName && result[districtName]) {
+        result[districtName].phmCount += 1;
+        staffDistrictById.set(person.staffId.toLowerCase(), districtName);
+      }
+      const mohKey = locationKey(person.mohArea);
+      if (mohKey) staffCountByMoh.set(mohKey, (staffCountByMoh.get(mohKey) || 0) + 1);
+    });
+
+    if (mothers.length) {
+      mothers.forEach((mother) => {
+        const districtName =
+          resolveDistrict(mother.district, mother.mohArea) ||
+          staffDistrictById.get(mother.assignedStaffId.toLowerCase()) ||
+          '';
+        if (districtName && result[districtName]) result[districtName].motherCount += 1;
+      });
+    } else {
+      areaStats.forEach((area) => {
+        const districtName = resolveDistrict(area.district, area.areaName);
+        if (districtName && result[districtName]) result[districtName].motherCount += area.motherCount;
+      });
+    }
+
+    Object.entries(MOH_AREAS).forEach(([districtCode, areas]) => {
+      const districtName = DISTRICT_NAME_BY_CODE.get(districtCode);
+      if (!districtName || !result[districtName]) return;
+      result[districtName].understaffedMoh = areas.filter((area) => {
+        const key = locationKey(area.name);
+        const serverArea = areaStatByMoh.get(key);
+        const phmCount = serverArea?.phmCount ?? staffCountByMoh.get(key) ?? 0;
+        const motherCount = serverArea?.motherCount ?? 0;
+        const average = phmCount > 0 ? motherCount / phmCount : motherCount;
+        const status = serverArea?.status.toLowerCase() || '';
+        return phmCount === 0 || average > CASELOAD_TARGET || status.includes('over') || status.includes('unstaff');
+      }).length;
+    });
+
+    return result;
+  }, [areaStats, enrichedStaff, mothers]);
+
+  const districtRows = useMemo(() => LOCATION_DISTRICTS.map((district) => {
+    const summary = districtStats[district.name] || { phmCount: 0, motherCount: 0, totalMoh: 0, understaffedMoh: 0 };
+    const coveredMoh = Math.max(0, summary.totalMoh - summary.understaffedMoh);
+    const coverage = summary.totalMoh ? Math.round((coveredMoh / summary.totalMoh) * 100) : 0;
+    const averageCaseload = summary.phmCount ? Math.round(summary.motherCount / summary.phmCount) : summary.motherCount;
+    return { district: district.name, ...summary, coveredMoh, coverage, averageCaseload };
+  }).sort((a, b) => {
+    if (mapMetric === 'phms') return b.phmCount - a.phmCount;
+    if (mapMetric === 'mothers') return b.motherCount - a.motherCount;
+    if (mapMetric === 'caseload') return b.averageCaseload - a.averageCaseload;
+    return b.coverage - a.coverage;
+  }), [districtStats, mapMetric]);
+
+  const nationalMapSummary = useMemo<DistrictSummary>(() => districtRows.reduce(
+    (total, district) => ({
+      phmCount: total.phmCount + district.phmCount,
+      motherCount: total.motherCount + district.motherCount,
+      totalMoh: total.totalMoh + district.totalMoh,
+      understaffedMoh: total.understaffedMoh + district.understaffedMoh,
+    }),
+    { phmCount: 0, motherCount: 0, totalMoh: 0, understaffedMoh: 0 },
+  ), [districtRows]);
+
+  const activeMapSummary = selectedDistrict
+    ? districtStats[selectedDistrict] || nationalMapSummary
+    : nationalMapSummary;
+  const activeMapCoverage = activeMapSummary.totalMoh
+    ? Math.round(((activeMapSummary.totalMoh - activeMapSummary.understaffedMoh) / activeMapSummary.totalMoh) * 100)
+    : 0;
+  const activeMapCaseload = activeMapSummary.phmCount
+    ? Math.round(activeMapSummary.motherCount / activeMapSummary.phmCount)
+    : activeMapSummary.motherCount;
 
   useEffect(() => {
     if (!form.district) {
@@ -524,6 +632,7 @@ export default function AdminDashboard() {
 
       <nav className="admin-nav" aria-label="Admin dashboard sections">
         <button className={view === 'overview' ? 'active' : ''} onClick={() => setView('overview')}>Overview</button>
+        <button className={view === 'map' ? 'active' : ''} onClick={() => setView('map')}>Statistical map</button>
         <button className={view === 'workforce' ? 'active' : ''} onClick={() => setView('workforce')}>PHM workforce & registration</button>
         <button className={view === 'mothers' ? 'active' : ''} onClick={() => setView('mothers')}>Mother records</button>
       </nav>
@@ -599,6 +708,108 @@ export default function AdminDashboard() {
               </>
             )}
 
+            {view === 'map' && (
+              <section className="map-page">
+                <div className="section-toolbar map-toolbar">
+                  <div>
+                    <p className="section-kicker">NATIONAL GEOSPATIAL INTELLIGENCE</p>
+                    <h2>Sri Lanka maternal-health statistical map</h2>
+                    <p>Choose a metric, hover over a district, or select it for a detailed administrative snapshot.</p>
+                  </div>
+                  <div className="map-metric-switch" role="group" aria-label="Map metric">
+                    <MapMetricButton active={mapMetric === 'coverage'} onClick={() => setMapMetric('coverage')}>Coverage</MapMetricButton>
+                    <MapMetricButton active={mapMetric === 'mothers'} onClick={() => setMapMetric('mothers')}>Mothers</MapMetricButton>
+                    <MapMetricButton active={mapMetric === 'phms'} onClick={() => setMapMetric('phms')}>PHMs</MapMetricButton>
+                    <MapMetricButton active={mapMetric === 'caseload'} onClick={() => setMapMetric('caseload')}>Caseload</MapMetricButton>
+                  </div>
+                </div>
+
+                <section className="map-layout">
+                  <article className="panel statistical-map-panel">
+                    <PanelHeading
+                      kicker="DISTRICT MAP"
+                      title={`${mapMetricLabel(mapMetric)} by district`}
+                      note="Click a district for details"
+                    />
+                    <div className="statistical-map-shell">
+                      <SriLankaMap
+                        districtStats={districtStats}
+                        metric={mapMetric}
+                        selectedDistrict={selectedDistrict}
+                        onSelectDistrict={(district) => setSelectedDistrict((current) => current === district ? null : district)}
+                      />
+                    </div>
+                  </article>
+
+                  <aside className="map-side-column">
+                    <article className="panel district-summary-panel">
+                      <div className="district-summary-hero">
+                        <div>
+                          <p className="section-kicker">{selectedDistrict ? 'SELECTED DISTRICT' : 'NATIONAL SNAPSHOT'}</p>
+                          <h2>{selectedDistrict || 'Sri Lanka'}</h2>
+                          <p>{selectedDistrict ? 'District workforce and maternal coverage' : 'Combined statistics across all 25 districts'}</p>
+                        </div>
+                        {selectedDistrict && <button className="clear-district-button" onClick={() => setSelectedDistrict(null)}>Clear</button>}
+                      </div>
+                      <div className="district-stat-grid">
+                        <MapStat label="Registered PHMs" value={activeMapSummary.phmCount} />
+                        <MapStat label="Registered mothers" value={activeMapSummary.motherCount} />
+                        <MapStat label="MOH coverage" value={`${activeMapCoverage}%`} />
+                        <MapStat label="Average caseload" value={activeMapCaseload} />
+                      </div>
+                      <div className={`coverage-callout ${activeMapSummary.understaffedMoh ? 'attention' : 'healthy'}`}>
+                        <strong>{activeMapSummary.totalMoh - activeMapSummary.understaffedMoh} of {activeMapSummary.totalMoh} MOH areas adequate</strong>
+                        <span>{activeMapSummary.understaffedMoh ? `${activeMapSummary.understaffedMoh} area(s) need workforce attention.` : 'All tracked areas are within the configured target.'}</span>
+                      </div>
+                    </article>
+
+                    <article className="panel district-ranking-panel">
+                      <PanelHeading kicker="DISTRICT RANKING" title={`Top districts by ${mapMetricLabel(mapMetric).toLowerCase()}`} />
+                      <div className="district-ranking-list">
+                        {districtRows.slice(0, 7).map((district, index) => (
+                          <button
+                            key={district.district}
+                            className={`district-ranking-row ${selectedDistrict === district.district ? 'selected' : ''}`}
+                            onClick={() => setSelectedDistrict(district.district)}
+                          >
+                            <span className="ranking-number">{String(index + 1).padStart(2, '0')}</span>
+                            <span className="ranking-name"><strong>{district.district}</strong><small>{district.phmCount} PHMs · {district.motherCount} mothers</small></span>
+                            <b>{districtMetricValue(district, mapMetric)}</b>
+                          </button>
+                        ))}
+                      </div>
+                    </article>
+                  </aside>
+                </section>
+
+                <article className="panel district-table-panel">
+                  <PanelHeading kicker="DISTRICT PERFORMANCE" title="National district comparison" note="25 administrative districts" />
+                  <div className="data-table-wrap">
+                    <table className="data-table district-table">
+                      <thead><tr><th>District</th><th>PHMs</th><th>Mothers</th><th>Avg. caseload</th><th>MOH coverage</th><th>Areas needing action</th><th>Status</th></tr></thead>
+                      <tbody>
+                        {districtRows.map((district) => (
+                          <tr
+                            key={district.district}
+                            className="clickable-row"
+                            onClick={() => setSelectedDistrict(district.district)}
+                          >
+                            <td><strong>{district.district}</strong></td>
+                            <td>{district.phmCount}</td>
+                            <td>{district.motherCount}</td>
+                            <td>{district.averageCaseload}</td>
+                            <td><span className="coverage-value">{district.coverage}%</span><small className="cell-subtext">{district.coveredMoh}/{district.totalMoh} MOH areas</small></td>
+                            <td>{district.understaffedMoh}</td>
+                            <td><Status value={district.understaffedMoh ? 'Needs attention' : district.totalMoh ? 'Adequate' : 'No data'} /></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>
+            )}
+
             {view === 'workforce' && (
               <section className="workforce-page">
                 <div className="section-toolbar">
@@ -612,7 +823,7 @@ export default function AdminDashboard() {
                     <form className="registration-form" onSubmit={registerPHM}>
                       <FormField label="Full name"><input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} /></FormField>
                       <FormField label="NIC"><input required value={form.nic} onChange={(e) => setForm({ ...form, nic: e.target.value })} /></FormField>
-                      <FormField label="District"><select required value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value, mohArea: '', gnDivision: '', staffId: '' })}><option value="">Select district</option>{DISTRICTS.map((district) => <option key={district}>{district}</option>)}</select></FormField>
+                      <FormField label="District"><select required value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value, mohArea: '', gnDivision: '', staffId: '' })}><option value="">Select district</option>{DISTRICT_NAMES.map((district) => <option key={district}>{district}</option>)}</select></FormField>
                       <FormField label="MOH area"><input required list="moh-options" value={form.mohArea} onChange={(e) => setForm({ ...form, mohArea: e.target.value, gnDivision: '', staffId: '' })} placeholder="Type or select MOH area" /><datalist id="moh-options">{mohOptions.map((area) => <option key={area} value={area} />)}</datalist></FormField>
                       <FormField label="GN division"><input required list="gn-options" value={form.gnDivision} onChange={(e) => setForm({ ...form, gnDivision: e.target.value })} placeholder="Type or select GN division" /><datalist id="gn-options">{gnOptions.map((division) => <option key={division} value={division} />)}</datalist></FormField>
                       <FormField label="Official staff ID"><input required value={form.staffId} onChange={(e) => setForm({ ...form, staffId: e.target.value.toUpperCase() })} /></FormField>
@@ -730,6 +941,33 @@ function Empty({ text: value }: { text: string }) {
 function FormField({ label, children }: { label: string; children: ReactNode }) {
   return <label className="form-field"><span>{label}</span>{children}</label>;
 }
+
+
+function MapMetricButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
+  return <button type="button" className={active ? 'active' : ''} onClick={onClick}>{children}</button>;
+}
+
+function MapStat({ label, value }: { label: string; value: string | number }) {
+  return <div className="map-stat"><span>{label}</span><strong>{value}</strong></div>;
+}
+
+function mapMetricLabel(metric: MapMetric): string {
+  if (metric === 'mothers') return 'Registered mothers';
+  if (metric === 'phms') return 'Registered PHMs';
+  if (metric === 'caseload') return 'Average caseload';
+  return 'MOH coverage';
+}
+
+function districtMetricValue(
+  district: { phmCount: number; motherCount: number; coverage: number; averageCaseload: number },
+  metric: MapMetric,
+): string | number {
+  if (metric === 'mothers') return district.motherCount;
+  if (metric === 'phms') return district.phmCount;
+  if (metric === 'caseload') return district.averageCaseload;
+  return `${district.coverage}%`;
+}
+
 
 function Detail({ label, value }: { label: string; value: string }) {
   return <div className="detail-item"><span>{label}</span><strong>{value}</strong></div>;
