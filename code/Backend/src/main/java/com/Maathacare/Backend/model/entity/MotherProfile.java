@@ -75,6 +75,9 @@ public class MotherProfile {
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
+    @Column(name = "profile_picture_url")
+    private String profilePictureUrl;
+
 
 
     public String getId() { return id; }
@@ -142,4 +145,7 @@ public class MotherProfile {
 
     public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
     public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
 }

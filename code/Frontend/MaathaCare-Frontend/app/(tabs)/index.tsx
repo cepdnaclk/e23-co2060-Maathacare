@@ -1,10 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import Constants from "expo-constants";
+import { jwtDecode } from "jwt-decode";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Activity, Bell, Calendar, Footprints } from "lucide-react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next"; // 🌟 ADDED TRANSLATION
 import {
   ActivityIndicator,
   Dimensions,
@@ -14,142 +15,82 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
+const { width } = Dimensions.get("window");
 
 import { API_BASE_URL } from "../../constants/apiConfig";
-
-// 🌟 Tells the OS to show the notification banner even if the app is open!
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
-
-const { width } = Dimensions.get("window");
 
 export default function HomeTab() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ weeks: 0, days: 0, totalDays: 0 });
   const [userName, setUserName] = useState("");
   const router = useRouter();
+  const { t } = useTranslation(); // 🌟 HOOK INITIALIZED
 
-  // State to hold the Midwife info
   const [phmInfo, setPhmInfo] = useState({ name: "Loading...", id: "" });
 
-  // 🌟 PUSH NOTIFICATION TRIGGER (Merged & Fixed to run only once)
-  useEffect(() => {
-    const registerAndSyncPushToken = async () => {
-      if (!Device.isDevice) {
-        console.log("Must use a physical device for Push Notifications");
-        return;
-      }
-
-      try {
-        const { status: existingStatus } = await Notifications.getPermissionsAsync();
-        let finalStatus = existingStatus;
-
-        if (existingStatus !== "granted") {
-          const { status } = await Notifications.requestPermissionsAsync();
-          finalStatus = status;
-        }
-
-        if (finalStatus !== "granted") {
-          console.log("Failed to get push token for push notification!");
-          return;
-        }
-
-        const projectId =
-            Constants.expoConfig?.extra?.eas?.projectId ??
-            "a06d1659-753c-4fd0-a631-c20c42877558";
-
-        const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
-        const token = tokenData.data;
-        console.log("🌟 Generated Push Token:", token);
-
-        const userToken = await AsyncStorage.getItem("userToken");
-        const userId = await AsyncStorage.getItem("userId");
-
-        if (!userToken || !userId) return;
-
-        // Merged Fix: Using API_BASE_URL and standard userId instead of hardcoded IP + jwtDecode
-        await axios.put(
-            `${API_BASE_URL}/api/mothers/${userId}/push-token`,
-            { pushToken: token },
-            { headers: { Authorization: `Bearer ${userToken}` } }
-        );
-        console.log("✅ Token synced successfully to backend!");
-      } catch (error) {
-        console.error("Error generating or syncing token:", error);
-      }
-    };
-
-    registerAndSyncPushToken();
-  }, []);
-
-  // 🌟 FETCH DASHBOARD DATA (From git main)
   useFocusEffect(
-      useCallback(() => {
-        const fetchPregnancyData = async () => {
-          try {
-            const userId = await AsyncStorage.getItem("userId");
-            const token = await AsyncStorage.getItem("userToken");
+    useCallback(() => {
+      const fetchPregnancyData = async () => {
+        try {
+          const storedUserId = await AsyncStorage.getItem("userId");
+          const token = await AsyncStorage.getItem("userToken");
 
-            if (!token || !userId) {
-              setLoading(false);
-              return;
-            }
-
-            const response = await axios.get(
-                `${API_BASE_URL}/api/mothers/profile/${userId}`,
-                {
-                  headers: { Authorization: `Bearer ${token}` },
-                }
-            );
-
-            const data = response.data;
-            setUserName(data.fullName ? data.fullName.split(" ")[0] : "Mother");
-
-            // Capture the PHM data sent from the backend
-            setPhmInfo({
-              name: data.phmName || "Pending",
-              id: data.phmId && data.phmId !== "Pending" ? data.phmId : "",
-            });
-
-            if (data.lastMenstrualPeriod) {
-              const lmp = new Date(data.lastMenstrualPeriod);
-              const today = new Date();
-              const diffInMs = today.getTime() - lmp.getTime();
-              const totalDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-
-              if (totalDays >= 0) {
-                setStats({
-                  weeks: Math.floor(totalDays / 7),
-                  days: totalDays % 7,
-                  totalDays: totalDays,
-                });
-              }
-            }
-          } catch (error) {
-            console.error("Dashboard error:", error);
-          } finally {
+          if (!token) {
             setLoading(false);
+            return;
           }
-        };
-        fetchPregnancyData();
-      }, [])
+
+          // The backend authorizes a profile request against the JWT subject.
+          // Use that canonical ID instead of a possibly stale locally stored value.
+          const claims = jwtDecode<{ sub?: string; userId?: string }>(token);
+          const userId = claims.userId || claims.sub || storedUserId;
+          if (!userId) {
+            setLoading(false);
+            return;
+          }
+
+          const response = await axios.get(
+            `${API_BASE_URL}/api/mothers/profile/${userId}`,
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+
+          const data = response.data;
+          setUserName(data.fullName ? data.fullName.split(" ")[0] : "Mother");
+
+          setPhmInfo({
+            name: data.phmName || "Pending",
+            id: data.phmId && data.phmId !== "Pending" ? data.phmId : "",
+          });
+
+          if (data.lastMenstrualPeriod) {
+            const lmp = new Date(data.lastMenstrualPeriod);
+            const today = new Date();
+            const diffInMs = today.getTime() - lmp.getTime();
+            const totalDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+            if (totalDays >= 0) {
+              setStats({
+                weeks: Math.floor(totalDays / 7),
+                days: totalDays % 7,
+                totalDays: totalDays,
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Dashboard error:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchPregnancyData();
+    }, []),
   );
 
-  // Calculate progress percentage (Pregnancy is ~280 days)
   const progress = Math.min(stats.totalDays / 280, 1);
 
   if (loading)
     return <ActivityIndicator style={styles.center} color="#ED70A1" />;
 
-  // Dynamic baby Size
   const getBabySizeInfo = (week: number) => {
     if (week <= 4) return { size: "a Poppy Seed", icon: "🌱" };
     if (week <= 7) return { size: "a Blueberry", icon: "🫐" };
@@ -164,166 +105,138 @@ export default function HomeTab() {
   };
 
   return (
-      <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.welcomeText}>Hi, {userName}</Text>
-            <Text style={styles.subText}>Your gentle journey</Text>
-          </View>
-
-          <TouchableOpacity activeOpacity={0.8}>
-            <LinearGradient
-                colors={["#FFE2F1", "#E3F1FF"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.iconCircle}
-            >
-              <Bell size={20} color="#8A6FA8" />
-            </LinearGradient>
-          </TouchableOpacity>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.welcomeText}>
+            {t("hi")}, {userName}
+          </Text>
+          <Text style={styles.subText}>{t("yourGentleJourney")}</Text>
         </View>
-
-        {/* 🌟 ASSIGNED MIDWIFE BADGE */}
-        <View style={styles.phmCard}>
-          <View style={styles.phmIconWrapper}>
-            <Text style={{ fontSize: 18 }}>👩‍⚕️</Text>
-          </View>
-          <View>
-            <Text style={styles.phmLabel}>Assigned Midwife</Text>
-            <Text style={styles.phmName}>
-              {phmInfo.name === "Pending"
-                  ? "Assignment Pending"
-                  : `${phmInfo.name} (${phmInfo.id})`}
-            </Text>
-          </View>
-        </View>
-
-        <LinearGradient
-            colors={["#FFE7F3", "#E8F3FF"]}
+        <TouchableOpacity activeOpacity={0.8}>
+          <LinearGradient
+            colors={["#FFE2F1", "#E3F1FF"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            style={styles.statsCard}
-        >
-          <View style={styles.topBadge}>
-            <Text style={styles.topBadgeText}>Today</Text>
-          </View>
+            style={styles.iconCircle}
+          >
+            <Bell size={20} color="#8A6FA8" />
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
 
-          <View style={styles.babyBadge}>
-            <Text style={styles.babyIcon}>
-              {getBabySizeInfo(stats.weeks).icon}
-            </Text>
-          </View>
-
-          <Text style={styles.softLabel}>Baby size</Text>
-          <Text style={styles.fruitText}>
-            {getBabySizeInfo(stats.weeks).size}
+      <View style={styles.phmCard}>
+        <View style={styles.phmIconWrapper}>
+          <Text style={{ fontSize: 18 }}>👩‍⚕️</Text>
+        </View>
+        <View>
+          <Text style={styles.phmLabel}>{t("assignedMidwife")}</Text>
+          <Text style={styles.phmName}>
+            {phmInfo.name === "Pending"
+              ? t("assignmentPending")
+              : `${phmInfo.name} (${phmInfo.id})`}
           </Text>
+        </View>
+      </View>
 
-          <View style={styles.weekRow}>
-            <View style={styles.timeCard}>
-              <Text style={styles.bigNumber}>{stats.weeks}</Text>
-              <Text style={styles.unitText}>Weeks</Text>
-            </View>
-
-            <View style={styles.timeCard}>
-              <Text style={styles.bigNumber}>{stats.days}</Text>
-              <Text style={styles.unitText}>Days</Text>
-            </View>
-          </View>
-
-          <View style={styles.progressBarBackground}>
-            <LinearGradient
-                colors={["#F59AC2", "#9ECDF8"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
-            />
-          </View>
-
-          <Text style={styles.progressLabel}>
-            {Math.floor(progress * 100)}% complete
+      <LinearGradient
+        colors={["#FFE7F3", "#E8F3FF"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.statsCard}
+      >
+        <View style={styles.topBadge}>
+          <Text style={styles.topBadgeText}>{t("today")}</Text>
+        </View>
+        <View style={styles.babyBadge}>
+          <Text style={styles.babyIcon}>
+            {getBabySizeInfo(stats.weeks).icon}
           </Text>
-        </LinearGradient>
+        </View>
+        <Text style={styles.softLabel}>{t("babySize")}</Text>
+        <Text style={styles.fruitText}>
+          {getBabySizeInfo(stats.weeks).size}
+        </Text>
 
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <View style={styles.weekRow}>
+          <View style={styles.timeCard}>
+            <Text style={styles.bigNumber}>{stats.weeks}</Text>
+            <Text style={styles.unitText}>{t("weeks")}</Text>
+          </View>
+          <View style={styles.timeCard}>
+            <Text style={styles.bigNumber}>{stats.days}</Text>
+            <Text style={styles.unitText}>{t("days")}</Text>
+          </View>
+        </View>
 
-        <View style={styles.grid}>
-          <ActionCard
-              icon={<Activity color="#D962A0" size={23} />}
-              label="Symptoms"
-              colors={["#FFE6F2", "#FFF1F7"]}
-              onPress={() => router.push("/log-symptoms")}
-          />
-
-          <ActionCard
-              icon={<Calendar color="#5D9CE6" size={23} />}
-              label="Clinic"
-              colors={["#E4F0FF", "#F1F7FF"]}
-              onPress={() => router.push("/upcoming-clinic")}
-          />
-
-          <ActionCard
-              icon={<Footprints color="#8C7CF3" size={23} />}
-              label="Kicks"
-              colors={["#F3E7FF", "#E8F2FF"]}
-              fullWidth
-              onPress={() => router.push("/kick-counter")}
+        <View style={styles.progressBarBackground}>
+          <LinearGradient
+            colors={["#F59AC2", "#9ECDF8"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.progressBarFill, { width: `${progress * 100}%` }]}
           />
         </View>
-      </ScrollView>
+        <Text style={styles.progressLabel}>
+          {Math.floor(progress * 100)}% {t("complete")}
+        </Text>
+      </LinearGradient>
+
+      <Text style={styles.sectionTitle}>{t("quickActions")}</Text>
+      <View style={styles.grid}>
+        <ActionCard
+          icon={<Activity color="#D962A0" size={23} />}
+          label={t("symptoms")}
+          colors={["#FFE6F2", "#FFF1F7"]}
+          onPress={() => router.push("/log-symptoms")}
+        />
+        <ActionCard
+          icon={<Calendar color="#5D9CE6" size={23} />}
+          label={t("clinic")}
+          colors={["#E4F0FF", "#F1F7FF"]}
+          onPress={() => router.push("/upcoming-clinic")}
+        />
+        <ActionCard
+          icon={<Footprints color="#8C7CF3" size={23} />}
+          label={t("kicks")}
+          colors={["#F3E7FF", "#E8F2FF"]}
+          fullWidth
+          onPress={() => router.push("/kick-counter")}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
-function ActionCard({
-                      icon,
-                      label,
-                      colors,
-                      fullWidth,
-                      onPress,
-                    }: {
-  icon: React.ReactNode;
-  label: string;
-  colors: string[];
-  fullWidth?: boolean;
-  onPress?: () => void;
-}) {
+function ActionCard({ icon, label, colors, fullWidth, onPress }: any) {
   return (
-      <TouchableOpacity
-          onPress={onPress}
-          activeOpacity={0.82}
-          style={[styles.actionWrapper, fullWidth && styles.fullWidth]}
+    <TouchableOpacity
+      onPress={onPress}
+      activeOpacity={0.82}
+      style={[styles.actionWrapper, fullWidth && styles.fullWidth]}
+    >
+      <LinearGradient
+        colors={colors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.actionCard}
       >
-        <LinearGradient
-            colors={colors as any}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.actionCard}
-        >
-          <View style={styles.actionIcon}>{icon}</View>
-          <Text style={styles.actionLabel}>{label}</Text>
-        </LinearGradient>
-      </TouchableOpacity>
+        <View style={styles.actionIcon}>{icon}</View>
+        <Text style={styles.actionLabel}>{label}</Text>
+      </LinearGradient>
+    </TouchableOpacity>
   );
 }
 
+// Ensure you keep your existing index.tsx styles here!
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFF9FD",
-  },
-  content: {
-    padding: 22,
-    paddingBottom: 36,
-  },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  container: { flex: 1, backgroundColor: "#FFF9FD" },
+  content: { padding: 22, paddingBottom: 36 },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
   header: {
     marginTop: 58,
     marginBottom: 22,
@@ -337,11 +250,7 @@ const styles = StyleSheet.create({
     color: "#665A7A",
     letterSpacing: -0.4,
   },
-  subText: {
-    fontSize: 14,
-    color: "#988FA8",
-    marginTop: 4,
-  },
+  subText: { fontSize: 14, color: "#988FA8", marginTop: 4 },
   iconCircle: {
     width: 48,
     height: 48,
@@ -373,17 +282,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 12,
   },
-  phmLabel: {
-    fontSize: 12,
-    color: "#988FA8",
-    fontWeight: "600",
-  },
-  phmName: {
-    fontSize: 15,
-    color: "#665A7A",
-    fontWeight: "800",
-    marginTop: 2,
-  },
+  phmLabel: { fontSize: 12, color: "#988FA8", fontWeight: "600" },
+  phmName: { fontSize: 15, color: "#665A7A", fontWeight: "800", marginTop: 2 },
   statsCard: {
     borderRadius: 30,
     padding: 24,
@@ -402,11 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     marginBottom: 14,
   },
-  topBadgeText: {
-    fontSize: 12,
-    color: "#876F99",
-    fontWeight: "700",
-  },
+  topBadgeText: { fontSize: 12, color: "#876F99", fontWeight: "700" },
   babyBadge: {
     width: 78,
     height: 78,
@@ -416,26 +312,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 12,
   },
-  babyIcon: {
-    fontSize: 38,
-  },
-  softLabel: {
-    fontSize: 12,
-    color: "#8F84A3",
-    marginBottom: 4,
-  },
+  babyIcon: { fontSize: 38 },
+  softLabel: { fontSize: 12, color: "#8F84A3", marginBottom: 4 },
   fruitText: {
     fontSize: 17,
     color: "#61586F",
     fontWeight: "700",
     marginBottom: 18,
   },
-  weekRow: {
-    width: "100%",
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 20,
-  },
+  weekRow: { width: "100%", flexDirection: "row", gap: 12, marginBottom: 20 },
   timeCard: {
     flex: 1,
     backgroundColor: "rgba(255,255,255,0.58)",
@@ -443,17 +328,8 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: "center",
   },
-  bigNumber: {
-    fontSize: 34,
-    fontWeight: "800",
-    color: "#625A75",
-  },
-  unitText: {
-    fontSize: 13,
-    color: "#9188A4",
-    fontWeight: "600",
-    marginTop: 2,
-  },
+  bigNumber: { fontSize: 34, fontWeight: "800", color: "#625A75" },
+  unitText: { fontSize: 13, color: "#9188A4", fontWeight: "600", marginTop: 2 },
   progressBarBackground: {
     width: "100%",
     height: 11,
@@ -461,10 +337,7 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     overflow: "hidden",
   },
-  progressBarFill: {
-    height: "100%",
-    borderRadius: 999,
-  },
+  progressBarFill: { height: "100%", borderRadius: 999 },
   progressLabel: {
     fontSize: 12,
     color: "#8E84A2",
@@ -483,13 +356,8 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-  actionWrapper: {
-    width: "48%",
-    marginBottom: 15,
-  },
-  fullWidth: {
-    width: "100%",
-  },
+  actionWrapper: { width: "48%", marginBottom: 15 },
+  fullWidth: { width: "100%" },
   actionCard: {
     minHeight: 112,
     borderRadius: 24,
@@ -509,9 +377,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  actionLabel: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: "#665B77",
-  },
+  actionLabel: { fontSize: 16, fontWeight: "800", color: "#665B77" },
 });
