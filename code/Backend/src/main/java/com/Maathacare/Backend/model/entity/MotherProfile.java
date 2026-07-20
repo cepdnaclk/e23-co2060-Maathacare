@@ -63,6 +63,9 @@ public class MotherProfile {
     @Column(name = "emergency_contact_relationship", length = 50)
     private String emergencyContactRelationship;
 
+    @Column(name = "moh_area", length = 100)
+    private String mohArea;
+
     // --- NEW FIELD ADDED HERE ---
     @Column(name = "push_token")
     private String pushToken;
@@ -142,4 +145,12 @@ public class MotherProfile {
 
     public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
     public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
+
+    public String getMohArea() {
+        return mohArea;
+    }
+
+    public void setMohArea(String mohArea) {
+        this.mohArea = mohArea;
+    }
 }
