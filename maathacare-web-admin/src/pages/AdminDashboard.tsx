@@ -66,7 +66,6 @@ interface RegistrationForm {
 const API_URL = (((import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_API_URL) || 'http://localhost:8080').replace(/\/$/, '');
 const CASELOAD_TARGET = 150;
 
-const DISTRICT_NAMES = LOCATION_DISTRICTS.map((district) => district.name);
 
 const locationKey = (value: string): string =>
   value.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -293,7 +292,6 @@ const maskNic = (nic: string): string => {
 const initials = (name: string): string =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase()).join('') || 'PH';
 
-const cleanCode = (value: string): string => value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 3) || 'XXX';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -310,8 +308,8 @@ export default function AdminDashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [loadError, setLoadError] = useState('');
-  const [mohOptions, setMohOptions] = useState<string[]>([]);
   const [gnOptions, setGnOptions] = useState<string[]>([]);
+  const [loadingGnOptions, setLoadingGnOptions] = useState(false);
   const [showRegistration, setShowRegistration] = useState(false);
   const [form, setForm] = useState<RegistrationForm>({
     fullName: '', nic: '', staffId: '', district: '', mohArea: '', gnDivision: '', email: '', phone: '', password: '',
@@ -432,6 +430,22 @@ export default function AdminDashboard() {
     return mothersByStaff.get(selectedPHM.staffId.toLowerCase()) || [];
   }, [mothersByStaff, selectedPHM]);
 
+
+  const selectedRegistrationDistrict = useMemo(
+    () => LOCATION_DISTRICTS.find((district) => district.name === form.district) || null,
+    [form.district],
+  );
+
+  const availableMohAreas = useMemo(
+    () => selectedRegistrationDistrict ? (MOH_AREAS[selectedRegistrationDistrict.code] || []) : [],
+    [selectedRegistrationDistrict],
+  );
+
+  const selectedRegistrationMohArea = useMemo(
+    () => availableMohAreas.find((area) => area.name === form.mohArea) || null,
+    [availableMohAreas, form.mohArea],
+  );
+
   const districtStats = useMemo<Record<string, DistrictSummary>>(() => {
     const result: Record<string, DistrictSummary> = {};
     const staffDistrictById = new Map<string, string>();
@@ -523,41 +537,49 @@ export default function AdminDashboard() {
     : activeMapSummary.motherCount;
 
   useEffect(() => {
-    if (!form.district) {
-      setMohOptions([]);
-      return;
-    }
-    const endpoints = [
-      `/api/locations/moh-areas?district=${encodeURIComponent(form.district)}`,
-      `/api/locations/moh?district=${encodeURIComponent(form.district)}`,
-    ];
-    void fetchFirstArray(endpoints, ['mohAreas', 'areas'], (item) => text(item) || text(firstValue(asRecord(item), ['name', 'areaName'])))
-      .then((result) => setMohOptions(result.items.filter(Boolean)))
-      .catch(() => setMohOptions([]));
+    setForm((current) => ({ ...current, mohArea: '', gnDivision: '', staffId: '' }));
+    setGnOptions([]);
   }, [form.district]);
 
   useEffect(() => {
+    setForm((current) => ({ ...current, gnDivision: '' }));
+    setGnOptions([]);
+
     if (!form.mohArea) {
-      setGnOptions([]);
+      setLoadingGnOptions(false);
       return;
     }
+
     const endpoints = [
       `/api/locations/gn-divisions?mohArea=${encodeURIComponent(form.mohArea)}`,
       `/api/locations/gn?mohArea=${encodeURIComponent(form.mohArea)}`,
     ];
-    void fetchFirstArray(endpoints, ['gnDivisions', 'divisions'], (item) => text(item) || text(firstValue(asRecord(item), ['name', 'divisionName'])))
-      .then((result) => setGnOptions(result.items.filter(Boolean)))
-      .catch(() => setGnOptions([]));
+
+    setLoadingGnOptions(true);
+    void fetchFirstArray(
+      endpoints,
+      ['gnDivisions', 'divisions'],
+      (item) => text(item) || text(firstValue(asRecord(item), ['name', 'divisionName'])),
+    )
+      .then((result) => setGnOptions(Array.from(new Set(result.items.filter(Boolean))).sort()))
+      .catch(() => setGnOptions([]))
+      .finally(() => setLoadingGnOptions(false));
   }, [form.mohArea]);
 
   useEffect(() => {
-    if (!form.district || !form.mohArea || form.staffId) return;
-    const prefix = `PHM-${cleanCode(form.district)}-${cleanCode(form.mohArea)}-`;
-    const existing = enrichedStaff
-      .filter((person) => person.staffId.startsWith(prefix))
+    if (!selectedRegistrationDistrict || !selectedRegistrationMohArea) {
+      setForm((current) => current.staffId ? { ...current, staffId: '' } : current);
+      return;
+    }
+
+    const prefix = `PHM-${selectedRegistrationDistrict.code}-${selectedRegistrationMohArea.code}-`;
+    const suffixes = enrichedStaff
+      .filter((person) => person.staffId.toUpperCase().startsWith(prefix))
       .map((person) => Number(person.staffId.split('-').at(-1)) || 0);
-    setForm((current) => ({ ...current, staffId: `${prefix}${String(Math.max(0, ...existing) + 1).padStart(3, '0')}` }));
-  }, [enrichedStaff, form.district, form.mohArea, form.staffId]);
+    const nextStaffId = `${prefix}${String(Math.max(0, ...suffixes) + 1).padStart(3, '0')}`;
+
+    setForm((current) => current.staffId === nextStaffId ? current : { ...current, staffId: nextStaffId });
+  }, [enrichedStaff, selectedRegistrationDistrict, selectedRegistrationMohArea]);
 
   const registerPHM = async (event: FormEvent) => {
     event.preventDefault();
@@ -565,17 +587,11 @@ export default function AdminDashboard() {
     try {
       await mutateFirst(REGISTER_ENDPOINTS, 'POST', {
         staffId: form.staffId,
-        fullName: form.fullName,
-        name: form.fullName,
-        nic: form.nic,
-        district: form.district,
+        fullName: form.fullName.trim(),
+        nic: form.nic.trim(),
         mohArea: form.mohArea,
         gnDivision: form.gnDivision,
-        email: form.email,
-        phone: form.phone,
-        phoneNumber: form.phone,
-        role: 'PHM',
-        password: form.password || form.nic,
+        password: form.nic.trim(),
       });
       setForm({ fullName: '', nic: '', staffId: '', district: '', mohArea: '', gnDivision: '', email: '', phone: '', password: '' });
       setShowRegistration(false);
@@ -819,18 +835,48 @@ export default function AdminDashboard() {
 
                 {showRegistration && (
                   <article className="panel registration-panel">
-                    <PanelHeading kicker="NEW PHM ACCOUNT" title="PHM registration" note="Password defaults to NIC when left blank" />
+                    <PanelHeading kicker="NEW PHM ACCOUNT" title="PHM registration" note="Staff ID and initial password are generated automatically" />
                     <form className="registration-form" onSubmit={registerPHM}>
-                      <FormField label="Full name"><input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} /></FormField>
-                      <FormField label="NIC"><input required value={form.nic} onChange={(e) => setForm({ ...form, nic: e.target.value })} /></FormField>
-                      <FormField label="District"><select required value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value, mohArea: '', gnDivision: '', staffId: '' })}><option value="">Select district</option>{DISTRICT_NAMES.map((district) => <option key={district}>{district}</option>)}</select></FormField>
-                      <FormField label="MOH area"><input required list="moh-options" value={form.mohArea} onChange={(e) => setForm({ ...form, mohArea: e.target.value, gnDivision: '', staffId: '' })} placeholder="Type or select MOH area" /><datalist id="moh-options">{mohOptions.map((area) => <option key={area} value={area} />)}</datalist></FormField>
-                      <FormField label="GN division"><input required list="gn-options" value={form.gnDivision} onChange={(e) => setForm({ ...form, gnDivision: e.target.value })} placeholder="Type or select GN division" /><datalist id="gn-options">{gnOptions.map((division) => <option key={division} value={division} />)}</datalist></FormField>
-                      <FormField label="Official staff ID"><input required value={form.staffId} onChange={(e) => setForm({ ...form, staffId: e.target.value.toUpperCase() })} /></FormField>
-                      <FormField label="Email"><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></FormField>
-                      <FormField label="Phone"><input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></FormField>
-                      <FormField label="Initial password"><input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder="Leave blank to use NIC" /></FormField>
-                      <div className="form-submit"><button className="primary-button" disabled={isSaving}>{isSaving ? 'Registering…' : 'Create PHM account'}</button></div>
+                      <FormField label="Full name"><input required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} autoComplete="name" /></FormField>
+                      <FormField label="NIC"><input required value={form.nic} onChange={(e) => setForm({ ...form, nic: e.target.value, password: e.target.value })} placeholder="Enter PHM NIC" /></FormField>
+                      <FormField label="District">
+                        <select required value={form.district} onChange={(e) => setForm({ ...form, district: e.target.value })}>
+                          <option value="">Select district</option>
+                          {LOCATION_DISTRICTS.map((district) => <option key={district.code} value={district.name}>{district.name}</option>)}
+                        </select>
+                      </FormField>
+                      <FormField label="MOH area">
+                        <select required disabled={!selectedRegistrationDistrict} value={form.mohArea} onChange={(e) => setForm({ ...form, mohArea: e.target.value })}>
+                          <option value="">{selectedRegistrationDistrict ? 'Select MOH area' : 'Select district first'}</option>
+                          {availableMohAreas.map((area) => <option key={`${selectedRegistrationDistrict?.code}-${area.code}`} value={area.name}>{area.name}</option>)}
+                        </select>
+                      </FormField>
+                      <FormField label="GN division">
+                        <select required disabled={!form.mohArea || loadingGnOptions || !gnOptions.length} value={form.gnDivision} onChange={(e) => setForm({ ...form, gnDivision: e.target.value })}>
+                          <option value="">
+                            {!form.mohArea
+                              ? 'Select MOH area first'
+                              : loadingGnOptions
+                                ? 'Loading GN divisions…'
+                                : gnOptions.length
+                                  ? 'Select GN division'
+                                  : 'No GN divisions returned'}
+                          </option>
+                          {gnOptions.map((division) => <option key={division} value={division}>{division}</option>)}
+                        </select>
+                        {form.mohArea && !loadingGnOptions && !gnOptions.length && <small className="form-helper error">The GN-division API returned no options for this MOH area.</small>}
+                      </FormField>
+                      <FormField label="Official staff ID">
+                        <input required readOnly value={form.staffId} placeholder="Generated after selecting MOH area" />
+                        <small className="form-helper">Format: PHM-{selectedRegistrationDistrict?.code || 'DIST'}-{selectedRegistrationMohArea?.code || 'MOH'}-XXX</small>
+                      </FormField>
+                      <FormField label="Email (optional)"><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" /></FormField>
+                      <FormField label="Phone (optional)"><input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} autoComplete="tel" /></FormField>
+                      <FormField label="Initial password">
+                        <input type="password" readOnly value={form.password} placeholder="Automatically copied from NIC" />
+                        <small className="form-helper">The initial password is the PHM's NIC.</small>
+                      </FormField>
+                      <div className="form-submit"><button className="primary-button" disabled={isSaving || loadingGnOptions || !form.staffId || !form.gnDivision}>{isSaving ? 'Registering…' : 'Create PHM account'}</button></div>
                     </form>
                   </article>
                 )}

@@ -479,6 +479,30 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   background: rgba(255,255,255,.95);
   box-shadow: 0 0 0 4px rgba(49,138,216,.11), inset 0 1px 0 #fff;
 }
+
+.registration-form input[readonly] {
+  cursor: default;
+  border-color: rgba(57, 127, 190, .22);
+  background: linear-gradient(135deg, rgba(226, 238, 249, .88), rgba(240, 246, 252, .76));
+  color: #315b81;
+  font-weight: 800;
+  letter-spacing: .025em;
+}
+.registration-form select:disabled,
+.registration-form input:disabled {
+  cursor: not-allowed;
+  opacity: .62;
+  background: rgba(231, 238, 246, .7);
+}
+.form-helper {
+  display: block;
+  margin-top: -2px;
+  color: #7f91a6;
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+.form-helper.error { color: #b05d3d; }
 .primary-button {
   min-height: 44px;
   padding: 10px 16px;
