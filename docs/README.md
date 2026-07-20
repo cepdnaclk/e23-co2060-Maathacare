@@ -72,8 +72,10 @@ The Software Designs section of MaathaCare outlines the technical framework used
 The backend logic computes weeks and days from the Last Menstrual Period (LMP)—and the secure JWT-based authentication cycle that manages user sessions. The visual aspect of the software is governed by a User Interface (UI) Design philosophy that prioritizes accessibility and comfort, using a glassmorphic aesthetic with soft pink and purple palettes. By documenting these layers, from the high-level system architecture down to specific component interactions, the project demonstrates a disciplined software engineering process tailored for the maternal healthcare sector.
 
 ## Testing
-
-Testing done on software : detailed + summarized results
+Our QA strategy covers backend reliability and frontend usability across devices:
+* **Unit Testing:** Comprehensive test suites using JUnit and Mockito for Spring Boot service layers (e.g., MotherProfileService transaction workflows).
+* **API Testing:** Endpoint validation via Postman to ensure secure JWT-based access control and correct response payloads.
+* **User Acceptance Testing (UAT):** Simulated workflows validating multi-role registration and real-time SMS reminder delivery triggers.
 
 ## Conclusion
 MaathaCare successfully digitizes the maternal healthcare journey in Sri Lanka, reducing the risk of missed clinics and improving the tracking of high-risk pregnancies. By replacing manual paperwork with a smart digital ecosystem, we provide healthcare workers with actionable insights to save lives.
