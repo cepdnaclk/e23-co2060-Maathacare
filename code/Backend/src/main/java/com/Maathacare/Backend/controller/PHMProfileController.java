@@ -119,18 +119,18 @@ public class PHMProfileController {
             @PathVariable String userId,
             @RequestBody PasswordChangeRequest request) {
         try {
-            // Ensure the logged-in user is the one changing their own password
+            // Authenticated check ensures the PHM can only change their own password
             String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
             if (!authenticatedUserId.equals(userId)) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only change your own password.");
             }
 
-            // Call the service to perform the update
             userService.updatePassword(userId, request.getOldPassword(), request.getNewPassword());
             return ResponseEntity.ok("Password updated successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+
     }
 
 }

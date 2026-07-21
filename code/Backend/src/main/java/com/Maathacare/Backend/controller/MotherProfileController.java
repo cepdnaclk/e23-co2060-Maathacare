@@ -98,7 +98,12 @@ public class MotherProfileController {
     @PutMapping("/change-password/{userId}")
     public ResponseEntity<?> changePassword(@PathVariable String userId, @RequestBody PasswordChangeRequest request) {
         try {
-            // Ensure you have access to UserService here
+            // 🟢 Add this check to ensure the Mother is only changing her own password
+            String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!authenticatedUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only change your own password.");
+            }
+
             userService.updatePassword(userId, request.getOldPassword(), request.getNewPassword());
             return ResponseEntity.ok("Password updated successfully.");
         } catch (RuntimeException e) {

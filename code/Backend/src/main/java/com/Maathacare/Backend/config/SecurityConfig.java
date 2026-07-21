@@ -38,7 +38,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
                         .requestMatchers(
                                 "/api/users/register",
                                 "/api/users/login",
@@ -48,24 +47,27 @@ public class SecurityConfig {
                                 "/api/locations/**"
                         ).permitAll()
 
-                        .requestMatchers(HttpMethod.PUT, "/api/phm/change-password/**").hasRole("PHM")
+                        // 1. Specific Role-based rules MUST come before .authenticated() catch-alls
+                        .requestMatchers(HttpMethod.PUT, "/api/phm/change-password/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/mothers/change-password/**").hasRole("MOTHER")
 
-                        // Administrator web dashboard endpoints.
+                        // 2. Administrator web dashboard endpoints
                         .requestMatchers("/api/users/staff/**").hasRole("ADMIN")
                         .requestMatchers("/api/users/mothers/**").hasRole("ADMIN")
 
-                        // Mother-owned profile endpoints.
+                        // 3. Mother-owned profile endpoints
                         .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
-                        .requestMatchers(HttpMethod.PUT, "/api/mothers/change-password/**").hasRole("MOTHER")
                         .requestMatchers("/api/mothers/upload-profile-picture/**").hasRole("MOTHER")
                         .requestMatchers("/api/mothers/pregnancy-data/**").authenticated()
-
-                        .requestMatchers("/api/appointments/**").authenticated()
-                        .requestMatchers("/api/phm/**").authenticated()
-                        .requestMatchers("/api/visits/**").authenticated()
-                        .requestMatchers("/api/medical-records/**").authenticated()
                         .requestMatchers("/api/mothers/kicks/**").hasRole("MOTHER")
                         .requestMatchers("/api/mothers/symptoms/**").hasRole("MOTHER")
+
+                        // 4. General authenticated endpoints (placed after specific rules)
+                        .requestMatchers("/api/appointments/**").authenticated()
+                        .requestMatchers("/api/phm/**").hasRole("PHM") // Changed from .authenticated() to enforce role-based security
+                        .requestMatchers("/api/visits/**").authenticated()
+                        .requestMatchers("/api/medical-records/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

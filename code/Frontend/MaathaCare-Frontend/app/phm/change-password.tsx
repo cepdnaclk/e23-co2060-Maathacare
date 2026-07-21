@@ -37,48 +37,47 @@ export default function ChangePasswordScreen() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleUpdatePassword = async () => {
-  if (newPassword !== confirmPassword) {
-    Alert.alert("Error", "New passwords do not match.");
-    return;
-  }
-
-  setIsLoading(true);
-  try {
-    // 1. Retrieve stored credentials
-    const token = await AsyncStorage.getItem("userToken");
-    const userId = await AsyncStorage.getItem("userId"); 
-    
-    if (!token || !userId) {
-      Alert.alert("Error", "Session expired. Please log in again.");
+ const handleUpdatePassword = async (event?: any) => {
+    // 1. Validation
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Error", "New passwords do not match.");
       return;
     }
 
-    // 2. Call the backend with Authorization Header
-    await axios.put(`${API_BASE_URL}/api/phm/change-password/${userId}`, {
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-    }, {
-      headers: { Authorization: `Bearer ${token}` } // Critical for 403 resolution
-    });
+    setIsLoading(true);
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const userId = await AsyncStorage.getItem("userId");
+      
+      if (!token || !userId) {
+        Alert.alert("Error", "Session expired.");
+        return;
+      }
 
-    Alert.alert("Success", "Password updated successfully.");
-    router.back();
-    
-  } catch (error: any) {
-    // 3. Robust Logging (Avoids cyclical structure error)
-    if (error.response) {
-      console.log("Status:", error.response.status);
-      console.log("Data:", JSON.stringify(error.response.data));
-      Alert.alert("Error " + error.response.status, 
-        typeof error.response.data === 'string' ? error.response.data : "Request failed.");
-    } else {
-      Alert.alert("Update Failed", "Check your internet connection.");
+      await axios.put(
+      `${API_BASE_URL}/api/phm/change-password/${userId}`,
+      { 
+        // Ensure these keys exactly match the fields in PasswordChangeRequest.java
+        oldPassword: oldPassword, 
+        newPassword: newPassword 
+      },
+      {
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json' 
+        }
+      }
+    );
+
+      Alert.alert("Success", "Password updated successfully.");
+      router.back();
+    } catch (error: any) {
+      console.error("Change Password Error:", error.response?.data || error.message);
+      Alert.alert("Error", typeof error.response?.data === 'string' ? error.response.data : "Request failed.");
+    } finally {
+      setIsLoading(false);
     }
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   return (
     <KeyboardAvoidingView
@@ -142,7 +141,7 @@ export default function ChangePasswordScreen() {
 
           <TouchableOpacity
             style={styles.saveButton}
-            onPress={handleUpdatePassword}
+            onPress={() => handleUpdatePassword()}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -164,10 +163,11 @@ const InputField = ({ label, icon: Icon, isPassword, show, setShow, ...props }: 
     <View style={styles.inputWrapper}>
       <Icon color={COLORS.textMuted} size={20} style={{ marginRight: 12 }} />
       <TextInput
-        style={styles.input}
-        placeholder={`Enter ${label.toLowerCase()}`}
-        secureTextEntry={isPassword && !show}
-        {...props}
+          style={styles.input}
+          placeholder={`Enter ${label.toLowerCase()}`}
+          secureTextEntry={isPassword && !show}
+          value={props.value}
+          onChangeText={props.onChange}
       />
       {isPassword && (
         <TouchableOpacity onPress={() => setShow(!show)}>
