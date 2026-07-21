@@ -26,9 +26,11 @@ import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
+import com.Maathacare.Backend.dto.PasswordChangeRequest;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/users")
@@ -252,4 +254,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving push token: " + e.getMessage());
         }
     }
+
 }

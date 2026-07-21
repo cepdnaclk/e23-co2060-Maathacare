@@ -48,12 +48,15 @@ public class SecurityConfig {
                                 "/api/locations/**"
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.PUT, "/api/phm/change-password/**").hasRole("PHM")
+
                         // Administrator web dashboard endpoints.
                         .requestMatchers("/api/users/staff/**").hasRole("ADMIN")
                         .requestMatchers("/api/users/mothers/**").hasRole("ADMIN")
 
                         // Mother-owned profile endpoints.
                         .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
+                        .requestMatchers(HttpMethod.PUT, "/api/mothers/change-password/**").hasRole("MOTHER")
                         .requestMatchers("/api/mothers/upload-profile-picture/**").hasRole("MOTHER")
                         .requestMatchers("/api/mothers/pregnancy-data/**").authenticated()
 
