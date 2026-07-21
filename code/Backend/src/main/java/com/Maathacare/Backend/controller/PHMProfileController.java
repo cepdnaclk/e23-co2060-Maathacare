@@ -8,6 +8,8 @@ import com.Maathacare.Backend.service.PHMProfileService;
 import org.springframework.beans.factory.annotation.Autowired; // 🟢 ADD THIS
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.Maathacare.Backend.service.StorageService;
 
 import java.util.List;
 
@@ -16,9 +18,11 @@ import java.util.List;
 public class PHMProfileController {
 
     private final PHMProfileService phmProfileService;
+    private final StorageService storageService;
 
-    public PHMProfileController(PHMProfileService phmProfileService) {
+    public PHMProfileController(PHMProfileService phmProfileService, StorageService storageService) {
         this.phmProfileService = phmProfileService;
+        this.storageService = storageService;
     }
 
     /**
@@ -53,6 +57,23 @@ public class PHMProfileController {
         // 🟢 Matching the method name in your Service (getMyProfile)
         PHMProfile profile = phmProfileService.getMyProfile();
         return ResponseEntity.ok(profile);
+    }
+
+    @PutMapping("/update-profile-picture")
+    public ResponseEntity<?> updateProfilePicture(@RequestParam("file") MultipartFile file) {
+        try {
+            PHMProfile profile = phmProfileService.getMyProfile();
+            String publicUrl = storageService.uploadAvatar(file, "phm", profile.getUser().getUserId());
+            profile.setProfilePictureUrl(publicUrl);
+            phmProfileService.save(profile);
+            return ResponseEntity.ok(java.util.Map.of(
+                    "message", "Profile picture updated successfully",
+                    "profilePictureUrl", publicUrl));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        } catch (Exception exception) {
+            return ResponseEntity.internalServerError().body("Failed to upload profile picture.");
+        }
     }
     // Inside PHMProfileController.java
     @Autowired

@@ -112,7 +112,9 @@ export default function PHMProfileScreen() {
       if (res.ok) {
         const data = await res.json();
         setPhmInfo(data);
-        if (data.profilePictureUrl) setProfileImage(data.profilePictureUrl);
+        if (data.profilePictureUrl) {
+          setProfileImage(`${data.profilePictureUrl}?v=${Date.now()}`);
+        }
       }
     } catch (error) {
       Alert.alert("Error", "Could not load profile.");
@@ -151,7 +153,7 @@ export default function PHMProfileScreen() {
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const imageUri = result.assets[0].uri;
-      setProfileImage(imageUri); // Update UI Instantly
+      setProfileImage(imageUri); // Update UI while upload is in progress
 
       try {
         const token = await AsyncStorage.getItem("userToken");
@@ -160,20 +162,22 @@ export default function PHMProfileScreen() {
         const formData = new FormData();
         formData.append("file", {
           uri: imageUri,
-          name: "profile.jpg",
-          type: "image/jpeg",
+          name: result.assets[0].fileName || "profile.jpg",
+          type: result.assets[0].mimeType || "image/jpeg",
         } as any);
 
-        await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
+        const response = await fetch(`${API_BASE_URL}/api/phm/update-profile-picture`, {
           method: "PUT",
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
+        if (!response.ok) throw new Error(await response.text());
+        const data = await response.json();
+        setProfileImage(`${data.profilePictureUrl}?v=${Date.now()}`);
+        Alert.alert("Success", "Profile photo updated successfully!");
       } catch (err) {
-        console.log("Upload background sync error:", err);
+        console.log("Profile picture upload error:", err);
+        Alert.alert("Upload failed", "Could not save the profile picture.");
       }
     }
   };

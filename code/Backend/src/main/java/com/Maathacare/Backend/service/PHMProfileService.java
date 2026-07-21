@@ -59,6 +59,10 @@ public class PHMProfileService {
                 .orElseGet(() -> phmRepo.findByUserUserId(identifier)
                         .orElseThrow(() -> new RuntimeException("PHM Profile not found for: " + identifier)));
     }
+
+    public PHMProfile save(PHMProfile profile) {
+        return phmRepo.save(profile);
+    }
     /**
      * 4. Edit the PHM profile
      */

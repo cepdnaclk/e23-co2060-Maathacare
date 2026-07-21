@@ -48,9 +48,19 @@ A HTML template integrated with the given GitHub repository templates, based on 
 
 MaathaCare is a smart digital healthcare ecosystem designed to modernize maternal support services within Sri Lanka’s public health sector. While the current healthcare framework is fundamentally robust, it is heavily reliant on manual, paper-based record-keeping. MaathaCare bridges this technological gap by digitizing the tracking of clinic schedules, supplement adherence, and high-risk pregnancy indicators, ensuring no mother is left behind due to administrative inefficiencies.
 
+* 📁 **Digital Health Locker:** Secure, paperless medical report and document management for mothers.
+
+* 📅 **Smart Clinic Scheduling:** Automated appointments and automated SMS supplement reminders triggered directly by PHMs.
+
+* 📈 **Pregnancy Milestones Timeline:** An interactive week-by-week tracker complete with baby growth details and instructional videos.
+
+* 🌍 **Inclusivity First:** Complete multilingual translation support (English, Sinhala, Tamil) to eliminate language barriers.
+
 ## Solution Architecture
 
 MaathaCare follows a modern **three-tier architecture** to ensure scalability and security. The system connects pregnant mothers and healthcare professionals (midwives/doctors) through a centralized cloud-based backend.
+
+[🔗 View System Architecture Diagram](./architecture-diagram.png)
 
 ### Key Components:
 * **Frontend:** A responsive web application built using [React.js] for healthcare workers and a mobile-friendly interface for mothers.
@@ -64,8 +74,10 @@ The Software Designs section of MaathaCare outlines the technical framework used
 The backend logic computes weeks and days from the Last Menstrual Period (LMP)—and the secure JWT-based authentication cycle that manages user sessions. The visual aspect of the software is governed by a User Interface (UI) Design philosophy that prioritizes accessibility and comfort, using a glassmorphic aesthetic with soft pink and purple palettes. By documenting these layers, from the high-level system architecture down to specific component interactions, the project demonstrates a disciplined software engineering process tailored for the maternal healthcare sector.
 
 ## Testing
-
-Testing done on software : detailed + summarized results
+Our QA strategy covers backend reliability and frontend usability across devices:
+* **Unit Testing:** Comprehensive test suites using JUnit and Mockito for Spring Boot service layers (e.g., MotherProfileService transaction workflows).
+* **API Testing:** Endpoint validation via Postman to ensure secure JWT-based access control and correct response payloads.
+* **User Acceptance Testing (UAT):** Simulated workflows validating multi-role registration and real-time SMS reminder delivery triggers.
 
 ## Conclusion
 MaathaCare successfully digitizes the maternal healthcare journey in Sri Lanka, reducing the risk of missed clinics and improving the tracking of high-risk pregnancies. By replacing manual paperwork with a smart digital ecosystem, we provide healthcare workers with actionable insights to save lives.

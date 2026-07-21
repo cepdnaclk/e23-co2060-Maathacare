@@ -1,20 +1,20 @@
 package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.MotherProfileRequest;
-import com.Maathacare.Backend.dto.MotherProfileResponse;
-import com.Maathacare.Backend.model.entity.KickRecord;
-import com.Maathacare.Backend.model.entity.MotherProfile;
-import com.Maathacare.Backend.model.entity.SymptomRecord;
+import com.Maathacare.Backend.model.entity.MotherProfile; // Correct entity
 import com.Maathacare.Backend.repository.SymptomRepository;
+import com.Maathacare.Backend.repository.MotherProfileRepository; // Correct repository
 import com.Maathacare.Backend.service.MotherProfileService;
+import com.Maathacare.Backend.service.StorageService; // Use your existing StorageService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.Maathacare.Backend.dto.KickCountRequest;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
 import java.util.Map;
+import java.util.HashMap;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/api/mothers")
@@ -27,132 +27,69 @@ public class MotherProfileController {
     @Autowired
     private SymptomRepository symptomRepository;
 
-    @PostMapping("/profile")
-    public ResponseEntity<?> createProfile(@RequestBody MotherProfileRequest request) {
-        try {
-            MotherProfile newProfile = motherProfileService.createMotherProfile(request);
-            return ResponseEntity.ok("Success! Mother Profile created with ID: " + newProfile.getId());
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+    @Autowired
+    private MotherProfileRepository motherProfileRepository; // Use your actual repository
 
-    @PostMapping("/kicks")
-    public ResponseEntity<?> saveKickCount(@RequestBody KickCountRequest request) {
-        try {
-            // This links the kicks to the user (e.g., Sayuri) in your PostgreSQL DB
-            motherProfileService.saveDailyKicks(request);
-            return ResponseEntity.ok("Daily kicks recorded successfully!");
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Failed to save kicks: " + e.getMessage());
-        }
-    }
+    @Autowired
+    private StorageService storageService; // Use the service you already have
 
-    @GetMapping("/kicks")
-    public ResponseEntity<?> getKickHistory(@RequestParam String userId) {
+    // ... (Keep your existing createProfile, saveKickCount, getKickHistory methods) ...
+
+    @PostMapping("/upload-profile-picture/{userId}")
+    public ResponseEntity<?> uploadProfilePicture(
+            @PathVariable String userId,
+            @RequestParam("file") MultipartFile file) {
+
         try {
-            // Pass userId directly as a String now
-            List<KickRecord> history = motherProfileService.getKickHistoryByMotherId(userId);
-            return ResponseEntity.ok(history);
+            String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!authenticatedUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own profile photo.");
+            }
+
+            String publicUrl = storageService.uploadAvatar(file, "mothers", userId);
+
+            // 2. Fetch the profile using your Repository
+            MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+            // 3. Update the URL
+            profile.setProfilePictureUrl(publicUrl);
+            motherProfileRepository.save(profile);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Profile picture updated successfully");
+            response.put("profilePictureUrl", publicUrl);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Failed to retrieve kick history: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to upload image: " + e.getMessage());
         }
     }
 
     @GetMapping("/profile/{userId}")
-    public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {
+    public ResponseEntity<?> getProfile(@PathVariable String userId) {
         try {
-            // 🟢 WE CHANGED THIS LINE: It now correctly catches the 'MotherProfileResponse'
-            // directly from the service, matching the new upgraded logic!
-            MotherProfileResponse response = motherProfileService.getProfileByUserId(userId);
-
-            // And sends it straight back to React Native
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Profile not found: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/phm/{userId}/patients")
-    public ResponseEntity<?> getPhmPatients(@PathVariable String userId) {
-        try {
-            List<MotherProfileResponse> patients = motherProfileService.getPatientsForPhm(userId);
-            return ResponseEntity.ok(patients);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    // Helper class to catch the JSON data sent from React Native
-    public static class SymptomDataRequest {
-        private String userId;
-        private List<String> symptoms;
-        private String date;
-
-        public String getUserId() { return userId; }
-        public void setUserId(String userId) { this.userId = userId; }
-        public List<String> getSymptoms() { return symptoms; }
-        public void setSymptoms(List<String> symptoms) { this.symptoms = symptoms; }
-        public String getDate() { return date; }
-        public void setDate(String date) { this.date = date; }
-    }
-
-    @PostMapping("/symptoms")
-    public ResponseEntity<?> saveSymptoms(@RequestBody SymptomDataRequest request) {
-        try {
-            SymptomRecord record = new SymptomRecord();
-            record.setUserId(request.getUserId());
-            record.setSymptoms(request.getSymptoms());
-            record.setTimestamp(LocalDateTime.now());
-
-            // 🌟 REMOVED the LogManager and the null bug here! Uses the real repository now.
-            symptomRepository.save(record);
-
-            System.out.println("DEBUG: Saved symptoms for user: " + request.getUserId());
-            return ResponseEntity.ok("Symptoms saved successfully!");
-        } catch (Exception e) {
-            System.out.println("ERROR: Failed to save symptoms: " + e.getMessage());
-            return ResponseEntity.internalServerError().body("Error saving symptoms: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/symptoms")
-    public ResponseEntity<?> getSymptomHistory(@RequestParam String userId) {
-        try {
-            // 🌟 REMOVED the local null bug here too! Uses the connected repository.
-            List<SymptomRecord> history = symptomRepository.findByUserIdOrderByTimestampDesc(userId);
-            System.out.println("DEBUG: Retrieved " + history.size() + " symptom records for user: " + userId);
-
-            return ResponseEntity.ok(history);
-        } catch (Exception e) {
-            System.out.println("ERROR: Failed to retrieve symptoms: " + e.getMessage());
-            return ResponseEntity.internalServerError().body("Error fetching history: " + e.getMessage());
+            String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!authenticatedUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view your own profile.");
+            }
+            return ResponseEntity.ok(motherProfileService.getProfileByUserId(userId));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         }
     }
 
     @PutMapping("/profile/{userId}")
-    public ResponseEntity<?> updateMotherProfile(@PathVariable String userId, @RequestBody MotherProfileRequest request) {
+    public ResponseEntity<?> updateProfile(@PathVariable String userId, @RequestBody MotherProfileRequest request) {
         try {
-            MotherProfileResponse updatedProfile = motherProfileService.updateMotherProfile(userId, request);
-            return ResponseEntity.ok(updatedProfile);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("Failed to update profile: " + e.getMessage());
-        }
-    }
-
-    // --- NEW PUSH TOKEN UPDATE ENDPOINT ADDED HERE ---
-    @PutMapping("/{userId}/push-token")
-    public ResponseEntity<?> updatePushToken(@PathVariable String userId, @RequestBody Map<String, String> payload) {
-        try {
-            String pushToken = payload.get("pushToken");
-            if (pushToken == null || pushToken.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body("Push token cannot be empty");
+            String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!authenticatedUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own profile.");
             }
-
-            motherProfileService.updatePushTokenByUserId(userId, pushToken);
-            return ResponseEntity.ok("Push token updated successfully!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Failed to update push token: " + e.getMessage());
+            return ResponseEntity.ok(motherProfileService.updateMotherProfile(userId, request));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
 }

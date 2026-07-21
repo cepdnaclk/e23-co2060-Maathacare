@@ -122,13 +122,36 @@ public class UserController {
     // ----------------------------------------------------
     @PostMapping("/staff/login")
     public ResponseEntity<?> staffLogin(@RequestBody AuthRequest request) {
-        User user = userRepository.findByStaffId(request.getStaffId()).orElse(null);
-        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff ID not found.");
-        if (user.getRole() == Role.MOTHER) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied.");
+        if (request == null
+                || request.getStaffId() == null
+                || request.getStaffId().trim().isEmpty()
+                || request.getPassword() == null
+                || request.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("Staff ID and password are required.");
+        }
+
+        String staffId = request.getStaffId().trim();
+        User user = userRepository.findByStaffId(staffId).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff ID not found.");
+        }
+
+        if (user.getRole() == Role.MOTHER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+        }
+
+        if (Boolean.FALSE.equals(user.getActive())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This staff account is inactive.");
+        }
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
         }
-        return ResponseEntity.ok(new AuthResponse(jwtService.generateToken(user), user.getRole().name()));
+
+        return ResponseEntity.ok(
+                new AuthResponse(jwtService.generateToken(user), user.getRole().name())
+        );
     }
 
 

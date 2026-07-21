@@ -8,12 +8,12 @@ import com.Maathacare.Backend.repository.MotherProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import com.Maathacare.Backend.dto.KickCountRequest;
-import com.Maathacare.Backend.model.entity.KickRecord;
 import com.Maathacare.Backend.repository.KickRepository;
 import java.time.LocalDateTime;
 import com.Maathacare.Backend.model.entity.PHMProfile;
 import com.Maathacare.Backend.repository.PHMProfileRepository;
 import org.springframework.transaction.annotation.Transactional;
+import com.Maathacare.Backend.model.entity.KickRecord;
 
 import java.util.Optional;
 import java.util.List;
@@ -78,8 +78,6 @@ public class MotherProfileService {
         if (request.getAddress() != null) profile.setAddress(request.getAddress());
         if (request.getChronicDiseaseStatus() != null) profile.setChronicDiseaseStatus(request.getChronicDiseaseStatus());
         if (request.getResidentialDivision() != null) profile.setResidentialDivision(request.getResidentialDivision());
-        if (request.getDistrict() != null) profile.setDistrict(request.getDistrict());
-        if (request.getProvince() != null) profile.setProvince(request.getProvince());
         if (request.getEmergencyContactName() != null) profile.setEmergencyContactName(request.getEmergencyContactName());
         if (request.getEmergencyContactRelationship() != null) profile.setEmergencyContactRelationship(request.getEmergencyContactRelationship());
 
@@ -97,6 +95,9 @@ public class MotherProfileService {
         response.setProvince(savedProfile.getProvince());
         response.setEmergencyContactName(savedProfile.getEmergencyContactName());
         response.setEmergencyContactRelationship(savedProfile.getEmergencyContactRelationship());
+        response.setProfilePictureUrl(savedProfile.getProfilePictureUrl());
+        response.setMohArea(savedProfile.getResidentialDivision());
+        response.setGnDivision(savedProfile.getGnDivision());
 
         if (savedProfile.getPhmProfile() != null) {
             response.setPhmName(savedProfile.getPhmProfile().getFullName());
@@ -125,6 +126,9 @@ public class MotherProfileService {
         response.setProvince(profile.getProvince());
         response.setEmergencyContactName(profile.getEmergencyContactName());
         response.setEmergencyContactRelationship(profile.getEmergencyContactRelationship());
+        response.setProfilePictureUrl(profile.getProfilePictureUrl());
+        response.setMohArea(profile.getResidentialDivision());
+        response.setGnDivision(profile.getGnDivision());
 
         if (profile.getPhmProfile() != null) {
             response.setPhmName(profile.getPhmProfile().getFullName());
@@ -188,6 +192,6 @@ public class MotherProfileService {
         MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Mother profile not found"));
 
-        return kickRepository.findByMotherProfileIdOrderByTimestampAsc(profile.getId());
+        return kickRepository.findByMotherProfile_IdOrderByTimestampAsc(profile.getId());
     }
 }
