@@ -26,6 +26,10 @@ import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
+import com.Maathacare.Backend.dto.PasswordChangeRequest;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -201,39 +205,17 @@ public class UserController {
         return ResponseEntity.ok("Test Midwife and Profile Created! Assigned to GN Division: Borella North");
     }
 
-
     // ----------------------------------------------------
-    // 🔐 SECURITY ENDPOINTS
+    // 📱 PUSH NOTIFICATION ENDPOINTS
     // ----------------------------------------------------
-    @CrossOrigin(origins = "*")
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
+    @PutMapping("/{userId}/push-token")
+    public ResponseEntity<?> updatePushToken(@PathVariable String userId, @RequestParam String token) {
         try {
-            String userId = request.get("userId");
-            String oldPassword = request.get("oldPassword");
-            String newPassword = request.get("newPassword");
-
-            // Find the user by either Staff ID or Phone Number
-            User user = userRepository.findByUserId(userId)
-                    .orElseGet(() -> userRepository.findByStaffId(userId)
-                            .orElse(null));
-
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-            }
-
-            // Verify the old password matches what is in the database
-            if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect current password.");
-            }
-
-            // Encrypt and save the new password
-            user.setPasswordHash(passwordEncoder.encode(newPassword));
-            userRepository.save(user);
-
-            return ResponseEntity.ok("Password successfully updated!");
+            userService.updatePushToken(userId, token);
+            return ResponseEntity.ok("Push token updated successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating password: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error saving push token: " + e.getMessage());
         }
     }
+
 }

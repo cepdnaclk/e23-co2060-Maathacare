@@ -13,7 +13,7 @@ public class KickRecord {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "mother_profile_id")
+    @JoinColumn(name = "mother_id")
     private MotherProfile motherProfile;
 
     private int count;
