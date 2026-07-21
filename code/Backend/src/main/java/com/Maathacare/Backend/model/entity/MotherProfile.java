@@ -45,11 +45,23 @@ public class MotherProfile {
     @Column(name = "last_menstrual_period")
     private LocalDate lastMenstrualPeriod;
 
+    @Column(name = "gn_division", length = 100)
+    private String gnDivision;
+
+    @Column(name = "residential_division")
+    private String residentialDivision;
+
     @Column(name = "district", length = 50)
     private String district;
 
     @Column(name = "province", length = 50)
     private String province;
+
+    @Column(name = "emergency_contact_name", length = 100)
+    private String emergencyContactName;
+
+    @Column(name = "emergency_contact_relationship", length = 50)
+    private String emergencyContactRelationship;
 
 
     @CreationTimestamp
@@ -59,6 +71,10 @@ public class MotherProfile {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
+
+    @Column(name = "profile_picture_url")
+    private String profilePictureUrl;
+
 
 
     public String getId() { return id; }
@@ -95,8 +111,8 @@ public class MotherProfile {
         return lastMenstrualPeriod;
     }
 
-    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
-        this.lastMenstrualPeriod = LastMenstrualPeriod;
+    public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) {
+        this.lastMenstrualPeriod = lastMenstrualPeriod;
     }
 
     public ZonedDateTime getCreatedAt() { return createdAt; }
@@ -105,9 +121,24 @@ public class MotherProfile {
     public ZonedDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
 
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
+
+    public String getResidentialDivision() { return residentialDivision; }
+    public void setResidentialDivision(String residentialDivision) { this.residentialDivision = residentialDivision; }
+
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getEmergencyContactName() { return emergencyContactName; }
+    public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
+
+    public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
+    public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
 }

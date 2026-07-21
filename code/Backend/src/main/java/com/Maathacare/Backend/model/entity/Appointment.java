@@ -1,49 +1,58 @@
 package com.Maathacare.Backend.model.entity;
 
+import com.Maathacare.Backend.model.enums.AppointmentStatus;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "appointments")
 public class Appointment {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // Specifically for String IDs
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "mother_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mother_profile_id", nullable = true)
     private MotherProfile mother;
 
-    @ManyToOne
-    @JoinColumn(name = "phm_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "phm_profile_id", nullable = true)
     private PHMProfile phm;
 
-    private LocalDateTime appointmentDate;
-    private String location;
-    private String status;
+    @Column(name = "appointment_date", nullable = false)
+    private ZonedDateTime appointmentDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AppointmentStatus status;
+
+    @Column(columnDefinition = "TEXT")
     private String remarks;
 
-    // --- Getters and Setters ---
+    @Column(length = 100)
+    private String location; // e.g., "Home Visit" or "Clinic"
 
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private ZonedDateTime createdAt;
+
+    // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-
     public MotherProfile getMother() { return mother; }
     public void setMother(MotherProfile mother) { this.mother = mother; }
-
     public PHMProfile getPhm() { return phm; }
     public void setPhm(PHMProfile phm) { this.phm = phm; }
-
-    public LocalDateTime getAppointmentDate() { return appointmentDate; }
-    public void setAppointmentDate(LocalDateTime appointmentDate) { this.appointmentDate = appointmentDate; }
-
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
+    public ZonedDateTime getAppointmentDate() { return appointmentDate; }
+    public void setAppointmentDate(ZonedDateTime appointmentDate) { this.appointmentDate = appointmentDate; }
+    public AppointmentStatus getStatus() { return status; }
+    public void setStatus(AppointmentStatus status) { this.status = status; }
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+    public ZonedDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
 }

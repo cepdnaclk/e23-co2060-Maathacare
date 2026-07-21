@@ -1,43 +1,95 @@
 package com.Maathacare.Backend.controller;
 
 import com.Maathacare.Backend.dto.MotherProfileRequest;
-import com.Maathacare.Backend.dto.MotherProfileResponse;
-import com.Maathacare.Backend.model.entity.MotherProfile;
+import com.Maathacare.Backend.model.entity.MotherProfile; // Correct entity
+import com.Maathacare.Backend.repository.SymptomRepository;
+import com.Maathacare.Backend.repository.MotherProfileRepository; // Correct repository
 import com.Maathacare.Backend.service.MotherProfileService;
+import com.Maathacare.Backend.service.StorageService; // Use your existing StorageService
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.HttpStatus;
+import java.util.Map;
+import java.util.HashMap;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/api/mothers")
+@CrossOrigin(origins = "*")
 public class MotherProfileController {
 
-    private final MotherProfileService motherProfileService;
+    @Autowired
+    private MotherProfileService motherProfileService;
 
-    public MotherProfileController(MotherProfileService motherProfileService) {
-        this.motherProfileService = motherProfileService;
-    }
+    @Autowired
+    private SymptomRepository symptomRepository;
 
-    @PostMapping("/profile")
-    public ResponseEntity<?> createProfile(@RequestBody MotherProfileRequest request) {
+    @Autowired
+    private MotherProfileRepository motherProfileRepository; // Use your actual repository
+
+    @Autowired
+    private StorageService storageService; // Use the service you already have
+
+    // ... (Keep your existing createProfile, saveKickCount, getKickHistory methods) ...
+
+    @PostMapping("/upload-profile-picture/{userId}")
+    public ResponseEntity<?> uploadProfilePicture(
+            @PathVariable String userId,
+            @RequestParam("file") MultipartFile file) {
+
         try {
-            MotherProfile newProfile = motherProfileService.createMotherProfile(request);
-            return ResponseEntity.ok("Success! Mother Profile created with ID: " + newProfile.getId());
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!authenticatedUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own profile photo.");
+            }
+
+            String publicUrl = storageService.uploadAvatar(file, "mothers", userId);
+
+            // 2. Fetch the profile using your Repository
+            MotherProfile profile = motherProfileRepository.findByUserUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("Profile not found"));
+
+            // 3. Update the URL
+            profile.setProfilePictureUrl(publicUrl);
+            motherProfileRepository.save(profile);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Profile picture updated successfully");
+            response.put("profilePictureUrl", publicUrl);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to upload image: " + e.getMessage());
         }
     }
 
     @GetMapping("/profile/{userId}")
-    public ResponseEntity<?> getMotherProfile(@PathVariable String userId) {
+    public ResponseEntity<?> getProfile(@PathVariable String userId) {
         try {
-            // 🟢 WE CHANGED THIS LINE: It now correctly catches the 'MotherProfileResponse'
-            // directly from the service, matching the new upgraded logic!
-            MotherProfileResponse response = motherProfileService.getProfileByUserId(userId);
+            String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!authenticatedUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only view your own profile.");
+            }
+            return ResponseEntity.ok(motherProfileService.getProfileByUserId(userId));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+        }
+    }
 
-            // And sends it straight back to React Native
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(404).body("Profile not found: " + e.getMessage());
+    @PutMapping("/profile/{userId}")
+    public ResponseEntity<?> updateProfile(@PathVariable String userId, @RequestBody MotherProfileRequest request) {
+        try {
+            String authenticatedUserId = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (!authenticatedUserId.equals(userId)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You can only update your own profile.");
+            }
+            return ResponseEntity.ok(motherProfileService.updateMotherProfile(userId, request));
+        } catch (RuntimeException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
 }

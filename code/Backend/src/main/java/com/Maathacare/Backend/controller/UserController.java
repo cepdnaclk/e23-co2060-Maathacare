@@ -1,9 +1,21 @@
 package com.Maathacare.Backend.controller;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.Maathacare.Backend.dto.AuthRequest;
 import com.Maathacare.Backend.dto.AuthResponse;
-import com.Maathacare.Backend.dto.StaffRegistrationRequest;
-import com.Maathacare.Backend.dto.StaffResponse;
 import com.Maathacare.Backend.dto.UserRegistrationRequest;
 import com.Maathacare.Backend.model.entity.MotherProfile;
 import com.Maathacare.Backend.model.entity.PHMProfile;
@@ -14,15 +26,6 @@ import com.Maathacare.Backend.repository.PHMProfileRepository;
 import com.Maathacare.Backend.repository.UserRepository;
 import com.Maathacare.Backend.security.JwtService;
 import com.Maathacare.Backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -58,7 +61,7 @@ public class UserController {
             }
 
             User newUser = new User();
-            newUser.setUserId(request.getPhoneNumber());
+            newUser.setUserId(request.getPhoneNumber().trim());
             newUser.setPasswordHash(passwordEncoder.encode(request.getPassword()));
             newUser.setRole(Role.MOTHER);
             newUser.setActive(true);
@@ -76,19 +79,35 @@ public class UserController {
             profile.setLastMenstrualPeriod(request.getLastMenstrualPeriod());
             profile.setDistrict(request.getDistrict());
             profile.setProvince(request.getProvince());
+            profile.setResidentialDivision(request.getResidentialDivision());
+
+            // 🟢 NEW: Save the GN Division to the Mother's Profile
+            profile.setGnDivision(request.getGnDivision());
+
+            // 🟢 NEW: Assign PHM based on GN Division instead of MOH Area
+            if (request.getGnDivision() != null && !request.getGnDivision().trim().isEmpty()) {
+                Optional<PHMProfile> assignedPhm = phmProfileRepository.findByGnDivision(request.getGnDivision().trim());
+
+                if (assignedPhm.isPresent()) {
+                    profile.setPhmProfile(assignedPhm.get()); // Link the PHM if found
+                }
+            }
 
             motherProfileRepository.save(profile);
-
             return ResponseEntity.status(HttpStatus.CREATED).body("Mother Account and Profile created!");
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
 
+    // ----------------------------------------------------
+    // UPDATED: MOTHER LOGIN ENDPOINT
+    // ----------------------------------------------------
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> requestData) {
         try {
-            String phone = requestData.get("phoneNumber");
+            String phone = requestData.get("phoneNumber").trim();
             String password = requestData.get("password");
             return ResponseEntity.ok(userService.loginUser(phone, password));
         } catch (RuntimeException e) {
@@ -97,89 +116,42 @@ public class UserController {
     }
 
     // ----------------------------------------------------
-    // 👩‍⚕️ STAFF MANAGEMENT ENDPOINTS
+    // 👩‍⚕️ STAFF LOGIN ENDPOINT
     // ----------------------------------------------------
-    @PostMapping("/staff/register")
-    public ResponseEntity<?> registerStaff(@RequestBody StaffRegistrationRequest request) {
-        try {
-            if (userRepository.findByStaffId(request.getStaffId()).isPresent()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Staff ID already in use.");
-            }
-
-            User newStaff = new User();
-            newStaff.setUserId(request.getNic());
-            newStaff.setStaffId(request.getStaffId());
-            newStaff.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-            newStaff.setRole(Role.PHM);
-            newStaff.setActive(true);
-            User savedUser = userRepository.save(newStaff);
-
-            PHMProfile profile = new PHMProfile();
-            profile.setUser(savedUser);
-            profile.setFullName(request.getFullName());
-            profile.setRegistrationNumber(request.getStaffId());
-            profile.setMohArea(request.getMohArea()); // Includes MOH Area
-            phmProfileRepository.save(profile);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("Staff registered: " + request.getFullName());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
-        }
-    }
-
     @PostMapping("/staff/login")
     public ResponseEntity<?> staffLogin(@RequestBody AuthRequest request) {
-        User user = userRepository.findByStaffId(request.getStaffId()).orElse(null);
-        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff ID not found.");
-        if (user.getRole() == Role.MOTHER) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access Denied.");
+        if (request == null
+                || request.getStaffId() == null
+                || request.getStaffId().trim().isEmpty()
+                || request.getPassword() == null
+                || request.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("Staff ID and password are required.");
+        }
+
+        String staffId = request.getStaffId().trim();
+        User user = userRepository.findByStaffId(staffId).orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff ID not found.");
+        }
+
+        if (user.getRole() == Role.MOTHER) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+        }
+
+        if (Boolean.FALSE.equals(user.getActive())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("This staff account is inactive.");
+        }
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
         }
-        return ResponseEntity.ok(new AuthResponse(jwtService.generateToken(user), user.getRole().name()));
+
+        return ResponseEntity.ok(
+                new AuthResponse(jwtService.generateToken(user), user.getRole().name())
+        );
     }
 
-    @GetMapping("/staff/all")
-    public ResponseEntity<?> getAllStaff() {
-        try {
-            List<PHMProfile> profiles = phmProfileRepository.findAll();
-            List<StaffResponse> staffList = new ArrayList<>();
-
-            for (PHMProfile profile : profiles) {
-                StaffResponse dto = new StaffResponse();
-                dto.setFullName(profile.getFullName());
-                dto.setStaffId(profile.getRegistrationNumber());
-                dto.setMohArea(profile.getMohArea());
-                if (profile.getUser() != null) {
-                    dto.setNic(profile.getUser().getUserId());
-                }
-                staffList.add(dto);
-            }
-            return ResponseEntity.ok(staffList);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching staff list: " + e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/staff/delete/{staffId}")
-    public ResponseEntity<?> deleteStaff(@PathVariable String staffId) {
-        try {
-            User user = userRepository.findByStaffId(staffId).orElse(null);
-            if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Staff member not found.");
-
-            List<PHMProfile> allProfiles = phmProfileRepository.findAll();
-            for (PHMProfile profile : allProfiles) {
-                if (staffId.equals(profile.getRegistrationNumber())) {
-                    phmProfileRepository.delete(profile);
-                    break;
-                }
-            }
-
-            userRepository.delete(user);
-            return ResponseEntity.ok("Staff member removed successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting staff: " + e.getMessage());
-        }
-    }
 
     // ----------------------------------------------------
     // ⚙️ SETUP & TESTING ENDPOINTS
@@ -219,8 +191,49 @@ public class UserController {
         profile.setUser(savedUser);
         profile.setFullName("Test Midwife");
         profile.setRegistrationNumber("PHM-100");
+        profile.setMohArea("Colombo MC");
+
+        // 🟢 NEW: Assign the test PHM to a specific GN Division for testing
+        profile.setGnDivision("Borella North");
+
         phmProfileRepository.save(profile);
 
-        return ResponseEntity.ok("Test Midwife and Profile Created!");
+        return ResponseEntity.ok("Test Midwife and Profile Created! Assigned to GN Division: Borella North");
+    }
+
+
+    // ----------------------------------------------------
+    // 🔐 SECURITY ENDPOINTS
+    // ----------------------------------------------------
+    @CrossOrigin(origins = "*")
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
+        try {
+            String userId = request.get("userId");
+            String oldPassword = request.get("oldPassword");
+            String newPassword = request.get("newPassword");
+
+            // Find the user by either Staff ID or Phone Number
+            User user = userRepository.findByUserId(userId)
+                    .orElseGet(() -> userRepository.findByStaffId(userId)
+                            .orElse(null));
+
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+
+            // Verify the old password matches what is in the database
+            if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect current password.");
+            }
+
+            // Encrypt and save the new password
+            user.setPasswordHash(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Password successfully updated!");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating password: " + e.getMessage());
+        }
     }
 }

@@ -24,8 +24,14 @@ public class PHMProfile {
     @Column(name = "moh_area", length = 100, nullable = false)
     private String mohArea;
 
+    @Column(name = "gn_division", length = 100)
+    private String gnDivision;
+
     @Column(name = "contact_number", length = 15)
     private String contactNumber;
+
+    @Column(name = "profile_picture_url", length = 1000)
+    private String profilePictureUrl;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -46,8 +52,14 @@ public class PHMProfile {
     public String getMohArea() { return mohArea; }
     public void setMohArea(String mohArea) { this.mohArea = mohArea; }
 
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
+
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
 
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
