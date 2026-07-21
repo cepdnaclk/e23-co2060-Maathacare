@@ -54,6 +54,8 @@ public class SecurityConfig {
                         // 2. Administrator web dashboard endpoints
                         .requestMatchers("/api/users/staff/**").hasRole("ADMIN")
                         .requestMatchers("/api/users/mothers/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/staff/**").hasRole("ADMIN")
 
                         // 3. Mother-owned profile endpoints
                         .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
@@ -64,7 +66,7 @@ public class SecurityConfig {
 
                         // 4. General authenticated endpoints (placed after specific rules)
                         .requestMatchers("/api/appointments/**").authenticated()
-                        .requestMatchers("/api/phm/**").hasRole("PHM") // Changed from .authenticated() to enforce role-based security
+                        .requestMatchers("/api/phm/**").hasAnyRole("PHM", "ADMIN") // Changed from .authenticated() to enforce role-based security
                         .requestMatchers("/api/visits/**").authenticated()
                         .requestMatchers("/api/medical-records/**").authenticated()
 
