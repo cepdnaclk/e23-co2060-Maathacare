@@ -54,8 +54,6 @@ Despite Sri Lanka's strong maternal healthcare system, many critical processesâ€
 
 By digitizing maternal records, automating clinic reminders, monitoring supplement adherence, and identifying high-risk pregnancies early, MaathaCare helps reduce administrative overhead while improving continuity of care. Our goal is simple: **ensure that every mother receives timely, personalized, and accessible healthcare throughout her pregnancy.**
 
-> **Empowering healthier pregnancies through smart, connected healthcare. **
-
 
 * ğŸ“ **Digital Health Locker:** Secure, paperless medical report and document management for mothers.
 
