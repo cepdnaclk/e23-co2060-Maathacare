@@ -33,11 +33,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors ->
+                        cors.configurationSource(corsConfigurationSource())
+                )
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**"
+                        ).permitAll()
 
                         .requestMatchers(
                                 "/api/users/register",
@@ -48,24 +57,64 @@ public class SecurityConfig {
                                 "/api/locations/**"
                         ).permitAll()
 
-                        // Administrator web dashboard endpoints.
-                        .requestMatchers("/api/users/staff/**").hasRole("ADMIN")
-                        .requestMatchers("/api/users/mothers/**").hasRole("ADMIN")
+                        // Administrator endpoints.
+                        .requestMatchers(
+                                "/api/users/staff/**"
+                        ).hasRole("ADMIN")
+
+                        .requestMatchers(
+                                "/api/users/mothers/**"
+                        ).hasRole("ADMIN")
+
+                        // Mothers may update their push token.
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/mothers/*/push-token"
+                        ).authenticated()
 
                         // Mother-owned profile endpoints.
-                        .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/upload-profile-picture/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/pregnancy-data/**").authenticated()
+                        .requestMatchers(
+                                "/api/mothers/profile/**"
+                        ).hasRole("MOTHER")
 
-                        .requestMatchers("/api/appointments/**").authenticated()
-                        .requestMatchers("/api/phm/**").authenticated()
-                        .requestMatchers("/api/visits/**").authenticated()
-                        .requestMatchers("/api/medical-records/**").authenticated()
-                        .requestMatchers("/api/mothers/kicks/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/symptoms/**").hasRole("MOTHER")
+                        .requestMatchers(
+                                "/api/mothers/upload-profile-picture/**"
+                        ).hasRole("MOTHER")
+
+                        .requestMatchers(
+                                "/api/mothers/pregnancy-data/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/mothers/kicks/**"
+                        ).hasRole("MOTHER")
+
+                        .requestMatchers(
+                                "/api/mothers/symptoms/**"
+                        ).hasRole("MOTHER")
+
+                        .requestMatchers(
+                                "/api/appointments/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/phm/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/visits/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/medical-records/**"
+                        ).authenticated()
+
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
@@ -73,14 +122,44 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization"));
+
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+        configuration.setAllowedHeaders(
+                List.of(
+                        "Authorization",
+                        "Content-Type",
+                        "Accept",
+                        "Origin",
+                        "X-Requested-With"
+                )
+        );
+
+        configuration.setExposedHeaders(
+                List.of("Authorization")
+        );
+
         configuration.setAllowCredentials(false);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
+
         return source;
     }
 }

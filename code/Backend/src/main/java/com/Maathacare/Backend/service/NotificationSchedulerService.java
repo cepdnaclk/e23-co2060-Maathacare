@@ -81,7 +81,7 @@ public class NotificationSchedulerService {
     // Helper method to push to Expo AND save to the Database inbox
     private void sendAndSaveNotification(MotherProfile mother, String title, String body, String type) {
         // 1. Push to device
-        String token = mother.getPushToken();
+        String token = mother.getUser().getPushToken();
         if (token != null && !token.isEmpty()) {
             expoNotificationService.sendPushNotification(token, title, body);
         }
