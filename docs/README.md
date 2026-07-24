@@ -63,6 +63,8 @@ By digitizing maternal records, automating clinic reminders, monitoring suppleme
 
 * 🌍 **Inclusivity First:** Complete multilingual translation support (English, Sinhala, Tamil) to eliminate language barriers.
 
+* 🔔 **Smart Push & SMS Notifications:** Automated alerts for clinic appointments, daily supplement updates, and real-time medical advisories from public health staff.
+
 ## Solution Architecture
 
 MaathaCare follows a modern **three-tier architecture** to ensure scalability and security. The system connects pregnant mothers and healthcare professionals (midwives/doctors) through a centralized cloud-based backend.
