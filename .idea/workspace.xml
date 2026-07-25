@@ -8,19 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b49cef77-4569-4145-8cfe-db880e7efb99" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/AppointmentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/AppointmentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/NotificationSchedulerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/java/com/Maathacare/Backend/service/NotificationSchedulerService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/role-selection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/role-selection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code/Backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/code/Backend/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +19,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="1908" />
+    <option name="cachedIndexableFilesCount" value="1924" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -51,61 +42,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0004043802057299" />
-      <entry key="S2" value="1.1418070258510349" />
-      <entry key="S5" value="1.4611843153278314" />
-      <entry key="S10" value="1.7923057002830682" />
-      <entry key="S30" value="3.1043970341490987" />
-      <entry key="S60" value="4.151610364404191" />
-      <entry key="M2" value="4.94420695815851" />
-      <entry key="M5" value="5.540916311063938" />
-      <entry key="M10" value="5.763838748005942" />
-      <entry key="M15" value="5.841049392686223" />
-      <entry key="M30" value="5.91975987066258" />
-      <entry key="H1" value="5.959686842188739" />
-      <entry key="H2" value="5.979794909925714" />
-      <entry key="H4" value="5.989885297306699" />
-      <entry key="D1" value="5.998312525113674" />
-      <entry key="W1" value="5.99975889071113" />
+      <entry key="MS100" value="1.2733537114105677" />
+      <entry key="MS500" value="2.662808713496649" />
+      <entry key="S2" value="8.513899275552433" />
+      <entry key="S5" value="17.582523094809314" />
+      <entry key="S10" value="26.80946098017744" />
+      <entry key="S30" value="41.30392544236165" />
+      <entry key="S60" value="47.64344508522047" />
+      <entry key="M2" value="51.6009772303136" />
+      <entry key="M5" value="55.18664051240579" />
+      <entry key="M10" value="57.56803973580012" />
+      <entry key="M15" value="58.72623057518301" />
+      <entry key="M30" value="60.17165480225698" />
+      <entry key="H1" value="61.03083462616132" />
+      <entry key="H2" value="61.500660923095815" />
+      <entry key="H4" value="61.746507189218015" />
+      <entry key="D1" value="61.957208399095904" />
+      <entry key="W1" value="61.993873464614886" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="9.051166778142872E-82" />
-      <entry key="MS500" value="6.185017262480464E-17" />
-      <entry key="S2" value="8.946358469028963E-5" />
-      <entry key="S5" value="0.027548010445651538" />
-      <entry key="S10" value="0.21478948805534145" />
-      <entry key="S30" value="0.9284752633793052" />
-      <entry key="S60" value="1.358499791000178" />
-      <entry key="M2" value="1.6470539239034299" />
-      <entry key="M5" value="1.8502062275729272" />
-      <entry key="M10" value="1.9235858107469244" />
-      <entry key="M15" value="1.9487137124759788" />
-      <entry key="M30" value="1.9741835012207152" />
-      <entry key="H1" value="1.9870481076910211" />
-      <entry key="H2" value="1.9935131048545522" />
-      <entry key="H4" value="1.9967538103817817" />
-      <entry key="D1" value="1.9994585871493902" />
-      <entry key="W1" value="1.9999226459650565" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="9.643352696480071E-113" />
+      <entry key="S5" value="1.7911128144909778E-45" />
+      <entry key="S10" value="5.476831427658086E-23" />
+      <entry key="S30" value="5.8876563697779496E-8" />
+      <entry key="S60" value="3.4209413965982974E-4" />
+      <entry key="M2" value="0.026136705673629385" />
+      <entry key="M5" value="0.35272589987077746" />
+      <entry key="M10" value="0.8398856685508331" />
+      <entry key="M15" value="1.1215546622756096" />
+      <entry key="M30" value="1.4976961728789824" />
+      <entry key="H1" value="1.7307186864721842" />
+      <entry key="H2" value="1.8604934501828714" />
+      <entry key="H4" value="1.928985873108487" />
+      <entry key="D1" value="1.9879852951099242" />
+      <entry key="W1" value="1.9982791777424758" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="4.716485981078345E-4" />
-      <entry key="MS500" value="0.21613595223527818" />
-      <entry key="S2" value="0.7176709995948226" />
-      <entry key="S5" value="1.1407842490862194" />
-      <entry key="S10" value="1.7097641764839073" />
-      <entry key="S30" value="3.818009913809935" />
-      <entry key="S60" value="5.366592646892521" />
-      <entry key="M2" value="6.506970146536299" />
-      <entry key="M5" value="7.353798271073023" />
-      <entry key="M10" value="7.6681030943711" />
-      <entry key="M15" value="7.776730994065434" />
-      <entry key="M30" value="7.88735056194738" />
-      <entry key="H1" value="7.943419130615691" />
-      <entry key="H2" value="7.971645223083472" />
-      <entry key="H4" value="7.985806487745013" />
-      <entry key="D1" value="7.9976321719547006" />
-      <entry key="W1" value="7.999661683885683" />
+      <entry key="MS100" value="1.1380107403971118" />
+      <entry key="MS500" value="2.6031344166489605" />
+      <entry key="S2" value="8.465461033214256" />
+      <entry key="S5" value="17.540570804549905" />
+      <entry key="S10" value="26.771168893474854" />
+      <entry key="S30" value="41.2772251140642" />
+      <entry key="S60" value="47.62673067128735" />
+      <entry key="M2" value="51.616081621495496" />
+      <entry key="M5" value="55.528045975216955" />
+      <entry key="M10" value="58.39732824156765" />
+      <entry key="M15" value="59.83883086252844" />
+      <entry key="M30" value="61.66361570282945" />
+      <entry key="H1" value="62.75829668702199" />
+      <entry key="H2" value="63.359417833195764" />
+      <entry key="H4" value="63.67459624372154" />
+      <entry key="D1" value="63.94504012680142" />
+      <entry key="W1" value="63.99213060203646" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -135,6 +126,7 @@
     "git-widget-placeholder": "push-notifications",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/sem 4/e23-co2060-Maathacare",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -170,7 +162,9 @@
       <option name="presentableId" value="Default" />
       <updated>1783398364326</updated>
       <workItem from="1783398371536" duration="29822000" />
-      <workItem from="1784641450967" duration="10648000" />
+      <workItem from="1784641450967" duration="14012000" />
+      <workItem from="1784737756158" duration="40000" />
+      <workItem from="1784954160938" duration="3171000" />
     </task>
     <servers />
   </component>
