@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Image, Animated, Dimensions, Text } from "react-native";
-import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import React, { useEffect, useRef } from "react";
+import { Animated, Dimensions, Image, StyleSheet, Text, View } from "react-native";
 
 const { width } = Dimensions.get("window");
 
@@ -65,7 +65,7 @@ export default function SplashScreen() {
 
         {/* 🌟 Swap this with any premium artwork asset you like, e.g., center.jpeg or logo.png */}
         <Image
-          source={require("../assets/images/logo.png")} 
+          source={require("../../assets/images/logo.png")} 
           style={styles.mainImage}
           resizeMode="contain"
         />

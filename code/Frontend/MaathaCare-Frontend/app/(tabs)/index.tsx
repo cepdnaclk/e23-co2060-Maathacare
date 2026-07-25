@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRouter } from "expo-router";
+import { jwtDecode } from "jwt-decode";
 import { Activity, Bell, Calendar, Footprints } from "lucide-react-native";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next"; // 🌟 ADDED TRANSLATION

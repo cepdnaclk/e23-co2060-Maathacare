@@ -11,4 +11,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, String
     // Finds all appointments for a specific PHM and orders them by date
     List<Appointment> findByPhmUserUserIdOrderByAppointmentDateAsc(String phmUserId);
     List<Appointment> findByMotherUserUserIdOrderByAppointmentDateAsc(String userId);
+    // Add this to your existing interface
+    List<Appointment> findByStatus(com.Maathacare.Backend.model.enums.AppointmentStatus status);
 }

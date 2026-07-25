@@ -63,6 +63,12 @@ public class MotherProfile {
     @Column(name = "emergency_contact_relationship", length = 50)
     private String emergencyContactRelationship;
 
+    @Column(name = "moh_area", length = 100)
+    private String mohArea;
+
+    // --- NEW FIELD ADDED HERE ---
+    @Column(name = "push_token")
+    private String pushToken;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -115,6 +121,10 @@ public class MotherProfile {
         this.lastMenstrualPeriod = lastMenstrualPeriod;
     }
 
+    // --- NEW GETTER AND SETTER ADDED HERE ---
+    public String getPushToken() { return pushToken; }
+    public void setPushToken(String pushToken) { this.pushToken = pushToken; }
+
     public ZonedDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(ZonedDateTime createdAt) { this.createdAt = createdAt; }
 
@@ -138,6 +148,14 @@ public class MotherProfile {
 
     public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
     public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
+
+    public String getMohArea() {
+        return mohArea;
+    }
+
+    public void setMohArea(String mohArea) {
+        this.mohArea = mohArea;
+    }
 
     public String getProfilePictureUrl() { return profilePictureUrl; }
     public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
