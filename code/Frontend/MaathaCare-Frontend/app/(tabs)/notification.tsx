@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { fetchMotherNotifications, markNotificationAsRead } from '../../api/notificationService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 // Define the shape of your notification data based on the Spring Boot entity
 interface NotificationItem {
     id: string;

@@ -1,4 +1,4 @@
-# Template specific files
+git rm -r --cached node_modules# Template specific files
 *.sh
 _site/
 .jekyll-metadata

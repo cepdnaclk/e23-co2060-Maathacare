@@ -5,3 +5,5 @@ maathacare-*.json
 
 # Ignore built APKs
 *.apk
+
+node_modules/

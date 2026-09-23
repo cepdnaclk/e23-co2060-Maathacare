@@ -77,7 +77,7 @@ public class AppointmentService {
             }
         }
 
-        String token = mother.getPushToken();
+        String token = mother.getUser().getPushToken();
         String title = "New Appointment Scheduled 📅";
         String body = "A new clinic session has been scheduled at " + appointment.getLocation();
         sendInstantPushNotification(token, title, body);
@@ -148,7 +148,7 @@ public class AppointmentService {
             }
         }
 
-        String token = appointment.getMother().getPushToken();
+        String token = appointment.getMother().getUser().getPushToken();
         String title = "Medical Plan Updated 💊";
         String body = "Your PHM has updated your supplement instructions. Tap to view your prescription chart.";
 

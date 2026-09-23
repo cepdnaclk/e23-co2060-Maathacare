@@ -33,11 +33,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors ->
+                        cors.configurationSource(corsConfigurationSource())
+                )
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(
+                                HttpMethod.OPTIONS,
+                                "/**"
+                        ).permitAll()
+
                         .requestMatchers(
                                 "/api/users/register",
                                 "/api/users/login",
@@ -47,32 +57,64 @@ public class SecurityConfig {
                                 "/api/locations/**"
                         ).permitAll()
 
-                        // 1. Specific Role-based rules MUST come before .authenticated() catch-alls
-                        .requestMatchers(HttpMethod.PUT, "/api/phm/change-password/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/mothers/change-password/**").hasRole("MOTHER")
+                        // Administrator endpoints.
+                        .requestMatchers(
+                                "/api/users/staff/**"
+                        ).hasRole("ADMIN")
 
-                        // 2. Administrator web dashboard endpoints
-                        .requestMatchers("/api/users/staff/**").hasRole("ADMIN")
-                        .requestMatchers("/api/users/mothers/**").hasRole("ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/staff/**").hasRole("ADMIN")
+                        .requestMatchers(
+                                "/api/users/mothers/**"
+                        ).hasRole("ADMIN")
 
-                        // 3. Mother-owned profile endpoints
-                        .requestMatchers("/api/mothers/profile/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/upload-profile-picture/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/pregnancy-data/**").authenticated()
-                        .requestMatchers("/api/mothers/kicks/**").hasRole("MOTHER")
-                        .requestMatchers("/api/mothers/symptoms/**").hasRole("MOTHER")
+                        // Mothers may update their push token.
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/mothers/*/push-token"
+                        ).authenticated()
 
-                        // 4. General authenticated endpoints (placed after specific rules)
-                        .requestMatchers("/api/appointments/**").authenticated()
-                        .requestMatchers("/api/phm/**").hasAnyRole("PHM", "ADMIN") // Changed from .authenticated() to enforce role-based security
-                        .requestMatchers("/api/visits/**").authenticated()
-                        .requestMatchers("/api/medical-records/**").authenticated()
+                        // Mother-owned profile endpoints.
+                        .requestMatchers(
+                                "/api/mothers/profile/**"
+                        ).hasRole("MOTHER")
+
+                        .requestMatchers(
+                                "/api/mothers/upload-profile-picture/**"
+                        ).hasRole("MOTHER")
+
+                        .requestMatchers(
+                                "/api/mothers/pregnancy-data/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/mothers/kicks/**"
+                        ).hasRole("MOTHER")
+
+                        .requestMatchers(
+                                "/api/mothers/symptoms/**"
+                        ).hasRole("MOTHER")
+
+                        .requestMatchers(
+                                "/api/appointments/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/phm/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/visits/**"
+                        ).authenticated()
+
+                        .requestMatchers(
+                                "/api/medical-records/**"
+                        ).authenticated()
 
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }
@@ -80,14 +122,44 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
         configuration.setAllowedOriginPatterns(List.of("*"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
-        configuration.setExposedHeaders(List.of("Authorization"));
+
+        configuration.setAllowedMethods(
+                List.of(
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE",
+                        "OPTIONS"
+                )
+        );
+
+        configuration.setAllowedHeaders(
+                List.of(
+                        "Authorization",
+                        "Content-Type",
+                        "Accept",
+                        "Origin",
+                        "X-Requested-With"
+                )
+        );
+
+        configuration.setExposedHeaders(
+                List.of("Authorization")
+        );
+
         configuration.setAllowCredentials(false);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration(
+                "/**",
+                configuration
+        );
+
         return source;
     }
 }
