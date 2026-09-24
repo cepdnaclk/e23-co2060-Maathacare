@@ -66,7 +66,7 @@ export default function SplashScreen() {
         <View style={styles.glowRing} />
 
         <Image
-          source={require("../assets/images/logo.png")}
+          source={require("../assets/images/logo.jpeg")}
           style={styles.mainImage}
           resizeMode="contain"
         />
