@@ -40,43 +40,43 @@ export default function GatewayScreen() {
   });
 
   useFocusEffect(
-    useCallback(() => {
-      const checkLoginStatus = async () => {
-        try {
-          setIsCheckingUser(true);
+      useCallback(() => {
+        const checkLoginStatus = async () => {
+          try {
+            setIsCheckingUser(true);
 
-          const userToken = await AsyncStorage.getItem("userToken");
-          const userRole = await AsyncStorage.getItem("userRole");
+            const userToken = await AsyncStorage.getItem("userToken");
+            const userRole = await AsyncStorage.getItem("userRole");
 
-          console.log(
-            "Gateway Check - Token exists:",
-            !!userToken,
-            "Role:",
-            userRole,
-          );
+            console.log(
+                "Gateway Check - Token exists:",
+                !!userToken,
+                "Role:",
+                userRole,
+            );
 
-          if (!userToken) {
+            if (!userToken) {
+              setIsCheckingUser(false);
+              return;
+            }
+
+            if (userRole === "MOTHER") {
+              router.replace("/(tabs)");
+            } else if (userRole === "PHM") {
+              router.replace("/phm/phm_dashboard");
+            } else if (userRole === "ADMIN") {
+              // router.replace("/admin/admin_hub");
+            } else {
+              setIsCheckingUser(false);
+            }
+          } catch (error) {
+            console.error("Error checking login status:", error);
             setIsCheckingUser(false);
-            return;
           }
+        };
 
-          if (userRole === "MOTHER") {
-            router.replace("/(tabs)");
-          } else if (userRole === "PHM") {
-            router.replace("/phm/phm_dashboard");
-          } else if (userRole === "ADMIN") {
-            // router.replace("/admin/admin_hub");
-          } else {
-            setIsCheckingUser(false);
-          }
-        } catch (error) {
-          console.error("Error checking login status:", error);
-          setIsCheckingUser(false);
-        }
-      };
-
-      checkLoginStatus();
-    }, []),
+        checkLoginStatus();
+      }, []),
   );
 
   // =========================================================
@@ -85,17 +85,17 @@ export default function GatewayScreen() {
 
   if (isCheckingUser || !fontsLoaded) {
     return (
-      <View style={styles.loadingContainer}>
-        <Image
-          source={require("../assets/images/logo.jpeg")}
-          style={styles.loadingLogo}
-          resizeMode="contain"
-        />
+        <View style={styles.loadingContainer}>
+          <Image
+              source={require("../assets/images/logo.jpeg")}
+              style={styles.loadingLogo}
+              resizeMode="contain"
+          />
 
-        <ActivityIndicator size="large" color="#D85B94" />
+          <ActivityIndicator size="large" color="#D85B94" />
 
-        <Text style={styles.loadingText}>Loading MaathaCare...</Text>
-      </View>
+          <Text style={styles.loadingText}>Loading MaathaCare...</Text>
+        </View>
     );
   }
 
@@ -104,276 +104,276 @@ export default function GatewayScreen() {
   // =========================================================
 
   return (
-    <View style={styles.screen}>
-      {/* =====================================================
+      <View style={styles.screen}>
+        {/* =====================================================
           DECORATIVE BACKGROUND BUBBLES
       ====================================================== */}
 
-      {/* Left side - away from logo */}
-      <View style={styles.bubbleTopLeft} />
+        {/* Left side - away from logo */}
+        <View style={styles.bubbleTopLeft} />
 
-      {/* Tiny bubble far to the right - below logo */}
-      <View style={styles.bubbleUpperRight} />
+        {/* Tiny bubble far to the right - below logo */}
+        <View style={styles.bubbleUpperRight} />
 
-      {/* Side bubbles */}
-      <View style={styles.bubbleLeftMiddle} />
-      <View style={styles.bubbleRightMiddle} />
+        {/* Side bubbles */}
+        <View style={styles.bubbleLeftMiddle} />
+        <View style={styles.bubbleRightMiddle} />
 
-      {/* Bottom decoration */}
-      <View style={styles.bubbleBottomLeft} />
-      <View style={styles.bubbleBottomRight} />
+        {/* Bottom decoration */}
+        <View style={styles.bubbleBottomLeft} />
+        <View style={styles.bubbleBottomRight} />
 
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-          contentContainerStyle={[
-            styles.scrollContent,
-            {
-              minHeight: height,
-            },
-          ]}
-        >
-          <View style={styles.page}>
-            {/* =================================================
+        <SafeAreaView style={styles.safeArea}>
+          <ScrollView
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+              contentContainerStyle={[
+                styles.scrollContent,
+                {
+                  minHeight: height,
+                },
+              ]}
+          >
+            <View style={styles.page}>
+              {/* =================================================
                 MAIN CONTENT
             ================================================== */}
 
-            <View>
-              {/* =================================================
+              <View>
+                {/* =================================================
                   LOGO
               ================================================== */}
 
-              <View
-                style={[
-                  styles.logoWrap,
-                  {
-                    marginTop: isCompact ? 2 : 5,
-                    marginBottom: isCompact ? 20 : isTall ? 28 : 24,
-                  },
-                ]}
-              >
-                <Image
-                  source={require("../assets/images/logo.jpeg")}
-                  style={[
-                    styles.logo,
-                    {
-                      width: isCompact ? 250 : isTall ? 320 : 295,
-                      height: isCompact ? 105 : isTall ? 134 : 122,
-                    },
-                  ]}
-                  resizeMode="contain"
-                />
-              </View>
+                <View
+                    style={[
+                      styles.logoWrap,
+                      {
+                        marginTop: isCompact ? 2 : 5,
+                        marginBottom: isCompact ? 20 : isTall ? 28 : 24,
+                      },
+                    ]}
+                >
+                  <Image
+                      source={require("../assets/images/logo.jpeg")}
+                      style={[
+                        styles.logo,
+                        {
+                          width: isCompact ? 250 : isTall ? 320 : 295,
+                          height: isCompact ? 105 : isTall ? 134 : 122,
+                        },
+                      ]}
+                      resizeMode="contain"
+                  />
+                </View>
 
-              {/* =================================================
+                {/* =================================================
                   HEADING
               ================================================== */}
 
-              <View
-                style={[
-                  styles.headerSection,
-                  {
-                    marginBottom: isCompact ? 21 : isTall ? 31 : 26,
-                  },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.title,
-                    {
-                      fontSize: isCompact ? 32 : isTall ? 39 : 36,
-                      lineHeight: isCompact ? 40 : isTall ? 48 : 44,
-                    },
-                  ]}
+                <View
+                    style={[
+                      styles.headerSection,
+                      {
+                        marginBottom: isCompact ? 21 : isTall ? 31 : 26,
+                      },
+                    ]}
                 >
-                  How will you use{"\n"}MaathaCare?
-                </Text>
+                  <Text
+                      style={[
+                        styles.title,
+                        {
+                          fontSize: isCompact ? 32 : isTall ? 39 : 36,
+                          lineHeight: isCompact ? 40 : isTall ? 48 : 44,
+                        },
+                      ]}
+                  >
+                    How will you use{"\n"}MaathaCare?
+                  </Text>
 
-                <Text
-                  style={[
-                    styles.subtitle,
-                    {
-                      fontSize: isCompact ? 15 : 17,
-                    },
-                  ]}
-                >
-                  Choose your role to get started.
-                </Text>
-              </View>
+                  <Text
+                      style={[
+                        styles.subtitle,
+                        {
+                          fontSize: isCompact ? 15 : 17,
+                        },
+                      ]}
+                  >
+                    Choose your role to get started.
+                  </Text>
+                </View>
 
-              {/* =================================================
+                {/* =================================================
                   ROLE CARDS
               ================================================== */}
 
-              <View style={styles.cardsWrap}>
-                {/* ===============================================
+                <View style={styles.cardsWrap}>
+                  {/* ===============================================
                     MOTHER
                 ================================================ */}
 
-                <TouchableOpacity
-                  activeOpacity={0.88}
-                  style={styles.cardTouchable}
-                  onPress={() => router.push("/mother-login")}
-                >
-                  <View
-                    style={[
-                      styles.card,
-                      styles.motherCard,
-                      {
-                        minHeight: isCompact ? 178 : isTall ? 215 : 198,
-                      },
-                    ]}
+                  <TouchableOpacity
+                      activeOpacity={0.88}
+                      style={styles.cardTouchable}
+                      onPress={() => router.push("/mother-login")}
                   >
                     <View
-                      style={[
-                        styles.imageBox,
-                        styles.motherImageBox,
-                        {
-                          width: isCompact ? 106 : isTall ? 134 : 122,
-                          height: isCompact ? 134 : isTall ? 164 : 152,
-                        },
-                      ]}
+                        style={[
+                          styles.card,
+                          styles.motherCard,
+                          {
+                            minHeight: isCompact ? 178 : isTall ? 215 : 198,
+                          },
+                        ]}
                     >
-                      <Image
-                        source={require("../assets/images/mother.jpeg")}
-                        style={styles.roleImage}
-                        resizeMode="cover"
-                      />
-                    </View>
-
-                    <View style={styles.cardTextArea}>
-                      <View style={styles.labelRow}>
-                        <View style={[styles.dot, styles.motherDot]} />
-
-                        <Text
+                      <View
                           style={[
-                            styles.microLabel,
-                            styles.motherLabel,
+                            styles.imageBox,
+                            styles.motherImageBox,
+                            {
+                              width: isCompact ? 106 : isTall ? 134 : 122,
+                              height: isCompact ? 134 : isTall ? 164 : 152,
+                            },
                           ]}
-                        >
-                          FOR MOTHERS
-                        </Text>
+                      >
+                        <Image
+                            source={require("../assets/images/mother.jpeg")}
+                            style={styles.roleImage}
+                            resizeMode="cover"
+                        />
                       </View>
 
-                      <Text style={styles.cardTitle}>
-                        I&apos;m a Mother
-                      </Text>
+                      <View style={styles.cardTextArea}>
+                        <View style={styles.labelRow}>
+                          <View style={[styles.dot, styles.motherDot]} />
 
-                      <Text style={styles.cardDescription}>
-                        Pregnancy and baby care.
-                      </Text>
+                          <Text
+                              style={[
+                                styles.microLabel,
+                                styles.motherLabel,
+                              ]}
+                          >
+                            FOR MOTHERS
+                          </Text>
+                        </View>
 
-                      <Text
-                        style={[
-                          styles.cardAction,
-                          styles.motherAction,
-                        ]}
-                      >
-                        Continue as Mother
-                      </Text>
+                        <Text style={styles.cardTitle}>
+                          I&apos;m a Mother
+                        </Text>
+
+                        <Text style={styles.cardDescription}>
+                          Pregnancy and baby care.
+                        </Text>
+
+                        <Text
+                            style={[
+                              styles.cardAction,
+                              styles.motherAction,
+                            ]}
+                        >
+                          Continue as Mother
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
+                  </TouchableOpacity>
 
-                {/* ===============================================
+                  {/* ===============================================
                     HEALTH STAFF
                 ================================================ */}
 
-                <TouchableOpacity
-                  activeOpacity={0.88}
-                  style={styles.cardTouchable}
-                  onPress={() => router.push("/staff-login")}
-                >
-                  <View
-                    style={[
-                      styles.card,
-                      styles.staffCard,
-                      {
-                        minHeight: isCompact ? 178 : isTall ? 215 : 198,
-                      },
-                    ]}
+                  <TouchableOpacity
+                      activeOpacity={0.88}
+                      style={styles.cardTouchable}
+                      onPress={() => router.push("/staff-login")}
                   >
                     <View
-                      style={[
-                        styles.imageBox,
-                        styles.staffImageBox,
-                        {
-                          width: isCompact ? 106 : isTall ? 134 : 122,
-                          height: isCompact ? 134 : isTall ? 164 : 152,
-                        },
-                      ]}
+                        style={[
+                          styles.card,
+                          styles.staffCard,
+                          {
+                            minHeight: isCompact ? 178 : isTall ? 215 : 198,
+                          },
+                        ]}
                     >
-                      <Image
-                        source={require("../assets/images/PHM.jpeg")}
-                        style={styles.roleImage}
-                        resizeMode="cover"
-                      />
-                    </View>
-
-                    <View style={styles.cardTextArea}>
-                      <View style={styles.labelRow}>
-                        <View style={[styles.dot, styles.staffDot]} />
-
-                        <Text
+                      <View
                           style={[
-                            styles.microLabel,
-                            styles.staffLabel,
+                            styles.imageBox,
+                            styles.staffImageBox,
+                            {
+                              width: isCompact ? 106 : isTall ? 134 : 122,
+                              height: isCompact ? 134 : isTall ? 164 : 152,
+                            },
                           ]}
-                        >
-                          CARE TEAM
-                        </Text>
+                      >
+                        <Image
+                            source={require("../assets/images/PHM.jpeg")}
+                            style={styles.roleImage}
+                            resizeMode="cover"
+                        />
                       </View>
 
-                      <Text style={styles.cardTitle}>
-                        I&apos;m Health Staff
-                      </Text>
+                      <View style={styles.cardTextArea}>
+                        <View style={styles.labelRow}>
+                          <View style={[styles.dot, styles.staffDot]} />
 
-                      <Text style={styles.cardDescription}>
-                        Support mothers and manage care.
-                      </Text>
+                          <Text
+                              style={[
+                                styles.microLabel,
+                                styles.staffLabel,
+                              ]}
+                          >
+                            CARE TEAM
+                          </Text>
+                        </View>
 
-                      <Text
-                        style={[
-                          styles.cardAction,
-                          styles.staffAction,
-                        ]}
-                      >
-                        Continue as Staff
-                      </Text>
+                        <Text style={styles.cardTitle}>
+                          I&apos;m Health Staff
+                        </Text>
+
+                        <Text style={styles.cardDescription}>
+                          Support mothers and manage care.
+                        </Text>
+
+                        <Text
+                            style={[
+                              styles.cardAction,
+                              styles.staffAction,
+                            ]}
+                        >
+                          Continue as Staff
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
 
-            {/* =================================================
+              {/* =================================================
                 FOOTER - NO BOX
             ================================================== */}
 
-            <View style={styles.footer}>
-              <View style={styles.footerIconWrap}>
-                <LockKeyhole
-                  size={18}
-                  color="#836D79"
-                  strokeWidth={1.8}
-                />
-              </View>
+              <View style={styles.footer}>
+                <View style={styles.footerIconWrap}>
+                  <LockKeyhole
+                      size={18}
+                      color="#836D79"
+                      strokeWidth={1.8}
+                  />
+                </View>
 
-              <View style={styles.footerTextWrap}>
-                <Text style={styles.footerTitle}>
-                  Private and secure
-                </Text>
+                <View style={styles.footerTextWrap}>
+                  <Text style={styles.footerTitle}>
+                    Private and secure
+                  </Text>
 
-                <Text style={styles.footerText}>
-                  Your information stays protected.
-                </Text>
+                  <Text style={styles.footerText}>
+                    Your information stays protected.
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+          </ScrollView>
+        </SafeAreaView>
+      </View>
   );
 }
 
