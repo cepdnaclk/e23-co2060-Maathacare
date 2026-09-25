@@ -87,7 +87,7 @@ export default function GatewayScreen() {
     return (
         <View style={styles.loadingContainer}>
           <Image
-              source={require("../assets/images/logo.jpeg")}
+              source={require("../assets/images/logo.png")}
               style={styles.loadingLogo}
               resizeMode="contain"
           />
@@ -154,7 +154,7 @@ export default function GatewayScreen() {
                     ]}
                 >
                   <Image
-                      source={require("../assets/images/logo.jpeg")}
+                      source={require("../assets/images/logo.png")}
                       style={[
                         styles.logo,
                         {
