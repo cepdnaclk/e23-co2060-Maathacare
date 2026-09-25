@@ -358,14 +358,14 @@ export default function ExploreScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.topHeaderBar}>
-        <Text style={styles.topHeaderTitle}>{t("explore.exploreEveryWeek")}</Text>
+        <Text style={styles.topHeaderTitle}>{t("Pregnancy Journey")}</Text>
         <TouchableOpacity
           style={styles.languageIconButton}
           onPress={() => setLanguageModalVisible(true)}
           accessibilityRole="button"
           accessibilityLabel={t("explore.languageTitle")}
         >
-          <Languages size={20} color="#B65378" />
+          <Languages size={22} color="#B65378" />
         </TouchableOpacity>
       </View>
 
@@ -853,7 +853,7 @@ const styles = StyleSheet.create({
   },
   topHeaderTitle: {
     color: "#51343F",
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "900",
   },
   languageIconButton: {
