@@ -74,8 +74,8 @@ MaathaCare follows a modern **three-tier architecture** to ensure scalability an
 ### Key Components:
 * **Frontend:** A responsive web application built using [React.js] for healthcare workers and a mobile-friendly interface for mothers.
 * **Backend API:** A RESTful API developed with [Spring Boot 3.x] to handle business logic, authentication, and data processing.
-* **Database:** A [PostgreSQL] database stores encrypted patient records, clinic schedules, and medical history.
-* **Cloud Hosting:** The system is deployed on [GitHub Pages / AWS / Render], ensuring high availability.
+* **Database:** A PostgreSQL database via Supabase stores encrypted patient records, clinic schedules, and medical history.
+* **Cloud Hosting:** The system is deployed on Railway, ensuring high availability.
 
 ## Software Designs
 The Software Designs section of MaathaCare outlines the technical framework used to bridge clinical requirements with a modern, full-stack digital solution. The system follows a structured Three-Tier Architecture, utilizing Java with Spring Boot for a robust backend and React Native for a high-performance, cross-platform mobile frontend. Central to the design is the Database Schema (ER Diagram), which carefully organizes entities like mothers, midwives, and medical records in a PostgreSQL database to ensure data integrity and security. This architecture allows for seamless communication between the user’s device and the server, ensuring that sensitive pregnancy data is processed and stored according to engineering best practices.
