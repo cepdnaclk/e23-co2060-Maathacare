@@ -12,6 +12,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.mathacare",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -40,11 +42,30 @@
         }
       ],
       "expo-secure-store",
-      "@react-native-community/datetimepicker"
+      "expo-font",
+      "expo-web-browser",
+      "expo-video",
+      "expo-notifications",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "expo-localization"
+      
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a06d1659-753c-4fd0-a631-c20c42877558"
+      }
     }
   }
 }
