@@ -64,6 +64,7 @@ By digitizing maternal records, automating clinic reminders, monitoring suppleme
 * 🌍 **Inclusivity First:** Complete multilingual translation support (English, Sinhala, Tamil) to eliminate language barriers.
 
 * 🔔 **Smart Push & SMS Notifications:** Automated alerts for clinic appointments, daily supplement updates, and real-time medical advisories from public health staff.
+* 🔔 **Symptom Tracker** User can update daily symptoms so the history is saved 
 
 ## Solution Architecture
 
