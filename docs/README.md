@@ -93,7 +93,7 @@ Our QA strategy covers backend reliability and frontend usability across devices
 MaathaCare successfully digitizes the maternal healthcare journey in Sri Lanka, reducing the risk of missed clinics and improving the tracking of high-risk pregnancies. By replacing manual paperwork with a smart digital ecosystem, we provide healthcare workers with actionable insights to save lives.
 
 ### Future Developments
-**Multi-language Support:** Adding Sinhala and Tamil guided instructions for better inclusivity.
+**Implement a chat option** So PHMs and Mothers can directly communicate through the app.
   
 ## Links
 
