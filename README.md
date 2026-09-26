@@ -16,7 +16,6 @@ MaathaCare is a smart digital pregnancy support system designed to enhance Sri L
 - Manage mother profiles
 - Monitor clinic attendance
 - View area-wise statistics
-- Identify high-risk pregnancies using rule-based alerts
 
 ## Technology Stack
 
