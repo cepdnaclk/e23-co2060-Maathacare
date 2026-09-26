@@ -12,9 +12,15 @@ MaathaCare is a smart digital pregnancy support system designed to enhance Sri L
 - Digital storage of medical records
 - Track baby's kick count
 - View and edit profile
+- symptom tracker
+
+### For PHMs
+- appointment sheduling
+- view and edit profile
+- add suplimets
+- Monitor mother profiles
   
-### For Healthcare Officers (PHMs & MOH)
-- Manage mother profiles
+### For Healthcare Officers (MOH)
 - Monitor clinic attendance
 - View area-wise statistics
 
