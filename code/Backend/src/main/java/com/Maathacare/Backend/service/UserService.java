@@ -50,4 +50,24 @@ public class UserService {
         String token = jwtService.generateToken(user);
         return new AuthResponse(token, user.getRole().name());
     }
+    public void updatePushToken(String userId, String pushToken) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        user.setPushToken(pushToken);
+        userRepository.save(user);
+    }
+    public void updatePassword(String userId, String oldPassword, String newPassword) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Verify old password (assuming you have a passwordEncoder bean)
+        if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+            throw new RuntimeException("Current password does not match.");
+        }
+
+        // Update and encode new password
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }

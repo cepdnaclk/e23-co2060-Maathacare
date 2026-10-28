@@ -1,9 +1,20 @@
-# This theme is based on https://github.com/jekyll/minima
-# Please refer above link to know the available configurations
 
-title: ""
+# ==================================================
+# MaathaCare Project Website Configuration
+# ==================================================
+
+# Website Information
+title: "MaathaCare"
+description: "Smart Digital Pregnancy Support System"
+
+# University of Peradeniya Project Theme
 remote_theme: cepdnaclk/eYY-project-theme
-description: ""
+
+# GitHub Pages Configuration
+url: "https://cepdnaclk.github.io"
+baseurl: "/e23-co2060-Maathacare"
+
+# Markdown Configuration
 markdown: kramdown
 
 kramdown:

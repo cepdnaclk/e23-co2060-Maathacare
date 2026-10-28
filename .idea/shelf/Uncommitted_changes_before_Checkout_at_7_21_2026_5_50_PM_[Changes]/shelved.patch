@@ -1,0 +1,130 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AIDiffSettings\">\r\n    <option name=\"showAIDiff\" value=\"false\" />\r\n  </component>\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"b49cef77-4569-4145-8cfe-db880e7efb99\" name=\"Changes\" comment=\"\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"EmbeddingIndexingInfo\">\r\n    <option name=\"cachedIndexableFilesCount\" value=\"2343\" />\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"languague-notication\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"MavenImportPreferences\">\r\n    <option name=\"generalSettings\">\r\n      <MavenGeneralSettings>\r\n        <option name=\"mavenHomeTypeForPersistence\" value=\"WRAPPER\" />\r\n      </MavenGeneralSettings>\r\n    </option>\r\n  </component>\r\n  <component name=\"McpProjectServerCommands\">\r\n    <commands />\r\n    <urls />\r\n  </component>\r\n  <component name=\"NextEditCompletionFeaturesState\">\r\n    <decayedCancelled>\r\n      <entry key=\"MS100\" value=\"1.0000000000000695\" />\r\n      <entry key=\"MS500\" value=\"1.0023355855405784\" />\r\n      <entry key=\"S2\" value=\"1.2198360664016652\" />\r\n      <entry key=\"S5\" value=\"1.5455563031222725\" />\r\n      <entry key=\"S10\" value=\"1.7386178329300428\" />\r\n      <entry key=\"S30\" value=\"1.903940676388264\" />\r\n      <entry key=\"S60\" value=\"1.9507579483697541\" />\r\n      <entry key=\"M2\" value=\"1.975068176486599\" />\r\n      <entry key=\"M5\" value=\"1.9906464682741967\" />\r\n      <entry key=\"M10\" value=\"2.1005857384598237\" />\r\n      <entry key=\"M15\" value=\"2.6401014384424517\" />\r\n      <entry key=\"M30\" value=\"8.2041981732226\" />\r\n      <entry key=\"H1\" value=\"28.668053337376154\" />\r\n      <entry key=\"H2\" value=\"62.11289342826653\" />\r\n      <entry key=\"H4\" value=\"93.89921851621152\" />\r\n      <entry key=\"D1\" value=\"134.87818838912108\" />\r\n      <entry key=\"W1\" value=\"145.04787278749902\" />\r\n    </decayedCancelled>\r\n    <decayedSelected>\r\n      <entry key=\"MS100\" value=\"0.0\" />\r\n      <entry key=\"MS500\" value=\"0.0\" />\r\n      <entry key=\"S2\" value=\"0.0\" />\r\n      <entry key=\"S5\" value=\"0.0\" />\r\n      <entry key=\"S10\" value=\"1.2534882572103537E-258\" />\r\n      <entry key=\"S30\" value=\"1.078218444013984E-86\" />\r\n      <entry key=\"S60\" value=\"1.0383729792391484E-43\" />\r\n      <entry key=\"M2\" value=\"3.222379523332327E-22\" />\r\n      <entry key=\"M5\" value=\"2.5308748822310705E-9\" />\r\n      <entry key=\"M10\" value=\"5.030780140525993E-5\" />\r\n      <entry key=\"M15\" value=\"0.0013627731193997146\" />\r\n      <entry key=\"M30\" value=\"0.03691575706117532\" />\r\n      <entry key=\"H1\" value=\"0.19213473673746592\" />\r\n      <entry key=\"H2\" value=\"0.43833176560393816\" />\r\n      <entry key=\"H4\" value=\"0.6620662849020015\" />\r\n      <entry key=\"D1\" value=\"0.9335772186099485\" />\r\n      <entry key=\"W1\" value=\"0.9902292470379495\" />\r\n    </decayedSelected>\r\n    <decayedShown>\r\n      <entry key=\"MS100\" value=\"8.285047471165217E-14\" />\r\n      <entry key=\"MS500\" value=\"0.00401479742777174\" />\r\n      <entry key=\"S2\" value=\"0.4222667655167919\" />\r\n      <entry key=\"S5\" value=\"1.073406332421261\" />\r\n      <entry key=\"S10\" value=\"1.4651507153923498\" />\r\n      <entry key=\"S30\" value=\"1.80292425420903\" />\r\n      <entry key=\"S60\" value=\"1.8989053935599873\" />\r\n      <entry key=\"M2\" value=\"1.948796806645004\" />\r\n      <entry key=\"M5\" value=\"1.9800538749744125\" />\r\n      <entry key=\"M10\" value=\"2.0953214096776045\" />\r\n      <entry key=\"M15\" value=\"2.6378915981321125\" />\r\n      <entry key=\"M30\" value=\"8.239064880722331\" />\r\n      <entry key=\"H1\" value=\"28.858613279307395\" />\r\n      <entry key=\"H2\" value=\"62.549999196879966\" />\r\n      <entry key=\"H4\" value=\"94.5604707700281\" />\r\n      <entry key=\"D1\" value=\"135.81158718401804\" />\r\n      <entry key=\"W1\" value=\"146.03807486010496\" />\r\n    </decayedShown>\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;customColor&quot;: &quot;&quot;,\r\n  &quot;associatedIndex&quot;: 6\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"3G9z20mApggwvRThbDXrVkRvwAt\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"ModuleVcsDetector.initialDetectionPerformed\": \"true\",\r\n    \"RequestMappingsPanelOrder0\": \"0\",\r\n    \"RequestMappingsPanelOrder1\": \"1\",\r\n    \"RequestMappingsPanelWidth0\": \"75\",\r\n    \"RequestMappingsPanelWidth1\": \"75\",\r\n    \"RunOnceActivity.MCP Project settings loaded\": \"true\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252\": \"true\",\r\n    \"RunOnceActivity.git.unshallow\": \"true\",\r\n    \"RunOnceActivity.typescript.service.memoryLimit.init\": \"true\",\r\n    \"Spring Boot.BackendApplication.executor\": \"Run\",\r\n    \"codeWithMe.voiceChat.enabledByDefault\": \"false\",\r\n    \"com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1\": \"true\",\r\n    \"git-widget-placeholder\": \"push-notifications\",\r\n    \"junie.onboarding.icon.badge.shown\": \"true\",\r\n    \"kotlin-language-version-configured\": \"true\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"settings.editor.selected.configurable\": \"terminal\",\r\n    \"to.speed.mode.migration.done\": \"true\",\r\n    \"ts.external.directory.path\": \"D:\\\\sem 4\\\\e23-co2060-Maathacare\\\\code\\\\Frontend\\\\MaathaCare-Frontend\\\\node_modules\\\\typescript\\\\lib\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"BackendApplication\" type=\"SpringBootApplicationConfigurationType\" factoryName=\"Spring Boot\" nameIsGenerated=\"true\">\r\n      <module name=\"Backend\" />\r\n      <option name=\"SPRING_BOOT_MAIN_CLASS\" value=\"com.Maathacare.Backend.BackendApplication\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-jdk-30f59d01ecdd-37e91769500f-intellij.indexing.shared.core-IU-261.24374.151\" />\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-IU-261.24374.151\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"b49cef77-4569-4145-8cfe-db880e7efb99\" name=\"Changes\" comment=\"\" />\r\n      <created>1783398364326</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1783398364326</updated>\r\n      <workItem from=\"1783398371536\" duration=\"38013000\" />\r\n      <workItem from=\"1783861706615\" duration=\"6927000\" />\r\n      <workItem from=\"1784441974791\" duration=\"4819000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 8f0c3a2d2336ac95574ecbf48bd4a72093c33023)
++++ b/.idea/workspace.xml	(date 1784635645766)
+@@ -9,6 +9,10 @@
+   <component name="ChangeListManager">
+     <list default="true" id="b49cef77-4569-4145-8cfe-db880e7efb99" name="Changes" comment="">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app.json" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/app/(tabs)/dashboard.tsx" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package-lock.json" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/code/Frontend/MaathaCare-Frontend/package.json" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -39,61 +43,61 @@
+   </component>
+   <component name="NextEditCompletionFeaturesState">
+     <decayedCancelled>
+-      <entry key="MS100" value="1.0000000000000695" />
+-      <entry key="MS500" value="1.0023355855405784" />
+-      <entry key="S2" value="1.2198360664016652" />
+-      <entry key="S5" value="1.5455563031222725" />
+-      <entry key="S10" value="1.7386178329300428" />
+-      <entry key="S30" value="1.903940676388264" />
+-      <entry key="S60" value="1.9507579483697541" />
+-      <entry key="M2" value="1.975068176486599" />
+-      <entry key="M5" value="1.9906464682741967" />
+-      <entry key="M10" value="2.1005857384598237" />
+-      <entry key="M15" value="2.6401014384424517" />
+-      <entry key="M30" value="8.2041981732226" />
+-      <entry key="H1" value="28.668053337376154" />
+-      <entry key="H2" value="62.11289342826653" />
+-      <entry key="H4" value="93.89921851621152" />
+-      <entry key="D1" value="134.87818838912108" />
+-      <entry key="W1" value="145.04787278749902" />
++      <entry key="MS100" value="1.0000000000000016" />
++      <entry key="MS500" value="1.0010941300919864" />
++      <entry key="S2" value="1.1818725854543446" />
++      <entry key="S5" value="1.5057162353026827" />
++      <entry key="S10" value="1.7111372830211355" />
++      <entry key="S30" value="1.8925882168537262" />
++      <entry key="S60" value="1.944768869541138" />
++      <entry key="M2" value="1.9719927929427934" />
++      <entry key="M5" value="1.99354271217251" />
++      <entry key="M10" value="2.0979271279082843" />
++      <entry key="M15" value="2.3512611120735034" />
++      <entry key="M30" value="5.006714975504183" />
++      <entry key="H1" value="19.35957893453458" />
++      <entry key="H2" value="50.334790212746334" />
++      <entry key="H4" value="84.83271606458378" />
++      <entry key="D1" value="134.0885345430902" />
++      <entry key="W1" value="146.61545494063247" />
+     </decayedCancelled>
+     <decayedSelected>
+       <entry key="MS100" value="0.0" />
+       <entry key="MS500" value="0.0" />
+       <entry key="S2" value="0.0" />
+       <entry key="S5" value="0.0" />
+-      <entry key="S10" value="1.2534882572103537E-258" />
+-      <entry key="S30" value="1.078218444013984E-86" />
+-      <entry key="S60" value="1.0383729792391484E-43" />
+-      <entry key="M2" value="3.222379523332327E-22" />
+-      <entry key="M5" value="2.5308748822310705E-9" />
+-      <entry key="M10" value="5.030780140525993E-5" />
+-      <entry key="M15" value="0.0013627731193997146" />
+-      <entry key="M30" value="0.03691575706117532" />
+-      <entry key="H1" value="0.19213473673746592" />
+-      <entry key="H2" value="0.43833176560393816" />
+-      <entry key="H4" value="0.6620662849020015" />
+-      <entry key="D1" value="0.9335772186099485" />
+-      <entry key="W1" value="0.9902292470379495" />
++      <entry key="S10" value="0.0" />
++      <entry key="S30" value="7.80667416438589E-113" />
++      <entry key="S60" value="8.835538559921461E-57" />
++      <entry key="M2" value="9.399754549945149E-29" />
++      <entry key="M5" value="6.155262876135724E-12" />
++      <entry key="M10" value="2.4809802248578537E-6" />
++      <entry key="M15" value="1.832661269387965E-4" />
++      <entry key="M30" value="0.013537582019651688" />
++      <entry key="H1" value="0.11635111524885222" />
++      <entry key="H2" value="0.34110279278958144" />
++      <entry key="H4" value="0.5840400609458066" />
++      <entry key="D1" value="0.9142685336686946" />
++      <entry key="W1" value="0.9872772063815637" />
+     </decayedSelected>
+     <decayedShown>
+-      <entry key="MS100" value="8.285047471165217E-14" />
+-      <entry key="MS500" value="0.00401479742777174" />
+-      <entry key="S2" value="0.4222667655167919" />
+-      <entry key="S5" value="1.073406332421261" />
+-      <entry key="S10" value="1.4651507153923498" />
+-      <entry key="S30" value="1.80292425420903" />
+-      <entry key="S60" value="1.8989053935599873" />
+-      <entry key="M2" value="1.948796806645004" />
+-      <entry key="M5" value="1.9800538749744125" />
+-      <entry key="M10" value="2.0953214096776045" />
+-      <entry key="M15" value="2.6378915981321125" />
+-      <entry key="M30" value="8.239064880722331" />
+-      <entry key="H1" value="28.858613279307395" />
+-      <entry key="H2" value="62.549999196879966" />
+-      <entry key="H4" value="94.5604707700281" />
+-      <entry key="D1" value="135.81158718401804" />
+-      <entry key="W1" value="146.03807486010496" />
++      <entry key="MS100" value="2.3905670224929262E-9" />
++      <entry key="MS500" value="0.018867656721485503" />
++      <entry key="S2" value="0.40026313729884794" />
++      <entry key="S5" value="0.9170978882339395" />
++      <entry key="S10" value="1.314705277691897" />
++      <entry key="S30" value="1.7268874234143199" />
++      <entry key="S60" value="1.856790833654042" />
++      <entry key="M2" value="1.9266395091229054" />
++      <entry key="M5" value="1.975037084144825" />
++      <entry key="M10" value="2.088370199541012" />
++      <entry key="M15" value="2.344752901058099" />
++      <entry key="M30" value="5.016389194380145" />
++      <entry key="H1" value="19.473418817503227" />
++      <entry key="H2" value="50.674159759565654" />
++      <entry key="H4" value="85.41564833195744" />
++      <entry key="D1" value="135.00256337958842" />
++      <entry key="W1" value="147.60269577272175" />
+     </decayedShown>
+   </component>
+   <component name="ProjectColorInfo">{

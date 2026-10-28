@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "71e897c0-94e0-4d4e-a70f-066cb150ea05"
+      }
+    },
+    "android": {
+      "package": "com.asani_weerasinghe.e23co2060maathacare"
+    }
+  }
+}

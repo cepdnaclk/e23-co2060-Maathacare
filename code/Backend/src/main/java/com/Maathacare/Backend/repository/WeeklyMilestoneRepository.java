@@ -1,6 +1,6 @@
 package com.Maathacare.Backend.repository;
 
-import com.Maathacare.Backend.entity.WeeklyMilestone;
+import com.Maathacare.Backend.model.entity.WeeklyMilestone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

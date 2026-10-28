@@ -2,6 +2,7 @@ package com.Maathacare.Backend.dto;
 
 import com.Maathacare.Backend.model.enums.Role;
 import java.time.LocalDate; // 🚨 Make sure this is imported!
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class UserRegistrationRequest {
     // Existing Fields
@@ -12,13 +13,21 @@ public class UserRegistrationRequest {
     // 🟢 NEW FIELDS for MotherProfile mapping
     private String fullName;
     private String nic;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+
     private String address;
     private String emergencyContactNumber;
     private String bloodGroup;
-    private LocalDate LastMenstrualPeriod;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate lastMenstrualPeriod;
+
     private String district;
     private String province;
+    private String residentialDivision;
+    private String gnDivision;
 
     // --- Existing Getters and Setters ---
     public String getPhoneNumber() {
@@ -95,11 +104,11 @@ public class UserRegistrationRequest {
     }
 
     public LocalDate getLastMenstrualPeriod() {
-        return LastMenstrualPeriod;
+        return lastMenstrualPeriod;
     }
 
-    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
-        this.LastMenstrualPeriod = LastMenstrualPeriod;
+    public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) {
+        this.lastMenstrualPeriod = lastMenstrualPeriod;
     }
 
     public String getDistrict() {
@@ -117,4 +126,15 @@ public class UserRegistrationRequest {
     public void setProvince(String province) {
         this.province = province;
     }
+
+    public String getResidentialDivision() {
+        return residentialDivision;
+    }
+
+    public void setResidentialDivision(String residentialDivision) {
+        this.residentialDivision = residentialDivision;
+    }
+
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 }

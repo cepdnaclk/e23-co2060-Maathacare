@@ -26,6 +26,9 @@ public class User {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Column(name = "push_token")
+    private String pushToken;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
@@ -54,4 +57,12 @@ public class User {
 
     public ZonedDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(ZonedDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public String getPushToken() {
+        return pushToken;
+    }
+
+    public void setPushToken(String pushToken) {
+        this.pushToken = pushToken;
+    }
 }

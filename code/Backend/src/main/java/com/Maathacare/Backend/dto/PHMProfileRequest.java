@@ -8,6 +8,7 @@ public class PHMProfileRequest {
     private String fullName;
     private String mohArea;
     private String contactNumber;
+    private String gnDivision;
 
     // Getters
     public String getUserId() { return userId; }
@@ -15,6 +16,7 @@ public class PHMProfileRequest {
     public String getFullName() { return fullName; }
     public String getMohArea() { return mohArea; }
     public String getContactNumber() { return contactNumber; }
+    public String getGnDivision() { return gnDivision; }
 
     // Setters
     public void setUserId(String userId) { this.userId = userId; }
@@ -22,4 +24,5 @@ public class PHMProfileRequest {
     public void setFullName(String fullName) { this.fullName = fullName; }
     public void setMohArea(String mohArea) { this.mohArea = mohArea; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 }

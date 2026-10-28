@@ -6,11 +6,19 @@ public class MotherProfileResponse {
     private String fullName;
     private String nic;
     private LocalDate dateOfBirth;
+    private LocalDate lastMenstrualPeriod;
     private String address;
     private String emergencyContactNumber;
     private String bloodGroup;
     private String district;
     private String province;
+    private String phmName;
+    private String phmId;
+    private String emergencyContactName;
+    private String emergencyContactRelationship;
+    private String profilePictureUrl;
+    private String mohArea;
+    private String gnDivision;
 
     // --- Getters and Setters ---
     // These allow the app to read and write the data
@@ -24,6 +32,10 @@ public class MotherProfileResponse {
     public LocalDate getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
+    public LocalDate getLastMenstrualPeriod() { return lastMenstrualPeriod; }
+    public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) {
+        this.lastMenstrualPeriod = lastMenstrualPeriod;
+    }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 
@@ -38,4 +50,35 @@ public class MotherProfileResponse {
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getPhmName() {
+        return phmName;
+    }
+
+    public void setPhmName(String phmName) {
+        this.phmName = phmName;
+    }
+
+    public String getPhmId() {
+        return phmId;
+    }
+
+    public void setPhmId(String phmId) {
+        this.phmId = phmId;
+    }
+
+    public String getEmergencyContactName() { return emergencyContactName; }
+    public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
+
+    public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
+    public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
+
+    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+
+    public String getMohArea() { return mohArea; }
+    public void setMohArea(String mohArea) { this.mohArea = mohArea; }
+
+    public String getGnDivision() { return gnDivision; }
+    public void setGnDivision(String gnDivision) { this.gnDivision = gnDivision; }
 }

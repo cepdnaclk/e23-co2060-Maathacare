@@ -10,12 +10,16 @@ public class MotherProfileRequest {
     private String nic;
     private LocalDate dateOfBirth;
     private String bloodGroup;
-    private LocalDate LastMenstrualPeriod;
+    private LocalDate lastMenstrualPeriod;
     private String emergencyContactNumber;
     private String address;
     private String chronicDiseaseStatus;
+    private String residentialDivision;
     private String district;
     private String province;
+    private String emergencyContactName;
+    private String emergencyContactRelationship;
+
 
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
@@ -52,12 +56,12 @@ public class MotherProfileRequest {
         this.bloodGroup = bloodGroup;
     }
 
-    public LocalDate getLastMenstrualPeriod() {
-        return LastMenstrualPeriod;
+    public LocalDate getLastMenstrualPeriod() { // 🟢 Must be 'getLast...'
+        return lastMenstrualPeriod;
     }
 
-    public void setLastMenstrualPeriod(LocalDate LastMenstrualPeriod) {
-        this.LastMenstrualPeriod = LastMenstrualPeriod;
+    public void setLastMenstrualPeriod(LocalDate lastMenstrualPeriod) { // 🟢 Must be 'setLast...'
+        this.lastMenstrualPeriod = lastMenstrualPeriod;
     }
 
     public String getEmergencyContactNumber() {
@@ -85,9 +89,24 @@ public class MotherProfileRequest {
 
 
     }
+
+    public String getResidentialDivision() {
+        return residentialDivision;
+    }
+
+    public void setResidentialDivision(String residentialDivision) {
+        this.residentialDivision = residentialDivision;
+    }
+
     public String getDistrict() { return district; }
     public void setDistrict(String district) { this.district = district; }
 
     public String getProvince() { return province; }
     public void setProvince(String province) { this.province = province; }
+
+    public String getEmergencyContactName() { return emergencyContactName; }
+    public void setEmergencyContactName(String emergencyContactName) { this.emergencyContactName = emergencyContactName; }
+
+    public String getEmergencyContactRelationship() { return emergencyContactRelationship; }
+    public void setEmergencyContactRelationship(String emergencyContactRelationship) { this.emergencyContactRelationship = emergencyContactRelationship; }
 }
