@@ -1,3 +1,6 @@
+const FALLBACK_URL =
+  "https://maathacare-backend-g4duhqasdqfwbteb.centralindia-01.azurewebsites.net";
 
-// apiConfig.ts
-export const API_BASE_URL = "https://e23-co2060-maathacare-production.up.railway.app";
+export const API_BASE_URL = (
+  process.env.EXPO_PUBLIC_API_URL ?? FALLBACK_URL
+).replace(/\/+$/, "");
