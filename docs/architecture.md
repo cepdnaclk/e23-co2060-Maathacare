@@ -1,9 +1,11 @@
-
 ---
 layout: maatha
 title: Architecture
 permalink: /architecture/
 ---
+
+# System Architecture
+
 
 # System Architecture
 
