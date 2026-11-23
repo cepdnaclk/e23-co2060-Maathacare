@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "MaathaCare-Frontend",
-    "slug": "MaathaCare-Frontend",
+    "slug": "e23-co2060-maathacare",
+    "owner": "team-maathacare",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -12,6 +13,8 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.mathacare",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -40,11 +43,28 @@
         }
       ],
       "expo-secure-store",
-      "@react-native-community/datetimepicker"
+      "expo-font",
+      "expo-web-browser",
+      "expo-video",
+      "expo-notifications",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "expo-localization"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8f7f41a3-816d-4333-a9e8-e82053ea99eb"
+      }
     }
   }
 }

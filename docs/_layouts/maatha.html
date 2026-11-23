@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#8f356b">
+  <meta name="description" content="MaathaCare - digital pregnancy support for mothers, PHMs and healthcare administrators.">
+  <title>{% if page.title %}{{ page.title | escape }} | {% endif %}MaathaCare</title>
+  <link rel="stylesheet" href="{{ '/assets/css/maatha.css' | relative_url }}">
+  <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{ '/' | relative_url }}"><span class="brand-mark" aria-hidden="true">♥</span><span>MaathaCare<small>Digital Pregnancy Support</small></span></a>
+      <button class="menu-toggle" type="button" aria-controls="main-nav" aria-expanded="false">☰ <span>Menu</span></button>
+      <nav id="main-nav" class="nav" aria-label="Main navigation">
+        <a href="{{ '/' | relative_url }}">Home</a>
+        <a href="{{ '/features/' | relative_url }}">Features</a>
+        <a href="{{ '/architecture/' | relative_url }}">Architecture</a>
+        <a href="{{ '/manuals/' | relative_url }}">User Manuals</a>
+        <a href="{{ '/developer/' | relative_url }}">Developers</a>
+        <a href="{{ '/testing/' | relative_url }}">Testing</a>
+        <a href="{{ '/team/' | relative_url }}">Team</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="container page-content {% if page.permalink == '/' %}homepage{% endif %}">
+    {{ content }}
+  </main>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div><strong>MaathaCare</strong><p>CO2060 Software Systems Design Project · Group 27 · University of Peradeniya</p></div>
+      <div><a href="https://github.com/cepdnaclk/e23-co2060-Maathacare">Project repository</a><br><a href="{{ '/manuals/' | relative_url }}">User documentation</a></div>
+    </div>
+  </footer>
+</body>
+</html>
