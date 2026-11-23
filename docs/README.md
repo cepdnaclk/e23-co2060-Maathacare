@@ -8,10 +8,6 @@ repository-name: e23-co2060-Maathacare
 # MaathaCare
 ### Smart Digital Pregnancy Support System
 
-
-# MaathaCare
-### Smart Digital Pregnancy Support System
-
 **Connecting Mothers, Public Health Midwives, and Healthcare Administrators Through Digital Maternal Healthcare**
 
 ![MaathaCare Cover]({{ '/data/cover_page.jpg' | relative_url }})
