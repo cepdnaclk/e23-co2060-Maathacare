@@ -18,3 +18,458 @@
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
+
+/* ==========================================
+   MAATHACARE - MODERN HOMEPAGE
+   ========================================== */
+
+:root {
+  --mc-primary: #a83f76;
+  --mc-dark: #26364e;
+  --mc-text: #59677c;
+  --mc-light: #fff3f7;
+  --mc-border: #efdce6;
+}
+
+.mc-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 55px;
+  padding: 48px 0 85px;
+}
+
+.mc-eyebrow {
+  display: inline-block;
+  color: var(--mc-primary);
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.6px;
+}
+
+.mc-hero h1 {
+  font-size: clamp(2.6rem, 4.3vw, 4.5rem);
+  line-height: 1.14;
+  letter-spacing: -2px;
+  color: var(--mc-dark);
+  margin: 20px 0;
+}
+
+.mc-hero h1 span {
+  color: var(--mc-primary);
+}
+
+.mc-hero-content > p {
+  font-size: 18px;
+  color: var(--mc-text);
+  line-height: 1.8;
+  max-width: 550px;
+}
+
+.mc-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.mc-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: transform .2s ease,
+              background-color .2s ease;
+}
+
+.mc-button:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.mc-button.primary {
+  color: white;
+  background: var(--mc-primary);
+}
+
+.mc-button.outline {
+  color: var(--mc-primary);
+  border: 1px solid #d7a7bf;
+  background: white;
+}
+
+.mc-hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 28px;
+}
+
+.mc-hero-tags span {
+  border: 1px solid #eed8e2;
+  border-radius: 30px;
+  padding: 6px 12px;
+  color: #915273;
+  background: #fff9fb;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mc-hero-image {
+  border-radius: 28px;
+  padding: 15px;
+  background: linear-gradient(
+    145deg,
+    #ffe5ef,
+    #eaf3fb
+  );
+  box-shadow: 0 20px 60px rgba(112, 59, 88, .12);
+}
+
+.mc-hero-image img {
+  width: 100%;
+  display: block;
+  border-radius: 19px;
+}
+
+/* Sections */
+
+.mc-section {
+  padding: 72px 0;
+}
+
+.mc-section-heading {
+  text-align: center;
+  max-width: 730px;
+  margin: 0 auto 40px;
+}
+
+.mc-section-heading h2 {
+  color: var(--mc-dark);
+  font-size: clamp(1.8rem, 3.3vw, 2.8rem);
+  margin: 14px 0;
+}
+
+.mc-section-heading p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--mc-text);
+}
+
+/* User role cards */
+
+.mc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.mc-role-card {
+  background: white;
+  border: 1px solid var(--mc-border);
+  border-radius: 22px;
+  padding: 32px 27px;
+  box-shadow: 0 10px 36px rgba(56, 42, 70, .06);
+  transition: transform .2s ease;
+}
+
+.mc-role-card:hover {
+  transform: translateY(-5px);
+}
+
+.mc-role-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: #ffe8f0;
+  color: var(--mc-primary);
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 20px;
+  margin-bottom: 22px;
+}
+
+.mc-role-card h3 {
+  color: var(--mc-dark);
+  font-size: 20px;
+  margin: 0 0 14px;
+}
+
+.mc-role-card p {
+  color: var(--mc-text);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.mc-role-card a {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--mc-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Connected care journey */
+
+.mc-journey {
+  background: #fff5f9;
+  border-radius: 30px;
+  padding: 55px 35px;
+}
+
+.mc-journey-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.mc-journey-step {
+  position: relative;
+  text-align: center;
+  background: white;
+  border: 1px solid #eedde5;
+  padding: 26px 18px;
+  border-radius: 19px;
+}
+
+.mc-step-number {
+  display: grid;
+  place-items: center;
+  background: #ffe3ed;
+  color: var(--mc-primary);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  font-weight: 800;
+  margin: 0 auto 17px;
+}
+
+.mc-journey-step h3 {
+  color: var(--mc-dark);
+  font-size: 17px;
+  margin: 0 0 10px;
+}
+
+.mc-journey-step p {
+  color: var(--mc-text);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* Feature grid */
+
+.mc-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.mc-feature {
+  background: white;
+  border-radius: 18px;
+  border: 1px solid #e9e5eb;
+  padding: 27px;
+}
+
+.mc-feature-symbol {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mc-primary);
+  margin-bottom: 12px;
+}
+
+.mc-feature h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: var(--mc-dark);
+}
+
+.mc-feature p {
+  font-size: 14px;
+  color: var(--mc-text);
+  line-height: 1.8;
+}
+
+.mc-centre {
+  text-align: center;
+  margin-top: 32px;
+}
+
+/* Architecture preview */
+
+.mc-technical {
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.mc-technical h2 {
+  color: var(--mc-dark);
+}
+
+.mc-technical p {
+  color: var(--mc-text);
+  line-height: 1.8;
+}
+
+.mc-technical-image {
+  border: 1px solid #eadfe6;
+  background: white;
+  border-radius: 22px;
+  padding: 17px;
+  box-shadow: 0 10px 35px rgba(40, 42, 60, .07);
+}
+
+.mc-technical-image img {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* Documentation cards */
+
+.mc-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.mc-resource-card {
+  padding: 25px;
+  border: 1px solid var(--mc-border);
+  border-radius: 17px;
+  text-decoration: none;
+  background: white;
+  transition: background .2s ease,
+              transform .2s ease;
+}
+
+.mc-resource-card:hover {
+  background: #fff7fa;
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+
+.mc-resource-card h3 {
+  color: var(--mc-dark);
+  font-size: 18px;
+  margin: 0 0 10px;
+}
+
+.mc-resource-card p {
+  color: var(--mc-text);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.mc-resource-card span {
+  color: var(--mc-primary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Final CTA */
+
+.mc-final-cta {
+  background: linear-gradient(
+    120deg,
+    #8f3469,
+    #b45689
+  );
+  border-radius: 28px;
+  padding: 55px 35px;
+  text-align: center;
+  color: white;
+  margin: 40px 0 30px;
+}
+
+.mc-final-cta h2 {
+  color: white;
+  margin: 0 0 15px;
+}
+
+.mc-final-cta p {
+  max-width: 600px;
+  margin: 0 auto;
+  color: #fff0f7;
+}
+
+.mc-final-cta .mc-buttons {
+  justify-content: center;
+}
+
+.mc-button.light {
+  color: #8f3469;
+  background: white;
+}
+
+.mc-button.transparent {
+  color: white;
+  border: 1px solid rgba(255,255,255,.65);
+}
+
+/* Responsive */
+
+@media (max-width: 950px) {
+  .mc-hero,
+  .mc-technical {
+    grid-template-columns: 1fr;
+  }
+
+  .mc-card-grid,
+  .mc-feature-grid,
+  .mc-resource-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mc-journey-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .mc-hero {
+    gap: 25px;
+    padding: 20px 0 40px;
+  }
+
+  .mc-hero h1 {
+    letter-spacing: -1px;
+  }
+
+  .mc-section {
+    padding: 42px 0;
+  }
+
+  .mc-card-grid,
+  .mc-feature-grid,
+  .mc-resource-grid,
+  .mc-journey-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mc-journey {
+    padding: 35px 18px;
+  }
+
+  .mc-final-cta {
+    padding: 40px 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-button,
+  .mc-role-card,
+  .mc-resource-card {
+    transition: none;
+  }
+}
