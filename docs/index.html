@@ -1,381 +1,779 @@
+
 ---
 layout: maatha
 title: Home
 permalink: /
 ---
 
-<section class="mc-hero">
-  <div class="mc-hero-content">
-    <span class="mc-eyebrow">
-      DIGITAL MATERNAL HEALTHCARE · SRI LANKA
+<link rel="stylesheet"
+      href="{{ '/assets/css/home.css' | relative_url }}">
+
+<div class="mc-home">
+
+  <!-- ========================================
+       1. HERO SECTION
+       ======================================== -->
+
+  <section class="health-hero" aria-labelledby="hero-title">
+
+    <div class="health-hero-copy">
+
+      <span class="health-eyebrow">
+        <span class="health-status-dot"></span>
+        DIGITAL MATERNAL HEALTHCARE
+      </span>
+
+      <h1 id="hero-title">
+        Better connected care
+        <span>for every mother.</span>
+      </h1>
+
+      <p class="health-hero-description">
+        MaathaCare is a digital maternal healthcare
+        platform connecting pregnant mothers,
+        Public Health Midwives and healthcare
+        administrators in Sri Lanka.
+      </p>
+
+      <p class="health-hero-support">
+        Supporting pregnancy monitoring, clinic
+        appointments, symptom tracking and
+        healthcare coordination through one
+        connected system.
+      </p>
+
+      <div class="health-actions">
+
+        <a href="#platform"
+           class="health-btn health-btn-primary">
+          Explore the Platform
+          <span aria-hidden="true">→</span>
+        </a>
+
+        <a href="{{ '/architecture/' | relative_url }}"
+           class="health-btn health-btn-secondary">
+          View Architecture
+        </a>
+
+      </div>
+
+      <div class="health-hero-footer">
+        <span>University of Peradeniya</span>
+        <span class="health-dot-separator">•</span>
+        <span>CO2060 · Group 27</span>
+      </div>
+
+    </div>
+
+    <div class="health-hero-visual">
+
+      <div class="health-visual-glow"></div>
+
+      <div class="health-hero-visual-label">
+        <span class="health-small-dot"></span>
+        MOTHER APPLICATION
+      </div>
+
+      <div class="health-hero-phone">
+
+        <div class="health-phone-camera"></div>
+
+        <img
+          src="{{ '/images/mother-dashboard.jpeg' | relative_url }}"
+          alt="Screenshot of the MaathaCare mother application"
+          fetchpriority="high">
+
+      </div>
+
+      <div class="health-floating-card health-float-top">
+        <span class="health-floating-icon">01</span>
+        <div>
+          <strong>Pregnancy Support</strong>
+          <small>Information and tracking</small>
+        </div>
+      </div>
+
+      <div class="health-floating-card health-float-bottom">
+        <span class="health-floating-icon">02</span>
+        <div>
+          <strong>Connected Care</strong>
+          <small>Mother and PHM workflows</small>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================
+       2. PLATFORM INTRODUCTION
+       ======================================== -->
+
+  <section class="health-section health-introduction"
+           id="about">
+
+    <div class="health-section-heading">
+
+      <span class="health-section-label">
+        ABOUT MAATHACARE
+      </span>
+
+      <h2>
+        Maternal healthcare is a journey.
+        <span>It should be connected.</span>
+      </h2>
+
+      <p>
+        Pregnancy care requires coordination between
+        mothers and healthcare professionals.
+        MaathaCare brings essential digital tools
+        together to support that process.
+      </p>
+
+    </div>
+
+    <div class="health-purpose-grid">
+
+      <article class="health-purpose-card">
+        <div class="health-purpose-number">01</div>
+
+        <h3>Accessible Information</h3>
+
+        <p>
+          Provide a central place for pregnancy
+          information, appointments, symptom
+          records and supported resources.
+        </p>
+      </article>
+
+      <article class="health-purpose-card">
+        <div class="health-purpose-number">02</div>
+
+        <h3>Care Coordination</h3>
+
+        <p>
+          Connect maternal healthcare activities
+          across the mother application and
+          healthcare worker interfaces.
+        </p>
+      </article>
+
+      <article class="health-purpose-card">
+        <div class="health-purpose-number">03</div>
+
+        <h3>Organized Follow-up</h3>
+
+        <p>
+          Support healthcare workers with relevant
+          information and appointment-related
+          workflows for maternal follow-up.
+        </p>
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================
+       3. CONNECTED CARE MODEL
+       ======================================== -->
+
+  <section class="health-section health-care-section"
+           id="connected-care">
+
+    <div class="health-section-heading">
+
+      <span class="health-section-label">
+        THE MAATHACARE ECOSYSTEM
+      </span>
+
+      <h2>
+        Connecting the people
+        <span>behind maternal care.</span>
+      </h2>
+
+      <p>
+        MaathaCare is designed around the different
+        roles involved in maternal healthcare.
+      </p>
+
+    </div>
+
+    <div class="health-ecosystem">
+
+      <article class="health-ecosystem-card">
+
+        <div class="health-ecosystem-symbol">
+          <span>01</span>
+        </div>
+
+        <h3>Pregnant Mothers</h3>
+
+        <p>
+          Manage pregnancy information,
+          appointments and symptom records.
+        </p>
+
+        <a href="{{ '/manuals/mother/' | relative_url }}">
+          Mother User Guide →
+        </a>
+
+      </article>
+
+      <div class="health-ecosystem-connection"
+           aria-hidden="true">
+        <span>↔</span>
+      </div>
+
+      <article class="health-ecosystem-card health-ecosystem-center">
+
+        <div class="health-ecosystem-symbol">
+          <span>02</span>
+        </div>
+
+        <h3>Public Health Midwives</h3>
+
+        <p>
+          Access supported maternal information
+          and coordinate healthcare follow-up.
+        </p>
+
+        <a href="{{ '/manuals/phm/' | relative_url }}">
+          PHM User Guide →
+        </a>
+
+      </article>
+
+      <div class="health-ecosystem-connection"
+           aria-hidden="true">
+        <span>↔</span>
+      </div>
+
+      <article class="health-ecosystem-card">
+
+        <div class="health-ecosystem-symbol">
+          <span>03</span>
+        </div>
+
+        <h3>Healthcare Administrators</h3>
+
+        <p>
+          Manage supported administrative
+          activities through the web portal.
+        </p>
+
+        <a href="{{ '/manuals/admin/' | relative_url }}">
+          Admin User Guide →
+        </a>
+
+      </article>
+
+    </div>
+
+    <div class="health-ecosystem-note">
+      <span class="health-note-mark">i</span>
+      <p>
+        The platform supports information exchange
+        and healthcare coordination. It does not
+        replace clinical assessment by qualified
+        healthcare professionals.
+      </p>
+    </div>
+
+  </section>
+
+
+  <!-- ========================================
+       4. APPLICATION SHOWCASE
+       ======================================== -->
+
+  <section class="health-section health-platform"
+           id="platform">
+
+    <div class="health-section-heading">
+
+      <span class="health-section-label">
+        EXPLORE THE PLATFORM
+      </span>
+
+      <h2>
+        Designed for the people
+        <span>who use it every day.</span>
+      </h2>
+
+      <p>
+        Explore the actual MaathaCare interfaces
+        developed for mothers, PHMs and
+        healthcare administrators.
+      </p>
+
+    </div>
+
+
+    <!-- Mother application -->
+
+    <article class="health-product-panel">
+
+      <div class="health-product-copy">
+
+        <span class="health-product-category">
+          01 / MOTHER APPLICATION
+        </span>
+
+        <h3>
+          Pregnancy support
+          in one place.
+        </h3>
+
+        <p>
+          The mother application provides access
+          to pregnancy-related information,
+          appointments, symptom recording and
+          other supported healthcare features.
+        </p>
+
+        <ul class="health-check-list">
+          <li>Pregnancy progress information</li>
+          <li>Clinic appointments</li>
+          <li>Symptom recording and history</li>
+          <li>Supported reminders and notifications</li>
+        </ul>
+
+        <a class="health-text-link"
+           href="{{ '/manuals/mother/' | relative_url }}">
+          Explore Mother User Manual
+          <span aria-hidden="true">→</span>
+        </a>
+
+      </div>
+
+      <div class="health-product-visual health-mother-bg">
+
+        <div class="health-device-phone">
+
+          <div class="health-device-notch"></div>
+
+          <img
+            src="{{ '/images/mother-dashboard.jpeg' | relative_url }}"
+            alt="MaathaCare mother mobile dashboard"
+            loading="lazy">
+
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <!-- PHM application -->
+
+    <article class="health-product-panel health-product-reverse">
+
+      <div class="health-product-copy">
+
+        <span class="health-product-category">
+          02 / PUBLIC HEALTH MIDWIFE
+        </span>
+
+        <h3>
+          Supporting healthcare
+          workers with information.
+        </h3>
+
+        <p>
+          The PHM interface supports healthcare
+          coordination by making relevant
+          maternal information and workflows
+          available to authorized users.
+        </p>
+
+        <ul class="health-check-list">
+          <li>Registered mothers</li>
+          <li>Maternal information access</li>
+          <li>Symptom review workflows</li>
+          <li>Clinic and follow-up coordination</li>
+        </ul>
+
+        <a class="health-text-link"
+           href="{{ '/manuals/phm/' | relative_url }}">
+          Explore PHM User Manual
+          <span aria-hidden="true">→</span>
+        </a>
+
+      </div>
+
+      <div class="health-product-visual health-phm-bg">
+
+        <div class="health-device-phone">
+
+          <div class="health-device-notch"></div>
+
+          <img
+            src="{{ '/images/phm-dashboard.jpeg' | relative_url }}"
+            alt="MaathaCare PHM interface screenshot"
+            loading="lazy">
+
+        </div>
+
+      </div>
+
+    </article>
+
+
+    <!-- Admin portal -->
+
+    <article class="health-admin-panel">
+
+      <div class="health-admin-copy">
+
+        <span class="health-product-category">
+          03 / ADMINISTRATIVE WEB PORTAL
+        </span>
+
+        <h3>
+          A clearer view of
+          healthcare administration.
+        </h3>
+
+        <p>
+          The administrative portal supports
+          system management and coordination
+          through a web-based interface.
+        </p>
+
+        <a class="health-text-link"
+           href="{{ '/manuals/admin/' | relative_url }}">
+          Explore Admin User Manual
+          <span aria-hidden="true">→</span>
+        </a>
+
+      </div>
+
+      <div class="health-browser">
+
+        <div class="health-browser-toolbar">
+
+          <div class="health-browser-dots">
+            <i></i><i></i><i></i>
+          </div>
+
+          <span>MaathaCare Administration</span>
+
+        </div>
+
+        <img
+          src="{{ '/images/admin-dashboard.jpeg' | relative_url }}"
+          alt="MaathaCare administrative web portal"
+          loading="lazy">
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- ========================================
+       5. FEATURES
+       ======================================== -->
+
+  <section class="health-section health-features"
+           id="features">
+
+    <div class="health-section-heading">
+
+      <span class="health-section-label">
+        PLATFORM CAPABILITIES
+      </span>
+
+      <h2>
+        Essential tools for
+        <span>maternal healthcare.</span>
+      </h2>
+
+      <p>
+        Features designed to organize
+        pregnancy-related information and
+        healthcare activities.
+      </p>
+
+    </div>
+
+    <div class="health-feature-grid">
+
+      <article class="health-feature-card">
+        <span class="health-feature-number">01</span>
+        <h3>Clinic Appointments</h3>
+        <p>
+          Organize and view upcoming maternal
+          healthcare appointments.
+        </p>
+      </article>
+
+      <article class="health-feature-card">
+        <span class="health-feature-number">02</span>
+        <h3>Symptom Tracking</h3>
+        <p>
+          Maintain a history of reported
+          pregnancy-related symptoms.
+        </p>
+      </article>
+
+      <article class="health-feature-card">
+        <span class="health-feature-number">03</span>
+        <h3>Digital Health Locker</h3>
+        <p>
+          Organize supported medical
+          documents and reports.
+        </p>
+      </article>
+
+      <article class="health-feature-card">
+        <span class="health-feature-number">04</span>
+        <h3>Pregnancy Timeline</h3>
+        <p>
+          Access week-by-week pregnancy
+          information and milestones.
+        </p>
+      </article>
+
+      <article class="health-feature-card">
+        <span class="health-feature-number">05</span>
+        <h3>Notifications</h3>
+        <p>
+          Receive configured reminders
+          through supported notification channels.
+        </p>
+      </article>
+
+      <article class="health-feature-card">
+        <span class="health-feature-number">06</span>
+        <h3>Multilingual Access</h3>
+        <p>
+          Support for English, Sinhala
+          and Tamil interfaces.
+        </p>
+      </article>
+
+    </div>
+
+    <div class="health-section-action">
+      <a href="{{ '/features/' | relative_url }}"
+         class="health-btn health-btn-primary">
+        Explore All Features →
+      </a>
+    </div>
+
+  </section>
+
+
+  <!-- ========================================
+       6. ARCHITECTURE
+       ======================================== -->
+
+  <section class="health-section health-architecture">
+
+    <div class="health-architecture-content">
+
+      <span class="health-section-label">
+        TECHNOLOGY & ARCHITECTURE
+      </span>
+
+      <h2>
+        Built on a connected
+        digital foundation.
+      </h2>
+
+      <p>
+        MaathaCare combines React Native
+        applications, a web administration portal,
+        a Spring Boot REST API and PostgreSQL
+        database services.
+      </p>
+
+      <div class="health-tech-tags">
+        <span>React Native</span>
+        <span>Spring Boot</span>
+        <span>PostgreSQL</span>
+        <span>Supabase</span>
+        <span>Railway</span>
+        <span>JWT</span>
+      </div>
+
+      <a href="{{ '/architecture/' | relative_url }}"
+         class="health-text-link">
+        Explore System Architecture →
+      </a>
+
+    </div>
+
+    <div class="health-architecture-visual">
+
+      <img
+        src="{{ '/architecture-diagram.png' | relative_url }}"
+        alt="MaathaCare system architecture"
+        loading="lazy">
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================
+       7. PROJECT DOCUMENTATION
+       ======================================== -->
+
+  <section class="health-section health-resources"
+           id="documentation">
+
+    <div class="health-section-heading">
+
+      <span class="health-section-label">
+        EXPLORE OUR WORK
+      </span>
+
+      <h2>
+        Everything about
+        <span>the MaathaCare project.</span>
+      </h2>
+
+      <p>
+        Explore our software designs,
+        user manuals, development documentation
+        and project evaluation.
+      </p>
+
+    </div>
+
+    <div class="health-resource-grid">
+
+      <a class="health-resource-card"
+         href="{{ '/features/' | relative_url }}">
+        <span>01 / PLATFORM</span>
+        <h3>Features</h3>
+        <p>Application functionality and screenshots.</p>
+        <strong>Explore →</strong>
+      </a>
+
+      <a class="health-resource-card"
+         href="{{ '/architecture/' | relative_url }}">
+        <span>02 / ENGINEERING</span>
+        <h3>Architecture</h3>
+        <p>System structure and technical diagrams.</p>
+        <strong>Explore →</strong>
+      </a>
+
+      <a class="health-resource-card"
+         href="{{ '/manuals/' | relative_url }}">
+        <span>03 / GUIDES</span>
+        <h3>User Manuals</h3>
+        <p>Instructions for each application role.</p>
+        <strong>Explore →</strong>
+      </a>
+
+      <a class="health-resource-card"
+         href="{{ '/developer/' | relative_url }}">
+        <span>04 / DEVELOPMENT</span>
+        <h3>Developer Guide</h3>
+        <p>Implementation and deployment information.</p>
+        <strong>Explore →</strong>
+      </a>
+
+      <a class="health-resource-card"
+         href="{{ '/testing/' | relative_url }}">
+        <span>05 / EVALUATION</span>
+        <h3>Testing & Results</h3>
+        <p>Testing methods and available evidence.</p>
+        <strong>Explore →</strong>
+      </a>
+
+      <a class="health-resource-card"
+         href="{{ '/team/' | relative_url }}">
+        <span>06 / TEAM</span>
+        <h3>Our Team</h3>
+        <p>CO2060 Group 27 at University of Peradeniya.</p>
+        <strong>Explore →</strong>
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================
+       8. FUTURE DEVELOPMENT
+       ======================================== -->
+
+  <section class="health-future">
+
+    <div>
+
+      <span class="health-section-label">
+        LOOKING AHEAD
+      </span>
+
+      <h2>Continuing to improve maternal care.</h2>
+
+      <p>
+        Future directions include improved symptom
+        analysis and risk prediction, expanded
+        communication features, and further
+        healthcare system integration.
+      </p>
+
+      <small>
+        These are proposed enhancements, not
+        claims of clinically validated capabilities.
+      </small>
+
+    </div>
+
+    <a class="health-btn health-btn-secondary"
+       href="{{ '/developer/' | relative_url }}">
+      Technical Documentation →
+    </a>
+
+  </section>
+
+
+  <!-- ========================================
+       9. PROJECT CTA
+       ======================================== -->
+
+  <section class="health-final">
+
+    <span class="health-section-label">
+      CO2060 · UNIVERSITY OF PERADENIYA
     </span>
 
-    <h1>
-      Connecting Mothers
-      <span>with Better Care.</span>
-    </h1>
+    <h2>
+      Connecting technology
+      with maternal healthcare.
+    </h2>
 
     <p>
-      MaathaCare connects pregnant mothers,
-      Public Health Midwives and healthcare
-      administrators through one digital
-      maternal healthcare platform.
+      Explore our implementation, documentation,
+      and development journey.
     </p>
 
-    <div class="mc-buttons">
-      <a class="mc-button primary"
-         href="#our-solution">
-        Explore Our Solution
+    <div class="health-actions">
+
+      <a href="{{ '/features/' | relative_url }}"
+         class="health-btn health-btn-light">
+        Explore MaathaCare
       </a>
 
-      <a class="mc-button outline"
-         href="#care-journey">
-        How It Works
+      <a href="https://github.com/cepdnaclk/e23-co2060-Maathacare"
+         class="health-btn health-btn-ghost"
+         target="_blank"
+         rel="noopener noreferrer">
+        GitHub Repository ↗
       </a>
+
     </div>
 
-    <div class="mc-hero-tags">
-      <span>Pregnancy Monitoring</span>
-      <span>Clinic Appointments</span>
-      <span>PHM Coordination</span>
-    </div>
-  </div>
+  </section>
 
-  <div class="mc-hero-image">
-    <img
-      src="{{ '/data/cover_page.jpg' | relative_url }}"
-      alt="MaathaCare digital maternal healthcare system"
-    >
-  </div>
-</section>
-
-
-<section class="mc-section mc-intro" id="our-solution">
-  <div class="mc-section-heading">
-    <span class="mc-eyebrow">OUR MISSION</span>
-
-    <h2>Supporting Every Step of Pregnancy</h2>
-
-    <p>
-      Maternal healthcare involves more than individual
-      appointments. It requires consistent access to
-      pregnancy information, communication and
-      coordination between mothers and healthcare workers.
-    </p>
-  </div>
-
-  <div class="mc-card-grid">
-
-    <article class="mc-role-card">
-      <div class="mc-role-icon">01</div>
-
-      <h3>For Pregnant Mothers</h3>
-
-      <p>
-        Access pregnancy information, manage clinic
-        appointments, record symptoms and receive
-        supported healthcare reminders.
-      </p>
-
-      <a href="{{ '/features/' | relative_url }}">
-        Explore Mother Features
-        <span aria-hidden="true">→</span>
-      </a>
-    </article>
-
-    <article class="mc-role-card">
-      <div class="mc-role-icon">02</div>
-
-      <h3>For Public Health Midwives</h3>
-
-      <p>
-        Support maternal follow-up through organized
-        pregnancy information, appointment management
-        and symptom review workflows.
-      </p>
-
-      <a href="{{ '/manuals/phm/' | relative_url }}">
-        Explore PHM Features
-        <span aria-hidden="true">→</span>
-      </a>
-    </article>
-
-    <article class="mc-role-card">
-      <div class="mc-role-icon">03</div>
-
-      <h3>For Healthcare Administrators</h3>
-
-      <p>
-        Access administrative tools for system
-        management and coordination of supported
-        maternal healthcare activities.
-      </p>
-
-      <a href="{{ '/manuals/admin/' | relative_url }}">
-        Explore Admin Features
-        <span aria-hidden="true">→</span>
-      </a>
-    </article>
-
-  </div>
-</section>
-
-
-<section class="mc-section mc-journey" id="care-journey">
-
-  <div class="mc-section-heading">
-    <span class="mc-eyebrow">CONNECTED CARE</span>
-
-    <h2>One Platform. A Connected Care Journey.</h2>
-
-    <p>
-      MaathaCare brings together different participants
-      in the maternal healthcare process.
-    </p>
-  </div>
-
-  <div class="mc-journey-grid">
-
-    <div class="mc-journey-step">
-      <div class="mc-step-number">01</div>
-
-      <h3>Mother Records</h3>
-      <p>
-        Mothers maintain pregnancy information,
-        symptoms and appointments.
-      </p>
-    </div>
-
-    <div class="mc-journey-step">
-      <div class="mc-step-number">02</div>
-
-      <h3>Information Connects</h3>
-      <p>
-        The platform manages supported information
-        through centralized backend services.
-      </p>
-    </div>
-
-    <div class="mc-journey-step">
-      <div class="mc-step-number">03</div>
-
-      <h3>PHM Reviews</h3>
-      <p>
-        PHMs access relevant maternal information
-        to support follow-up activities.
-      </p>
-    </div>
-
-    <div class="mc-journey-step">
-      <div class="mc-step-number">04</div>
-
-      <h3>Care Coordination</h3>
-      <p>
-        Appointment and notification workflows
-        support maternal healthcare coordination.
-      </p>
-    </div>
-
-  </div>
-</section>
-
-
-<section class="mc-section mc-features">
-
-  <div class="mc-section-heading">
-    <span class="mc-eyebrow">PLATFORM CAPABILITIES</span>
-    <h2>Designed Around Maternal Healthcare</h2>
-
-    <p>
-      Essential tools for organizing pregnancy-related
-      information and healthcare activities.
-    </p>
-  </div>
-
-  <div class="mc-feature-grid">
-
-    <article class="mc-feature">
-      <span class="mc-feature-symbol">01</span>
-      <h3>Clinic Scheduling</h3>
-      <p>
-        Manage appointments and view scheduled
-        maternal healthcare visits.
-      </p>
-    </article>
-
-    <article class="mc-feature">
-      <span class="mc-feature-symbol">02</span>
-      <h3>Symptom Tracking</h3>
-      <p>
-        Record pregnancy-related symptoms and
-        maintain a history for follow-up.
-      </p>
-    </article>
-
-    <article class="mc-feature">
-      <span class="mc-feature-symbol">03</span>
-      <h3>Digital Health Locker</h3>
-      <p>
-        Organize pregnancy-related documents
-        and medical reports.
-      </p>
-    </article>
-
-    <article class="mc-feature">
-      <span class="mc-feature-symbol">04</span>
-      <h3>Pregnancy Timeline</h3>
-      <p>
-        Access pregnancy milestones and
-        educational information.
-      </p>
-    </article>
-
-    <article class="mc-feature">
-      <span class="mc-feature-symbol">05</span>
-      <h3>Healthcare Reminders</h3>
-      <p>
-        Receive supported push and SMS reminders
-        for configured healthcare activities.
-      </p>
-    </article>
-
-    <article class="mc-feature">
-      <span class="mc-feature-symbol">06</span>
-      <h3>Multilingual Access</h3>
-      <p>
-        Support for English, Sinhala and Tamil
-        interfaces.
-      </p>
-    </article>
-
-  </div>
-
-  <div class="mc-centre">
-    <a class="mc-button primary"
-       href="{{ '/features/' | relative_url }}">
-      View All Features
-    </a>
-  </div>
-
-</section>
-
-
-<section class="mc-section mc-technical">
-
-  <div class="mc-technical-text">
-
-    <span class="mc-eyebrow">BEHIND THE PLATFORM</span>
-
-    <h2>Built on a Connected Digital Architecture</h2>
-
-    <p>
-      MaathaCare combines React Native applications,
-      a web administration interface, a Spring Boot
-      REST API and PostgreSQL database services.
-    </p>
-
-    <p>
-      Backend services are deployed through Railway,
-      while PostgreSQL is hosted using Supabase.
-    </p>
-
-    <a class="mc-button outline"
-       href="{{ '/architecture/' | relative_url }}">
-      Explore Architecture
-    </a>
-
-  </div>
-
-  <div class="mc-technical-image">
-    <img
-      src="{{ '/architecture.png' | relative_url }}"
-      alt="MaathaCare system architecture diagram"
-      loading="lazy"
-    >
-  </div>
-
-</section>
-
-
-<section class="mc-section mc-resources">
-
-  <div class="mc-section-heading">
-    <span class="mc-eyebrow">PROJECT DOCUMENTATION</span>
-
-    <h2>Explore MaathaCare</h2>
-
-    <p>
-      Learn how the platform works, examine its
-      implementation and explore the user documentation.
-    </p>
-  </div>
-
-  <div class="mc-resource-grid">
-
-    <a class="mc-resource-card"
-       href="{{ '/features/' | relative_url }}">
-      <h3>Platform Features</h3>
-      <p>Application screenshots and workflows.</p>
-      <span>Explore →</span>
-    </a>
-
-    <a class="mc-resource-card"
-       href="{{ '/architecture/' | relative_url }}">
-      <h3>System Architecture</h3>
-      <p>Components, data flow and deployment.</p>
-      <span>Explore →</span>
-    </a>
-
-    <a class="mc-resource-card"
-       href="{{ '/manuals/' | relative_url }}">
-      <h3>User Manuals</h3>
-      <p>Guides for mothers, PHMs and administrators.</p>
-      <span>Explore →</span>
-    </a>
-
-    <a class="mc-resource-card"
-       href="{{ '/developer/' | relative_url }}">
-      <h3>Developer Guide</h3>
-      <p>Technical and deployment documentation.</p>
-      <span>Explore →</span>
-    </a>
-
-    <a class="mc-resource-card"
-       href="{{ '/testing/' | relative_url }}">
-      <h3>Testing & Results</h3>
-      <p>Testing approach and available evidence.</p>
-      <span>Explore →</span>
-    </a>
-
-    <a class="mc-resource-card"
-       href="{{ '/team/' | relative_url }}">
-      <h3>Project Team</h3>
-      <p>CO2060 Group 27, University of Peradeniya.</p>
-      <span>Explore →</span>
-    </a>
-
-  </div>
-
-</section>
-
-
-<section class="mc-final-cta">
-  <h2>Technology Supporting Maternal Healthcare</h2>
-
-  <p>
-    Explore MaathaCare's implementation,
-    documentation and development journey.
-  </p>
-
-  <div class="mc-buttons">
-    <a class="mc-button light"
-       href="{{ '/features/' | relative_url }}">
-      Explore the Project
-    </a>
-
-    <a class="mc-button transparent"
-       href="https://github.com/cepdnaclk/e23-co2060-Maathacare">
-      View GitHub Repository
-    </a>
-  </div>
-</section>
+</div>
