@@ -6,10 +6,15 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": { "buildType": "apk" }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://maathacare-backend-g4duhqasdqfwbteb.centralindia-01.azurewebsites.net"
+      }
     },
     "production": {
       "autoIncrement": true

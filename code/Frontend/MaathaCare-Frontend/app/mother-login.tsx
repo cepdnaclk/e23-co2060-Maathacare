@@ -1,22 +1,22 @@
+import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { jwtDecode } from "jwt-decode";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Image,
 } from "react-native";
 
 import LanguageSwitcher from "../components/LanguageSwitcher";
@@ -67,16 +67,22 @@ export default function MotherLoginScreen() {
       const claims = jwtDecode<{ sub?: string; userId?: string }>(token);
       await AsyncStorage.setItem(
         "userId",
-        claims.userId || claims.sub || phoneNumber.trim()
+        claims.userId || claims.sub || phoneNumber.trim(),
       );
 
       router.replace("/(tabs)");
     } catch (error) {
       const err = error as any;
-      Alert.alert(
-        "Login Failed",
-        err.response?.data || "Check your connection and credentials."
-      );
+      const data = err.response?.data;
+      const message =
+        typeof data === "string"
+          ? data
+          : typeof data?.message === "string"
+            ? data.message
+            : err.response
+              ? "Login failed. Please check your phone number and password."
+              : "Cannot reach the server. Check your connection and try again.";
+      Alert.alert("Login Failed", message);
     } finally {
       setLoading(false);
     }
@@ -113,7 +119,9 @@ export default function MotherLoginScreen() {
           {/* Form Fields */}
           <View style={styles.formContainer}>
             {/* Phone Input */}
-            <Text style={styles.label}>{t("phoneNumber") || "Phone Number"}</Text>
+            <Text style={styles.label}>
+              {t("phoneNumber") || "Phone Number"}
+            </Text>
             <View style={styles.inputCard}>
               <TextInput
                 style={styles.input}
