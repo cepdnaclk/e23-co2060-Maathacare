@@ -1,10 +1,13 @@
-
 ---
 layout: maatha
-permalink: /
 title: MaathaCare
+permalink: /
 repository-name: e23-co2060-Maathacare
 ---
+
+# MaathaCare
+### Smart Digital Pregnancy Support System
+
 
 # MaathaCare
 ### Smart Digital Pregnancy Support System
